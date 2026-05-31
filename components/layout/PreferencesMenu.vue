@@ -26,7 +26,7 @@
     <Transition name="slide">
       <div
         v-if="open"
-        class="absolute right-0 top-full mt-2 w-56 rounded-2xl border border-white/[0.08] bg-[#1a1a2e] shadow-2xl shadow-black/40 backdrop-blur-2xl overflow-hidden z-50"
+        class="absolute right-0 top-full mt-2 w-56 rounded-2xl overflow-hidden z-50 shadow-2xl backdrop-blur-2xl bg-white border border-slate-200 shadow-slate-900/15 dark:bg-[#1a1a2e] dark:border-white/[0.08] dark:shadow-black/40"
         @mousedown.prevent
       >
         <!-- Theme section -->
