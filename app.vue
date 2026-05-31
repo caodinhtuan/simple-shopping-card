@@ -39,9 +39,14 @@ const cartStore = useCartStore()
 const prefs = usePreferencesStore()
 
 const currentNaiveTheme = computed(() => (prefs.theme === 'light' ? null : darkTheme))
-const layoutBg = computed(() => (prefs.theme === 'light' ? '#f7f8fb' : '#0a0a1a'))
+// Light mode: use Naive UI's native body color (#fff).
+// Dark mode: our custom near-black.
+const layoutBg = computed(() => (prefs.theme === 'light' ? '#ffffff' : '#0a0a1a'))
 
-const themeOverrides = computed<GlobalThemeOverrides>(() => {
+const themeOverrides = computed<GlobalThemeOverrides | undefined>(() => {
+  // Light mode → return undefined so Naive UI uses its base light theme verbatim.
+  // The only thing we customize is brand primary (purple) which already cascades
+  // through Tailwind's btn-stripe / gradient-text classes, so we leave it out here too.
   if (prefs.theme === 'light') {
     return {
       common: {
@@ -49,15 +54,11 @@ const themeOverrides = computed<GlobalThemeOverrides>(() => {
         primaryColorHover: '#a78bfa',
         primaryColorPressed: '#7c3aed',
         primaryColorSuppl: '#8b5cf6',
-        bodyColor: '#f7f8fb',
-        cardColor: '#ffffff',
-        modalColor: '#ffffff',
-        popoverColor: '#ffffff',
         fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-        borderRadius: '12px',
       },
     }
   }
+
   return {
     common: {
       primaryColor: '#8b5cf6',

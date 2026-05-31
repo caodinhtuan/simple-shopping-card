@@ -26,10 +26,12 @@
 @layer base {
   body {
     @apply min-h-screen overflow-x-hidden font-sans antialiased;
-    @apply bg-slate-50 text-slate-900;
-    @apply dark:bg-[#0a0a1a] dark:text-slate-100;
+    @apply bg-white;                     /* Naive UI light body color */
+    @apply dark:bg-[#0a0a1a];            /* Our brand dark */
+    color: rgba(0, 0, 0, 0.82);          /* Naive UI textColor2 */
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
+  html.dark body { color: #f1f5f9; }
 
   /* Preflight is disabled (Naive UI compatibility) — restore minimal anchor reset */
   a {
@@ -51,55 +53,62 @@
   *::-webkit-scrollbar-thumb:hover { background: rgba(139, 92, 246, 0.5); }
 }
 
-/* ─── Light theme overrides for legacy hardcoded dark tokens ───
- * Templates use `text-slate-100`, `bg-white/[0.04]`, etc. which assume a dark
- * surface. Remap them to light-appropriate values when html has NO `.dark`.
- * (Tailwind darkMode is class-based, .dark is toggled on <html>.) */
-html:not(.dark) .text-slate-100 { color: #0f172a; }
-html:not(.dark) .text-slate-200 { color: #1e293b; }
-html:not(.dark) .text-slate-300 { color: #334155; }
-html:not(.dark) .text-slate-400 { color: #475569; }
-html:not(.dark) .text-slate-500 { color: #64748b; }
-html:not(.dark) .text-slate-600 { color: #94a3b8; }
+/* ─── Light theme overrides — mirror Naive UI's base light palette ───
+ * Naive UI light text tokens (from naive-ui/es/_styles/common/light.js):
+ *   textColor1: rgba(0,0,0,0.9)
+ *   textColor2: rgba(0,0,0,0.82)
+ *   textColor3: rgba(0,0,0,0.52)
+ *   placeholderColor: rgba(0,0,0,0.38)
+ *   borderColor: #e0e0e6, dividerColor: #efeff5
+ *   hoverColor: rgba(0,0,0,0.04)
+ * Map our legacy dark-only Tailwind tokens onto these so templates render
+ * with Naive UI's native light aesthetic when html does NOT carry .dark. */
+html:not(.dark) .text-slate-100 { color: rgba(0, 0, 0, 0.9); }    /* heading */
+html:not(.dark) .text-slate-200 { color: rgba(0, 0, 0, 0.82); }   /* body */
+html:not(.dark) .text-slate-300 { color: rgba(0, 0, 0, 0.7); }
+html:not(.dark) .text-slate-400 { color: rgba(0, 0, 0, 0.52); }   /* secondary */
+html:not(.dark) .text-slate-500 { color: rgba(0, 0, 0, 0.45); }
+html:not(.dark) .text-slate-600 { color: rgba(0, 0, 0, 0.38); }   /* placeholder */
 
-html:not(.dark) .bg-white\/\[0\.02\] { background-color: rgba(15, 23, 42, 0.02); }
-html:not(.dark) .bg-white\/\[0\.03\] { background-color: rgba(15, 23, 42, 0.03); }
-html:not(.dark) .bg-white\/\[0\.04\] { background-color: rgba(15, 23, 42, 0.04); }
-html:not(.dark) .bg-white\/\[0\.05\] { background-color: rgba(15, 23, 42, 0.05); }
-html:not(.dark) .bg-white\/5        { background-color: rgba(15, 23, 42, 0.05); }
-html:not(.dark) .bg-white\/10       { background-color: rgba(15, 23, 42, 0.08); }
+html:not(.dark) .bg-white\/\[0\.02\] { background-color: rgba(0, 0, 0, 0.02); }
+html:not(.dark) .bg-white\/\[0\.03\] { background-color: rgba(0, 0, 0, 0.03); }
+html:not(.dark) .bg-white\/\[0\.04\] { background-color: rgba(0, 0, 0, 0.04); }
+html:not(.dark) .bg-white\/\[0\.05\] { background-color: rgba(0, 0, 0, 0.04); }
+html:not(.dark) .bg-white\/5        { background-color: rgba(0, 0, 0, 0.04); }
+html:not(.dark) .bg-white\/10       { background-color: rgba(0, 0, 0, 0.06); }
 
-html:not(.dark) .border-white\/5            { border-color: rgba(15, 23, 42, 0.08); }
-html:not(.dark) .border-white\/8            { border-color: rgba(15, 23, 42, 0.1); }
-html:not(.dark) .border-white\/10           { border-color: rgba(15, 23, 42, 0.12); }
-html:not(.dark) .border-white\/\[0\.05\]    { border-color: rgba(15, 23, 42, 0.07); }
-html:not(.dark) .border-white\/\[0\.06\]    { border-color: rgba(15, 23, 42, 0.08); }
-html:not(.dark) .border-white\/\[0\.08\]    { border-color: rgba(15, 23, 42, 0.1); }
+html:not(.dark) .border-white\/5            { border-color: #efeff5; }
+html:not(.dark) .border-white\/8            { border-color: #e0e0e6; }
+html:not(.dark) .border-white\/10           { border-color: #d4d4dc; }
+html:not(.dark) .border-white\/\[0\.05\]    { border-color: #efeff5; }
+html:not(.dark) .border-white\/\[0\.06\]    { border-color: #e8e8ee; }
+html:not(.dark) .border-white\/\[0\.08\]    { border-color: #e0e0e6; }
 
-html:not(.dark) .hero-glow { opacity: 0.18; }
+/* Tone down ambient glows + grid overlay in light mode */
+html:not(.dark) .hero-glow { opacity: 0.12; filter: blur(140px); }
 
 @layer components {
-  /* Light defaults + dark: override — leveraging Tailwind's class-based darkMode */
+  /* ── Light: clean Naive UI base — flat white surface, hairline border ──
+     ── Dark : our glassmorphism layer                                  ── */
   .glass {
-    @apply backdrop-blur-xl bg-white/70 border border-slate-200/70;
-    @apply dark:bg-white/[0.05] dark:border-white/[0.08];
+    @apply bg-white border border-[#e0e0e6];
+    @apply dark:bg-white/[0.05] dark:border-white/[0.08] dark:backdrop-blur-xl;
   }
 
   .glass-strong {
-    @apply backdrop-blur-2xl bg-white/85 border-b border-slate-200/80;
-    @apply dark:bg-white/[0.08] dark:border-b-white/[0.06];
+    @apply bg-white border-b border-[#e0e0e6];
+    @apply dark:bg-white/[0.08] dark:border-b-white/[0.06] dark:backdrop-blur-2xl;
   }
 
   .glass-card {
-    @apply backdrop-blur-2xl rounded-2xl transition-all duration-300 ease-out;
-    @apply bg-white/85 border border-slate-200/60 shadow-[0_8px_32px_rgba(15,23,42,0.06)];
-    @apply dark:bg-white/[0.04] dark:border-white/[0.06] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)];
+    @apply rounded-lg transition-all duration-300 ease-out;
+    @apply bg-white border border-[#e0e0e6] shadow-[0_1px_2px_-2px_rgba(0,0,0,0.08),0_2px_4px_0_rgba(0,0,0,0.04)];
+    @apply dark:rounded-2xl dark:bg-white/[0.04] dark:border-white/[0.06] dark:backdrop-blur-2xl dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)];
   }
 
   .glass-card:hover {
-    @apply -translate-y-0.5;
-    @apply bg-white/95 border-purple-300/40 shadow-[0_12px_48px_rgba(15,23,42,0.08),0_0_40px_rgba(139,92,246,0.06)];
-    @apply dark:bg-white/[0.07] dark:border-purple-500/20 dark:shadow-[0_12px_48px_rgba(0,0,0,0.3),0_0_40px_rgba(139,92,246,0.08)];
+    @apply border-[#d0d0d6];
+    @apply dark:-translate-y-0.5 dark:bg-white/[0.07] dark:border-purple-500/20 dark:shadow-[0_12px_48px_rgba(0,0,0,0.3),0_0_40px_rgba(139,92,246,0.08)];
   }
 
   .gradient-text {

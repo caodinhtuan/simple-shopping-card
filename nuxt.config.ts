@@ -79,7 +79,7 @@ export default defineNuxtConfig({
               content:'';display:block;position:fixed;inset:0;z-index:9999;
               background:#0a0a1a;background-image:radial-gradient(circle at 50% 50%,rgba(139,92,246,0.08),transparent 50%);
             }
-            html:not(.dark) #__nuxt:empty::before{background:#f8fafc;background-image:radial-gradient(circle at 50% 50%,rgba(139,92,246,0.04),transparent 50%);}
+            html:not(.dark) #__nuxt:empty::before{background:#fff;background-image:radial-gradient(circle at 50% 50%,rgba(139,92,246,0.04),transparent 50%);}
             #__nuxt:empty::after{
               content:'';position:fixed;left:50%;top:50%;width:48px;height:48px;margin:-24px;z-index:10000;
               border:3px solid rgba(139,92,246,0.15);border-top-color:#8b5cf6;border-radius:50%;
