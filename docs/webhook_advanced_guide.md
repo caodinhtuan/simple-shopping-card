@@ -1,14 +1,15 @@
 # 🔔 Advanced Webhook Integration Guide
+
 ### ShopPay · Stripe & PayPal · Payment Status, Amount, Transaction Tracking
 
-| | |
-|---|---|
-| **Document version** | 1.0 |
-| **Last updated** | 2026-05-31 |
-| **Prerequisites** | [`sandbox_setup_guide.md`](./sandbox_setup_guide.md) (Phases 1–4 complete) |
-| **Audience** | Backend engineers, Payments team, SRE on-call |
-| **Estimated reading time** | 25 minutes |
-| **Focus** | Reliable capture of payment status, amount, and related transaction metadata |
+|                            |                                                                              |
+|----------------------------|------------------------------------------------------------------------------|
+| **Document version**       | 1.0                                                                          |
+| **Last updated**           | 2026-05-31                                                                   |
+| **Prerequisites**          | [`sandbox_setup_guide.md`](./sandbox_setup_guide.md) (Phases 1–4 complete)   |
+| **Audience**               | Backend engineers, Payments team, SRE on-call                                |
+| **Estimated reading time** | 25 minutes                                                                   |
+| **Focus**                  | Reliable capture of payment status, amount, and related transaction metadata |
 
 ---
 
@@ -34,28 +35,31 @@
 
 ### The fundamental problem
 
-After a customer is redirected back from Stripe Checkout or PayPal approval, the **frontend cannot be trusted** as the source of truth for payment status:
+After a customer is redirected back from Stripe Checkout or PayPal approval, the **frontend cannot be trusted** as the
+source of truth for payment status:
 
-1. The redirect URL is **fired by the browser**, not the gateway — it can be tampered with, blocked, or never reached (closed tab, network loss).
+1. The redirect URL is **fired by the browser**, not the gateway — it can be tampered with, blocked, or never reached (
+   closed tab, network loss).
 2. **Async payments** (ACH, SEPA, bank transfers) complete hours or days after redirect.
 3. **Recurring subscriptions** charge on a schedule with no user interaction.
 4. **Disputes, refunds, chargebacks** happen entirely outside the user session.
 
 > [!IMPORTANT]
-> **Webhooks are the only reliable mechanism** for synchronizing payment state from the gateway to your database. The redirect is for UX (showing the success page); the webhook is for **business truth**.
+> **Webhooks are the only reliable mechanism** for synchronizing payment state from the gateway to your database. The
+> redirect is for UX (showing the success page); the webhook is for **business truth**.
 
 ### What we capture via webhooks
 
-| Data point | Why it matters |
-|------------|---------------|
-| **Payment status** | `pending` → `paid` / `failed` / `refunded` — drives fulfillment, dunning, churn |
-| **Amount captured** | Reconcile against expected order total (catch tampering) |
-| **Currency** | Multi-currency support |
-| **Gateway transaction ID** | Customer support lookup, refund reference, dispute defense |
-| **Customer identifier** | Link to user/email account |
-| **Failure reason code** | Drive retry logic, customer messaging |
-| **Subscription period** | Compute MRR, renewal date, churn metrics |
-| **Timestamp** | Audit log, financial reconciliation |
+| Data point                 | Why it matters                                                                  |
+|----------------------------|---------------------------------------------------------------------------------|
+| **Payment status**         | `pending` → `paid` / `failed` / `refunded` — drives fulfillment, dunning, churn |
+| **Amount captured**        | Reconcile against expected order total (catch tampering)                        |
+| **Currency**               | Multi-currency support                                                          |
+| **Gateway transaction ID** | Customer support lookup, refund reference, dispute defense                      |
+| **Customer identifier**    | Link to user/email account                                                      |
+| **Failure reason code**    | Drive retry logic, customer messaging                                           |
+| **Subscription period**    | Compute MRR, renewal date, churn metrics                                        |
+| **Timestamp**              | Audit log, financial reconciliation                                             |
 
 ---
 
@@ -81,7 +85,8 @@ Both gateways treat any non-2xx, timeout, or slow response as a delivery failure
 
 ### Rule 3 — Be idempotent
 
-The same event WILL be delivered more than once. Compute a deterministic key (`event.id` or `event.event_type + resource.id`) and skip if already processed.
+The same event WILL be delivered more than once. Compute a deterministic key (`event.id` or
+`event.event_type + resource.id`) and skip if already processed.
 
 ### Rule 4 — Trust gateway, not frontend
 
@@ -89,7 +94,8 @@ Amount, currency, status — read **only** from the webhook payload, **never** f
 
 ### Rule 5 — Log everything
 
-Persist the full event payload (raw JSON) before processing. If a handler bug corrupts state, you need the original to replay.
+Persist the full event payload (raw JSON) before processing. If a handler bug corrupts state, you need the original to
+replay.
 
 ---
 
@@ -130,16 +136,16 @@ Fired when the buyer finishes the hosted Stripe Checkout flow.
 
 **Key fields:**
 
-| Field | Path | Notes |
-|-------|------|-------|
-| Session ID | `data.object.id` | `cs_test_...` / `cs_live_...` |
-| Payment status | `data.object.payment_status` | `paid` / `unpaid` / `no_payment_required` |
-| Mode | `data.object.mode` | `payment` / `subscription` / `setup` |
-| Amount total | `data.object.amount_total` | Integer in **smallest currency unit** (cents for USD) |
-| Currency | `data.object.currency` | ISO 4217 lowercase (`usd`) |
-| Customer email | `data.object.customer_details.email` | Verified during checkout |
-| Payment Intent ID | `data.object.payment_intent` | Use to look up Charge for refunds |
-| Metadata | `data.object.metadata` | Your `order_id`, etc. |
+| Field             | Path                                 | Notes                                                 |
+|-------------------|--------------------------------------|-------------------------------------------------------|
+| Session ID        | `data.object.id`                     | `cs_test_...` / `cs_live_...`                         |
+| Payment status    | `data.object.payment_status`         | `paid` / `unpaid` / `no_payment_required`             |
+| Mode              | `data.object.mode`                   | `payment` / `subscription` / `setup`                  |
+| Amount total      | `data.object.amount_total`           | Integer in **smallest currency unit** (cents for USD) |
+| Currency          | `data.object.currency`               | ISO 4217 lowercase (`usd`)                            |
+| Customer email    | `data.object.customer_details.email` | Verified during checkout                              |
+| Payment Intent ID | `data.object.payment_intent`         | Use to look up Charge for refunds                     |
+| Metadata          | `data.object.metadata`               | Your `order_id`, etc.                                 |
 
 > [!NOTE]
 > For one-time payments (`mode: 'payment'`), `payment_status === 'paid'` is the canonical success signal.
@@ -147,24 +153,25 @@ Fired when the buyer finishes the hosted Stripe Checkout flow.
 
 #### `payment_intent.succeeded`
 
-Fired by the underlying PaymentIntent when funds settle. Useful for **async payment methods** (ACH, SEPA) where `checkout.session.completed` fires immediately but money arrives later.
+Fired by the underlying PaymentIntent when funds settle. Useful for **async payment methods** (ACH, SEPA) where
+`checkout.session.completed` fires immediately but money arrives later.
 
-| Field | Path |
-|-------|------|
-| PaymentIntent ID | `data.object.id` (`pi_...`) |
-| Amount received | `data.object.amount_received` |
-| Charges | `data.object.charges.data[0].id` (`ch_...`) |
-| Receipt URL | `data.object.charges.data[0].receipt_url` |
+| Field            | Path                                        |
+|------------------|---------------------------------------------|
+| PaymentIntent ID | `data.object.id` (`pi_...`)                 |
+| Amount received  | `data.object.amount_received`               |
+| Charges          | `data.object.charges.data[0].id` (`ch_...`) |
+| Receipt URL      | `data.object.charges.data[0].receipt_url`   |
 
 #### `payment_intent.payment_failed`
 
 Critical for **dunning** and **customer messaging**.
 
-| Field | Path |
-|-------|------|
-| Failure code | `data.object.last_payment_error.code` |
+| Field        | Path                                          |
+|--------------|-----------------------------------------------|
+| Failure code | `data.object.last_payment_error.code`         |
 | Decline code | `data.object.last_payment_error.decline_code` |
-| Message | `data.object.last_payment_error.message` |
+| Message      | `data.object.last_payment_error.message`      |
 
 Common decline codes: `insufficient_funds`, `card_declined`, `expired_card`, `incorrect_cvc`, `processing_error`.
 
@@ -176,12 +183,12 @@ Buyer abandoned Checkout (session timeout after 24h). Use to release inventory h
 
 A refund was processed (full or partial).
 
-| Field | Path |
-|-------|------|
-| Charge ID | `data.object.id` |
+| Field           | Path                          |
+|-----------------|-------------------------------|
+| Charge ID       | `data.object.id`              |
 | Amount refunded | `data.object.amount_refunded` |
-| Refund list | `data.object.refunds.data[]` |
-| Original amount | `data.object.amount` |
+| Refund list     | `data.object.refunds.data[]`  |
+| Original amount | `data.object.amount`          |
 
 ### 2.4 Subscription events
 
@@ -189,20 +196,21 @@ A refund was processed (full or partial).
 
 A subscription was just created. Status may be `trialing`, `active`, or `incomplete`.
 
-| Field | Path |
-|-------|------|
-| Subscription ID | `data.object.id` (`sub_...`) |
-| Status | `data.object.status` |
-| Customer ID | `data.object.customer` |
-| Price ID | `data.object.items.data[0].price.id` |
-| Current period start | `data.object.current_period_start` |
-| Current period end | `data.object.current_period_end` |
+| Field                | Path                                 |
+|----------------------|--------------------------------------|
+| Subscription ID      | `data.object.id` (`sub_...`)         |
+| Status               | `data.object.status`                 |
+| Customer ID          | `data.object.customer`               |
+| Price ID             | `data.object.items.data[0].price.id` |
+| Current period start | `data.object.current_period_start`   |
+| Current period end   | `data.object.current_period_end`     |
 
 #### `customer.subscription.updated`
 
 Fires on **any** change: plan upgrade/downgrade, quantity change, status flip (`active` ↔ `past_due` ↔ `canceled`).
 
 Critical sub-cases:
+
 - Status changed from `active` → `past_due` → start dunning UI
 - `cancel_at_period_end` flipped to `true` → flag account for churn outreach
 
@@ -216,23 +224,24 @@ Subscription was canceled and the period ended. Revoke access.
 
 Fired every billing cycle when payment succeeds. This is what you record for MRR/ARR.
 
-| Field | Path |
-|-------|------|
-| Invoice ID | `data.object.id` (`in_...`) |
-| Amount paid | `data.object.amount_paid` |
-| Subscription | `data.object.subscription` |
-| Period start | `data.object.period_start` |
-| Period end | `data.object.period_end` |
-| Invoice PDF | `data.object.invoice_pdf` |
+| Field        | Path                        |
+|--------------|-----------------------------|
+| Invoice ID   | `data.object.id` (`in_...`) |
+| Amount paid  | `data.object.amount_paid`   |
+| Subscription | `data.object.subscription`  |
+| Period start | `data.object.period_start`  |
+| Period end   | `data.object.period_end`    |
+| Invoice PDF  | `data.object.invoice_pdf`   |
 
 #### `invoice.payment_failed`
 
-The card on file failed during a recurring charge. Stripe retries automatically per your Smart Retries config; this event fires on each attempt.
+The card on file failed during a recurring charge. Stripe retries automatically per your Smart Retries config; this
+event fires on each attempt.
 
-| Field | Path |
-|-------|------|
-| Attempt count | `data.object.attempt_count` |
-| Next attempt | `data.object.next_payment_attempt` |
+| Field          | Path                                  |
+|----------------|---------------------------------------|
+| Attempt count  | `data.object.attempt_count`           |
+| Next attempt   | `data.object.next_payment_attempt`    |
 | Failure reason | `data.object.last_finalization_error` |
 
 Use this to send dunning emails (e.g. "Update your card") and ultimately suspend service after N failures.
@@ -251,11 +260,11 @@ Sent ~3 days before trial ends. Send conversion-priming emails.
 
 A chargeback was filed. You have **7 days** to submit evidence.
 
-| Field | Path |
-|-------|------|
-| Dispute ID | `data.object.id` (`dp_...`) |
-| Reason | `data.object.reason` |
-| Amount | `data.object.amount` |
+| Field           | Path                                  |
+|-----------------|---------------------------------------|
+| Dispute ID      | `data.object.id` (`dp_...`)           |
+| Reason          | `data.object.reason`                  |
+| Amount          | `data.object.amount`                  |
 | Evidence due by | `data.object.evidence_details.due_by` |
 
 ---
@@ -289,32 +298,33 @@ Local dev: tunnel via `ngrok http 3000`, register the ngrok URL in PayPal Dashbo
 
 #### `CHECKOUT.ORDER.APPROVED`
 
-Buyer approved the order on PayPal but funds are **not yet captured**. Use this to log intent or trigger your capture call (if you didn't do it synchronously).
+Buyer approved the order on PayPal but funds are **not yet captured**. Use this to log intent or trigger your capture
+call (if you didn't do it synchronously).
 
-| Field | Path |
-|-------|------|
-| Order ID | `resource.id` |
-| Status | `resource.status` (`APPROVED`) |
-| Amount | `resource.purchase_units[0].amount.value` |
-| Currency | `resource.purchase_units[0].amount.currency_code` |
-| Payer email | `resource.payer.email_address` |
-| Custom ID | `resource.purchase_units[0].custom_id` (your `order_id`) |
+| Field       | Path                                                     |
+|-------------|----------------------------------------------------------|
+| Order ID    | `resource.id`                                            |
+| Status      | `resource.status` (`APPROVED`)                           |
+| Amount      | `resource.purchase_units[0].amount.value`                |
+| Currency    | `resource.purchase_units[0].amount.currency_code`        |
+| Payer email | `resource.payer.email_address`                           |
+| Custom ID   | `resource.purchase_units[0].custom_id` (your `order_id`) |
 
 #### `PAYMENT.CAPTURE.COMPLETED` ⭐ KEY EVENT
 
 Funds successfully transferred. This is your **"payment confirmed"** signal.
 
-| Field | Path |
-|-------|------|
-| Capture ID | `resource.id` (use this for refund lookups) |
-| Status | `resource.status` (`COMPLETED`) |
-| Amount | `resource.amount.value` |
-| Currency | `resource.amount.currency_code` |
-| Custom ID | `resource.custom_id` (your `order_id`) |
-| Invoice ID | `resource.invoice_id` |
-| Final capture | `resource.final_capture` (boolean) |
-| Seller fee | `resource.seller_receivable_breakdown.paypal_fee.value` |
-| Net amount | `resource.seller_receivable_breakdown.net_amount.value` |
+| Field         | Path                                                    |
+|---------------|---------------------------------------------------------|
+| Capture ID    | `resource.id` (use this for refund lookups)             |
+| Status        | `resource.status` (`COMPLETED`)                         |
+| Amount        | `resource.amount.value`                                 |
+| Currency      | `resource.amount.currency_code`                         |
+| Custom ID     | `resource.custom_id` (your `order_id`)                  |
+| Invoice ID    | `resource.invoice_id`                                   |
+| Final capture | `resource.final_capture` (boolean)                      |
+| Seller fee    | `resource.seller_receivable_breakdown.paypal_fee.value` |
+| Net amount    | `resource.seller_receivable_breakdown.net_amount.value` |
 
 #### `PAYMENT.CAPTURE.DENIED`
 
@@ -322,18 +332,19 @@ The capture failed (insufficient funds, fraud rule, etc.). Mark order as failed.
 
 #### `PAYMENT.CAPTURE.PENDING`
 
-Capture awaiting review (e.g., e-check pending). May resolve to `COMPLETED` or `DENIED` later — keep order in `pending` state.
+Capture awaiting review (e.g., e-check pending). May resolve to `COMPLETED` or `DENIED` later — keep order in `pending`
+state.
 
 #### `PAYMENT.CAPTURE.REFUNDED`
 
 A refund was issued against this capture.
 
-| Field | Path |
-|-------|------|
-| Refund ID | `resource.id` |
-| Amount refunded | `resource.amount.value` |
-| Status | `resource.status` |
-| Linked capture | `resource.links[].href` (find `up` rel) |
+| Field           | Path                                    |
+|-----------------|-----------------------------------------|
+| Refund ID       | `resource.id`                           |
+| Amount refunded | `resource.amount.value`                 |
+| Status          | `resource.status`                       |
+| Linked capture  | `resource.links[].href` (find `up` rel) |
 
 #### `PAYMENT.CAPTURE.REVERSED`
 
@@ -349,15 +360,15 @@ Subscription record created in PayPal but not yet activated.
 
 User completed approval and the subscription is now live.
 
-| Field | Path |
-|-------|------|
-| Subscription ID | `resource.id` (`I-...`) |
-| Plan ID | `resource.plan_id` |
-| Status | `resource.status` (`ACTIVE`) |
-| Subscriber email | `resource.subscriber.email_address` |
-| Subscriber payer ID | `resource.subscriber.payer_id` |
-| Start time | `resource.start_time` |
-| Next billing time | `resource.billing_info.next_billing_time` |
+| Field               | Path                                              |
+|---------------------|---------------------------------------------------|
+| Subscription ID     | `resource.id` (`I-...`)                           |
+| Plan ID             | `resource.plan_id`                                |
+| Status              | `resource.status` (`ACTIVE`)                      |
+| Subscriber email    | `resource.subscriber.email_address`               |
+| Subscriber payer ID | `resource.subscriber.payer_id`                    |
+| Start time          | `resource.start_time`                             |
+| Next billing time   | `resource.billing_info.next_billing_time`         |
 | Last payment amount | `resource.billing_info.last_payment.amount.value` |
 
 #### `BILLING.SUBSCRIPTION.UPDATED`
@@ -376,12 +387,12 @@ PayPal suspended due to payment failure or merchant action.
 
 A recurring payment couldn't be charged. Triggers dunning.
 
-| Field | Path |
-|-------|------|
-| Subscription ID | `resource.id` |
-| Failed amount | `resource.billing_info.last_failed_payment.amount.value` |
-| Reason | `resource.billing_info.last_failed_payment.reason_code` |
-| Next attempt | `resource.billing_info.last_failed_payment.next_payment_retry_time` |
+| Field           | Path                                                                |
+|-----------------|---------------------------------------------------------------------|
+| Subscription ID | `resource.id`                                                       |
+| Failed amount   | `resource.billing_info.last_failed_payment.amount.value`            |
+| Reason          | `resource.billing_info.last_failed_payment.reason_code`             |
+| Next attempt    | `resource.billing_info.last_failed_payment.next_payment_retry_time` |
 
 #### `BILLING.SUBSCRIPTION.EXPIRED`
 
@@ -391,30 +402,31 @@ End of term reached without renewal (rare — most subs auto-renew).
 
 Recurring payment for a subscription captured successfully. This is the per-cycle revenue event.
 
-| Field | Path |
-|-------|------|
-| Sale ID | `resource.id` |
-| Amount gross | `resource.amount.total` |
+| Field                | Path                                                         |
+|----------------------|--------------------------------------------------------------|
+| Sale ID              | `resource.id`                                                |
+| Amount gross         | `resource.amount.total`                                      |
 | Billing agreement ID | `resource.billing_agreement_id` (links back to subscription) |
-| Transaction fee | `resource.transaction_fee.value` |
+| Transaction fee      | `resource.transaction_fee.value`                             |
 
 ### 3.5 Dispute events
 
 #### `CUSTOMER.DISPUTE.CREATED`
 
-| Field | Path |
-|-------|------|
-| Dispute ID | `resource.dispute_id` |
-| Reason | `resource.reason` |
-| Status | `resource.status` |
-| Amount | `resource.dispute_amount.value` |
+| Field             | Path                                |
+|-------------------|-------------------------------------|
+| Dispute ID        | `resource.dispute_id`               |
+| Reason            | `resource.reason`                   |
+| Status            | `resource.status`                   |
+| Amount            | `resource.dispute_amount.value`     |
 | Response due date | `resource.seller_response_due_date` |
 
 ---
 
 ## Phase 4 — Event Subscription Recommendations
 
-Pick the **minimum viable set** based on what you actually need. Subscribing to events you don't handle wastes processing capacity.
+Pick the **minimum viable set** based on what you actually need. Subscribing to events you don't handle wastes
+processing capacity.
 
 ### 4.1 Stripe — Recommended subscriptions
 
@@ -489,16 +501,16 @@ CUSTOMER.DISPUTE.RESOLVED
 
 ### 4.3 Decision matrix
 
-| Business need | Stripe events | PayPal events |
-|--------------|---------------|---------------|
-| Confirm payment | `checkout.session.completed` + `payment_intent.succeeded` | `PAYMENT.CAPTURE.COMPLETED` |
-| Track recurring revenue | `invoice.paid` | `PAYMENT.SALE.COMPLETED` |
-| Handle failed payment | `payment_intent.payment_failed` + `invoice.payment_failed` | `BILLING.SUBSCRIPTION.PAYMENT.FAILED` |
-| Process refunds | `charge.refunded` | `PAYMENT.CAPTURE.REFUNDED` |
-| Detect cancellations | `customer.subscription.deleted` | `BILLING.SUBSCRIPTION.CANCELLED` |
-| Defend chargebacks | `charge.dispute.created` | `CUSTOMER.DISPUTE.CREATED` |
-| Compute MRR/ARR | `invoice.paid` (sum `amount_paid`) | `PAYMENT.SALE.COMPLETED` (sum `amount.total`) |
-| Send renewal reminders | `invoice.upcoming` | (poll subscription `next_billing_time`) |
+| Business need           | Stripe events                                              | PayPal events                                 |
+|-------------------------|------------------------------------------------------------|-----------------------------------------------|
+| Confirm payment         | `checkout.session.completed` + `payment_intent.succeeded`  | `PAYMENT.CAPTURE.COMPLETED`                   |
+| Track recurring revenue | `invoice.paid`                                             | `PAYMENT.SALE.COMPLETED`                      |
+| Handle failed payment   | `payment_intent.payment_failed` + `invoice.payment_failed` | `BILLING.SUBSCRIPTION.PAYMENT.FAILED`         |
+| Process refunds         | `charge.refunded`                                          | `PAYMENT.CAPTURE.REFUNDED`                    |
+| Detect cancellations    | `customer.subscription.deleted`                            | `BILLING.SUBSCRIPTION.CANCELLED`              |
+| Defend chargebacks      | `charge.dispute.created`                                   | `CUSTOMER.DISPUTE.CREATED`                    |
+| Compute MRR/ARR         | `invoice.paid` (sum `amount_paid`)                         | `PAYMENT.SALE.COMPLETED` (sum `amount.total`) |
+| Send renewal reminders  | `invoice.upcoming`                                         | (poll subscription `next_billing_time`)       |
 
 ---
 
@@ -525,11 +537,11 @@ const stripeEvent = stripe.webhooks.constructEvent(
 
 **Failure modes:**
 
-| Error | Meaning | Action |
-|-------|---------|--------|
-| `Webhook signature verification failed` | Wrong secret or body parsed | Check `STRIPE_WEBHOOK_SECRET` matches the endpoint |
-| `Webhook payload must be in JSON format` | Body was empty | Check middleware order |
-| `Timestamp outside the tolerance zone` | Clock drift > 5 min | Sync server time (NTP) |
+| Error                                    | Meaning                     | Action                                             |
+|------------------------------------------|-----------------------------|----------------------------------------------------|
+| `Webhook signature verification failed`  | Wrong secret or body parsed | Check `STRIPE_WEBHOOK_SECRET` matches the endpoint |
+| `Webhook payload must be in JSON format` | Body was empty              | Check middleware order                             |
+| `Timestamp outside the tolerance zone`   | Clock drift > 5 min         | Sync server time (NTP)                             |
 
 ### 5.2 PayPal — REST Verification API
 
@@ -552,12 +564,13 @@ const verificationResult = await paypalRequest<any>(
 )
 
 if (verificationResult.verification_status !== 'SUCCESS') {
-  throw createError({ statusCode: 400, statusMessage: 'Verification failed' })
+  throw createError({statusCode: 400, statusMessage: 'Verification failed'})
 }
 ```
 
 > [!NOTE]
-> Each verification consumes an API call. For high-volume endpoints, consider caching by `transmission_id` (the dedupe key).
+> Each verification consumes an API call. For high-volume endpoints, consider caching by `transmission_id` (the dedupe
+> key).
 
 ### 5.3 IP allowlisting (defense in depth)
 
@@ -572,28 +585,29 @@ Both gateways publish their webhook source IP ranges. For production, configure 
 
 ### 6.1 Why duplicates happen
 
-| Cause | Frequency |
-|-------|-----------|
-| Network retry after timeout | Common |
-| Your handler returned 5xx | Common |
+| Cause                                 | Frequency  |
+|---------------------------------------|------------|
+| Network retry after timeout           | Common     |
+| Your handler returned 5xx             | Common     |
 | Gateway recovery after their incident | Occasional |
-| Manual re-trigger from dashboard | On-demand |
+| Manual re-trigger from dashboard      | On-demand  |
 
 ### 6.2 Implementation pattern
 
 Use a dedicated `webhook_events` table as the dedupe layer:
 
 ```sql
-CREATE TABLE webhook_events (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  gateway TEXT NOT NULL,              -- 'stripe' | 'paypal'
-  event_id TEXT NOT NULL UNIQUE,      -- Stripe evt_xxx or PayPal WH-xxx
-  event_type TEXT NOT NULL,
-  payload TEXT NOT NULL,              -- raw JSON for audit
-  processed_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  status TEXT NOT NULL DEFAULT 'received'  -- received | processed | failed
+CREATE TABLE webhook_events
+(
+    id           INTEGER PRIMARY KEY AUTOINCREMENT,
+    gateway      TEXT     NOT NULL,                   -- 'stripe' | 'paypal'
+    event_id     TEXT     NOT NULL UNIQUE,            -- Stripe evt_xxx or PayPal WH-xxx
+    event_type   TEXT     NOT NULL,
+    payload      TEXT     NOT NULL,                   -- raw JSON for audit
+    processed_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    status       TEXT     NOT NULL DEFAULT 'received' -- received | processed | failed
 );
-CREATE INDEX idx_webhook_events_lookup ON webhook_events(gateway, event_id);
+CREATE INDEX idx_webhook_events_lookup ON webhook_events (gateway, event_id);
 ```
 
 Wrap the handler:
@@ -611,7 +625,7 @@ async function handleWebhook(gateway: 'stripe' | 'paypal', evt: any) {
   } catch (e: any) {
     if (e.code === 'SQLITE_CONSTRAINT_UNIQUE') {
       console.log(`[Webhook] Duplicate event ${evt.id} — skipping`)
-      return { received: true, duplicate: true }
+      return {received: true, duplicate: true}
     }
     throw e
   }
@@ -625,12 +639,13 @@ async function handleWebhook(gateway: 'stripe' | 'paypal', evt: any) {
     throw e
   }
 
-  return { received: true }
+  return {received: true}
 }
 ```
 
 > [!TIP]
-> Logging the raw payload (the `payload` column) is invaluable for postmortems. Many production incidents are solved by re-reading the original webhook JSON.
+> Logging the raw payload (the `payload` column) is invaluable for postmortems. Many production incidents are solved by
+> re-reading the original webhook JSON.
 
 ---
 
@@ -641,40 +656,41 @@ Beyond the existing `orders` and `subscriptions` tables, add these for full tran
 ### 7.1 `payment_transactions` (every monetary event)
 
 ```sql
-CREATE TABLE payment_transactions (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
+CREATE TABLE payment_transactions
+(
+    id                     INTEGER PRIMARY KEY AUTOINCREMENT,
 
-  -- Linkage
-  order_id INTEGER REFERENCES orders(id),
-  subscription_id INTEGER REFERENCES subscriptions(id),
+    -- Linkage
+    order_id               INTEGER REFERENCES orders (id),
+    subscription_id        INTEGER REFERENCES subscriptions (id),
 
-  -- Gateway identifiers
-  gateway TEXT NOT NULL,                  -- 'stripe' | 'paypal'
-  gateway_transaction_id TEXT NOT NULL,   -- Stripe ch_/pi_/in_ or PayPal capture/sale id
-  gateway_event_id TEXT NOT NULL,         -- evt_/WH- for traceability
+    -- Gateway identifiers
+    gateway                TEXT     NOT NULL,           -- 'stripe' | 'paypal'
+    gateway_transaction_id TEXT     NOT NULL,           -- Stripe ch_/pi_/in_ or PayPal capture/sale id
+    gateway_event_id       TEXT     NOT NULL,           -- evt_/WH- for traceability
 
-  -- Money
-  type TEXT NOT NULL,                     -- 'payment' | 'refund' | 'chargeback' | 'fee'
-  amount INTEGER NOT NULL,                -- in smallest currency unit (cents)
-  currency TEXT NOT NULL DEFAULT 'USD',
-  fee_amount INTEGER DEFAULT 0,           -- gateway fee
-  net_amount INTEGER DEFAULT 0,           -- amount - fee
+    -- Money
+    type                   TEXT     NOT NULL,           -- 'payment' | 'refund' | 'chargeback' | 'fee'
+    amount                 INTEGER  NOT NULL,           -- in smallest currency unit (cents)
+    currency               TEXT     NOT NULL DEFAULT 'USD',
+    fee_amount             INTEGER           DEFAULT 0, -- gateway fee
+    net_amount             INTEGER           DEFAULT 0, -- amount - fee
 
-  -- Status
-  status TEXT NOT NULL,                   -- 'succeeded' | 'pending' | 'failed' | 'reversed'
-  failure_code TEXT,
-  failure_message TEXT,
+    -- Status
+    status                 TEXT     NOT NULL,           -- 'succeeded' | 'pending' | 'failed' | 'reversed'
+    failure_code           TEXT,
+    failure_message        TEXT,
 
-  -- Audit
-  occurred_at DATETIME NOT NULL,          -- gateway-reported time
-  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  raw_event TEXT                          -- full webhook payload for audit
+    -- Audit
+    occurred_at            DATETIME NOT NULL,           -- gateway-reported time
+    created_at             DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    raw_event              TEXT                         -- full webhook payload for audit
 );
 
-CREATE INDEX idx_pt_order ON payment_transactions(order_id);
-CREATE INDEX idx_pt_subscription ON payment_transactions(subscription_id);
-CREATE INDEX idx_pt_gateway_tx ON payment_transactions(gateway, gateway_transaction_id);
-CREATE INDEX idx_pt_occurred ON payment_transactions(occurred_at);
+CREATE INDEX idx_pt_order ON payment_transactions (order_id);
+CREATE INDEX idx_pt_subscription ON payment_transactions (subscription_id);
+CREATE INDEX idx_pt_gateway_tx ON payment_transactions (gateway, gateway_transaction_id);
+CREATE INDEX idx_pt_occurred ON payment_transactions (occurred_at);
 ```
 
 ### 7.2 Why this schema
@@ -686,19 +702,19 @@ CREATE INDEX idx_pt_occurred ON payment_transactions(occurred_at);
 
 ### 7.3 Event → row mapping
 
-| Event | Row written |
-|-------|-------------|
-| Stripe `checkout.session.completed` (mode: payment) | `type='payment', status='succeeded'` |
-| Stripe `payment_intent.payment_failed` | `type='payment', status='failed', failure_code=...` |
-| Stripe `charge.refunded` | `type='refund', status='succeeded'` |
-| Stripe `invoice.paid` (subscription) | `type='payment', status='succeeded', subscription_id=...` |
-| Stripe `invoice.payment_failed` | `type='payment', status='failed', subscription_id=...` |
-| PayPal `PAYMENT.CAPTURE.COMPLETED` | `type='payment', status='succeeded'` |
-| PayPal `PAYMENT.CAPTURE.DENIED` | `type='payment', status='failed'` |
-| PayPal `PAYMENT.CAPTURE.REFUNDED` | `type='refund', status='succeeded'` |
-| PayPal `PAYMENT.SALE.COMPLETED` (sub) | `type='payment', status='succeeded', subscription_id=...` |
-| PayPal `BILLING.SUBSCRIPTION.PAYMENT.FAILED` | `type='payment', status='failed', subscription_id=...` |
-| Either `charge.dispute.created` / `CUSTOMER.DISPUTE.CREATED` | `type='chargeback', status='pending'` |
+| Event                                                        | Row written                                               |
+|--------------------------------------------------------------|-----------------------------------------------------------|
+| Stripe `checkout.session.completed` (mode: payment)          | `type='payment', status='succeeded'`                      |
+| Stripe `payment_intent.payment_failed`                       | `type='payment', status='failed', failure_code=...`       |
+| Stripe `charge.refunded`                                     | `type='refund', status='succeeded'`                       |
+| Stripe `invoice.paid` (subscription)                         | `type='payment', status='succeeded', subscription_id=...` |
+| Stripe `invoice.payment_failed`                              | `type='payment', status='failed', subscription_id=...`    |
+| PayPal `PAYMENT.CAPTURE.COMPLETED`                           | `type='payment', status='succeeded'`                      |
+| PayPal `PAYMENT.CAPTURE.DENIED`                              | `type='payment', status='failed'`                         |
+| PayPal `PAYMENT.CAPTURE.REFUNDED`                            | `type='refund', status='succeeded'`                       |
+| PayPal `PAYMENT.SALE.COMPLETED` (sub)                        | `type='payment', status='succeeded', subscription_id=...` |
+| PayPal `BILLING.SUBSCRIPTION.PAYMENT.FAILED`                 | `type='payment', status='failed', subscription_id=...`    |
+| Either `charge.dispute.created` / `CUSTOMER.DISPUTE.CREATED` | `type='chargeback', status='pending'`                     |
 
 ---
 
@@ -706,20 +722,20 @@ CREATE INDEX idx_pt_occurred ON payment_transactions(occurred_at);
 
 ### 8.1 Gateway retry policies
 
-| Gateway | Retry behavior |
-|---------|---------------|
-| Stripe | Up to 3 days, exponential backoff, ~10 attempts |
-| PayPal | Up to 3 days, retry every few hours |
+| Gateway | Retry behavior                                  |
+|---------|-------------------------------------------------|
+| Stripe  | Up to 3 days, exponential backoff, ~10 attempts |
+| PayPal  | Up to 3 days, retry every few hours             |
 
 ### 8.2 Your handler's contract
 
 Return **2xx within 5 seconds**. Otherwise the gateway treats it as failure and retries.
 
-| Your response | Effect |
-|--------------|--------|
-| `200 OK` | Event marked delivered |
+| Your response          | Effect                              |
+|------------------------|-------------------------------------|
+| `200 OK`               | Event marked delivered              |
 | `4xx` (except 401/403) | Logged as bad request; **no retry** |
-| `5xx` or timeout | Retried per policy |
+| `5xx` or timeout       | Retried per policy                  |
 
 ### 8.3 Pattern: enqueue heavy work
 
@@ -737,11 +753,11 @@ export default defineEventHandler(async (event) => {
   })()
 
   // 3. Enqueue downstream work
-  await queue.enqueue('send-receipt-email', { eventId: stripeEvent.id })
-  await queue.enqueue('update-analytics', { eventId: stripeEvent.id })
+  await queue.enqueue('send-receipt-email', {eventId: stripeEvent.id})
+  await queue.enqueue('update-analytics', {eventId: stripeEvent.id})
 
   // 4. Return immediately
-  return { received: true }
+  return {received: true}
 })
 ```
 
@@ -756,7 +772,8 @@ If processing fails after the event was recorded:
 3. Build a manual replay tool: `GET /admin/webhooks/replay/:event_id` that re-runs dispatch
 
 > [!IMPORTANT]
-> Never `throw` to force a retry. Stripe/PayPal retries are blunt — they'll re-deliver the **same** event repeatedly. Instead, log and triage.
+> Never `throw` to force a retry. Stripe/PayPal retries are blunt — they'll re-deliver the **same** event repeatedly.
+> Instead, log and triage.
 
 ---
 
@@ -953,8 +970,8 @@ stripe refunds create --charge=ch_XXXX
 PayPal does not offer a `stripe trigger` equivalent. Options:
 
 1. **Sandbox Simulator** in Developer Dashboard → **Mock webhook events**
-   - Choose your app → Webhooks → Click bell icon → "Simulate"
-   - Pick event type, customize payload, send to your URL
+    - Choose your app → Webhooks → Click bell icon → "Simulate"
+    - Pick event type, customize payload, send to your URL
 
 2. **Manual flow:** Actually run an end-to-end checkout in sandbox; PayPal sends real webhooks.
 
@@ -986,37 +1003,37 @@ After deploying:
 
 ### Stripe
 
-| Event | Updates `orders` | Updates `subscriptions` | Writes `payment_transactions` | Side effect |
-|-------|:----------------:|:----------------------:|:----------------------------:|-------------|
-| `checkout.session.completed` (payment) | ✅ status='paid' | — | ✅ type='payment' | Send receipt |
-| `checkout.session.expired` | ✅ status='expired' | — | — | Release inventory |
-| `payment_intent.succeeded` | — | — | ✅ type='payment' | — |
-| `payment_intent.payment_failed` | ✅ status='failed' | — | ✅ type='payment' status='failed' | Notify customer |
-| `charge.refunded` | ✅ status='refunded' | — | ✅ type='refund' | Update accounting |
-| `customer.subscription.created` | — | ✅ insert | — | Provision access |
-| `customer.subscription.updated` | — | ✅ update status/period | — | (depends) |
-| `customer.subscription.deleted` | — | ✅ status='canceled' | — | Revoke access |
-| `invoice.paid` | — | ✅ extend period | ✅ type='payment' (MRR) | Send receipt |
-| `invoice.payment_failed` | — | ✅ status='past_due' | ✅ type='payment' status='failed' | Dunning email |
-| `charge.dispute.created` | ✅ status='disputed' | — | ✅ type='chargeback' | Alert ops |
+| Event                                  |  Updates `orders`   | Updates `subscriptions` |  Writes `payment_transactions`   | Side effect       |
+|----------------------------------------|:-------------------:|:-----------------------:|:--------------------------------:|-------------------|
+| `checkout.session.completed` (payment) |   ✅ status='paid'   |            —            |         ✅ type='payment'         | Send receipt      |
+| `checkout.session.expired`             | ✅ status='expired'  |            —            |                —                 | Release inventory |
+| `payment_intent.succeeded`             |          —          |            —            |         ✅ type='payment'         | —                 |
+| `payment_intent.payment_failed`        |  ✅ status='failed'  |            —            | ✅ type='payment' status='failed' | Notify customer   |
+| `charge.refunded`                      | ✅ status='refunded' |            —            |         ✅ type='refund'          | Update accounting |
+| `customer.subscription.created`        |          —          |        ✅ insert         |                —                 | Provision access  |
+| `customer.subscription.updated`        |          —          | ✅ update status/period  |                —                 | (depends)         |
+| `customer.subscription.deleted`        |          —          |   ✅ status='canceled'   |                —                 | Revoke access     |
+| `invoice.paid`                         |          —          |     ✅ extend period     |      ✅ type='payment' (MRR)      | Send receipt      |
+| `invoice.payment_failed`               |          —          |   ✅ status='past_due'   | ✅ type='payment' status='failed' | Dunning email     |
+| `charge.dispute.created`               | ✅ status='disputed' |            —            |       ✅ type='chargeback'        | Alert ops         |
 
 ### PayPal
 
-| Event | Updates `orders` | Updates `subscriptions` | Writes `payment_transactions` | Side effect |
-|-------|:----------------:|:----------------------:|:----------------------------:|-------------|
-| `CHECKOUT.ORDER.APPROVED` | ✅ status='approved' | — | — | Trigger capture |
-| `PAYMENT.CAPTURE.COMPLETED` | ✅ status='paid' | — | ✅ type='payment' | Send receipt |
-| `PAYMENT.CAPTURE.DENIED` | ✅ status='failed' | — | ✅ type='payment' status='failed' | Notify customer |
-| `PAYMENT.CAPTURE.PENDING` | ✅ status='pending' | — | ✅ type='payment' status='pending' | Wait |
-| `PAYMENT.CAPTURE.REFUNDED` | ✅ status='refunded' | — | ✅ type='refund' | Update accounting |
-| `PAYMENT.CAPTURE.REVERSED` | ✅ status='reversed' | — | ✅ type='chargeback' | Alert ops |
-| `BILLING.SUBSCRIPTION.ACTIVATED` | — | ✅ insert/activate | — | Provision access |
-| `BILLING.SUBSCRIPTION.UPDATED` | — | ✅ update | — | — |
-| `BILLING.SUBSCRIPTION.CANCELLED` | — | ✅ status='canceled' | — | Schedule revoke |
-| `BILLING.SUBSCRIPTION.SUSPENDED` | — | ✅ status='suspended' | — | Restrict access |
-| `BILLING.SUBSCRIPTION.PAYMENT.FAILED` | — | ✅ status='past_due' | ✅ status='failed' | Dunning |
-| `PAYMENT.SALE.COMPLETED` (recurring) | — | ✅ extend period | ✅ type='payment' (MRR) | Send receipt |
-| `CUSTOMER.DISPUTE.CREATED` | ✅ status='disputed' | — | ✅ type='chargeback' | Alert ops |
+| Event                                 |  Updates `orders`   | Updates `subscriptions` |   Writes `payment_transactions`   | Side effect       |
+|---------------------------------------|:-------------------:|:-----------------------:|:---------------------------------:|-------------------|
+| `CHECKOUT.ORDER.APPROVED`             | ✅ status='approved' |            —            |                 —                 | Trigger capture   |
+| `PAYMENT.CAPTURE.COMPLETED`           |   ✅ status='paid'   |            —            |         ✅ type='payment'          | Send receipt      |
+| `PAYMENT.CAPTURE.DENIED`              |  ✅ status='failed'  |            —            | ✅ type='payment' status='failed'  | Notify customer   |
+| `PAYMENT.CAPTURE.PENDING`             | ✅ status='pending'  |            —            | ✅ type='payment' status='pending' | Wait              |
+| `PAYMENT.CAPTURE.REFUNDED`            | ✅ status='refunded' |            —            |          ✅ type='refund'          | Update accounting |
+| `PAYMENT.CAPTURE.REVERSED`            | ✅ status='reversed' |            —            |        ✅ type='chargeback'        | Alert ops         |
+| `BILLING.SUBSCRIPTION.ACTIVATED`      |          —          |    ✅ insert/activate    |                 —                 | Provision access  |
+| `BILLING.SUBSCRIPTION.UPDATED`        |          —          |        ✅ update         |                 —                 | —                 |
+| `BILLING.SUBSCRIPTION.CANCELLED`      |          —          |   ✅ status='canceled'   |                 —                 | Schedule revoke   |
+| `BILLING.SUBSCRIPTION.SUSPENDED`      |          —          |  ✅ status='suspended'   |                 —                 | Restrict access   |
+| `BILLING.SUBSCRIPTION.PAYMENT.FAILED` |          —          |   ✅ status='past_due'   |         ✅ status='failed'         | Dunning           |
+| `PAYMENT.SALE.COMPLETED` (recurring)  |          —          |     ✅ extend period     |      ✅ type='payment' (MRR)       | Send receipt      |
+| `CUSTOMER.DISPUTE.CREATED`            | ✅ status='disputed' |            —            |        ✅ type='chargeback'        | Alert ops         |
 
 ---
 
@@ -1024,26 +1041,26 @@ After deploying:
 
 ### B.1 Metrics to emit
 
-| Metric | Type | Purpose |
-|--------|------|---------|
-| `webhook.received.count` | counter, labels: gateway, event_type | Volume tracking |
-| `webhook.duration.ms` | histogram | p50/p95/p99 handler latency |
-| `webhook.signature_failed.count` | counter | Security signal (potential attack) |
-| `webhook.duplicate.count` | counter | Idempotency working as expected |
-| `webhook.processing_failed.count` | counter | Alert if non-zero |
-| `payment.amount.sum` | counter, label: gateway, currency | Real-time revenue dashboard |
-| `payment.failed.count` | counter, label: failure_code | Watch for spike in `card_declined` etc. |
+| Metric                            | Type                                 | Purpose                                 |
+|-----------------------------------|--------------------------------------|-----------------------------------------|
+| `webhook.received.count`          | counter, labels: gateway, event_type | Volume tracking                         |
+| `webhook.duration.ms`             | histogram                            | p50/p95/p99 handler latency             |
+| `webhook.signature_failed.count`  | counter                              | Security signal (potential attack)      |
+| `webhook.duplicate.count`         | counter                              | Idempotency working as expected         |
+| `webhook.processing_failed.count` | counter                              | Alert if non-zero                       |
+| `payment.amount.sum`              | counter, label: gateway, currency    | Real-time revenue dashboard             |
+| `payment.failed.count`            | counter, label: failure_code         | Watch for spike in `card_declined` etc. |
 
 ### B.2 Alerts to configure
 
-| Alert | Condition | Severity |
-|-------|-----------|----------|
-| Signature failures spiking | `> 5/min` for 5 min | P1 — possible attack |
-| Webhook p99 latency | `> 3s` for 10 min | P2 — gateway will retry soon |
-| Processing failure rate | `> 1%` over 1h | P2 — bug investigation |
-| Zero webhooks received | `count == 0` for 1h during business hours | P1 — endpoint may be down |
-| Dispute event arrived | `charge.dispute.created` or `CUSTOMER.DISPUTE.CREATED` | P2 — ops handover within 48h |
-| Payment failed > N times | per subscription, configurable | P3 — auto-suspend trigger |
+| Alert                      | Condition                                              | Severity                     |
+|----------------------------|--------------------------------------------------------|------------------------------|
+| Signature failures spiking | `> 5/min` for 5 min                                    | P1 — possible attack         |
+| Webhook p99 latency        | `> 3s` for 10 min                                      | P2 — gateway will retry soon |
+| Processing failure rate    | `> 1%` over 1h                                         | P2 — bug investigation       |
+| Zero webhooks received     | `count == 0` for 1h during business hours              | P1 — endpoint may be down    |
+| Dispute event arrived      | `charge.dispute.created` or `CUSTOMER.DISPUTE.CREATED` | P2 — ops handover within 48h |
+| Payment failed > N times   | per subscription, configurable                         | P3 — auto-suspend trigger    |
 
 ### B.3 Dashboards
 
@@ -1059,13 +1076,13 @@ Suggested panels (Grafana/Datadog):
 
 ## 📞 Support & References
 
-| Topic | Resource |
-|-------|----------|
-| Stripe events catalog | https://docs.stripe.com/api/events/types |
-| Stripe webhook best practices | https://docs.stripe.com/webhooks/best-practices |
-| PayPal events catalog | https://developer.paypal.com/api/rest/webhooks/event-names/ |
-| PayPal webhook simulator | https://developer.paypal.com/dashboard/webhooksSimulator |
-| Internal questions | `#shoppay-platform` on Slack |
+| Topic                         | Resource                                                    |
+|-------------------------------|-------------------------------------------------------------|
+| Stripe events catalog         | https://docs.stripe.com/api/events/types                    |
+| Stripe webhook best practices | https://docs.stripe.com/webhooks/best-practices             |
+| PayPal events catalog         | https://developer.paypal.com/api/rest/webhooks/event-names/ |
+| PayPal webhook simulator      | https://developer.paypal.com/dashboard/webhooksSimulator    |
+| Internal questions            | `#shoppay-platform` on Slack                                |
 
 ---
 

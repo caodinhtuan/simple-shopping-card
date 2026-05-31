@@ -15,10 +15,10 @@ export default defineEventHandler(async (event) => {
   const body = await readBody<CreatePayPalSubscriptionBody>(event)
 
   if (!body.planId) {
-    throw createError({ statusCode: 400, statusMessage: 'PayPal plan ID is required.' })
+    throw createError({statusCode: 400, statusMessage: 'PayPal plan ID is required.'})
   }
   if (!body.customerEmail) {
-    throw createError({ statusCode: 400, statusMessage: 'Customer email is required.' })
+    throw createError({statusCode: 400, statusMessage: 'Customer email is required.'})
   }
 
   const config = useRuntimeConfig()
@@ -46,7 +46,7 @@ export default defineEventHandler(async (event) => {
   try {
     const subscriptionPayload = {
       plan_id: body.planId,
-      subscriber: { email_address: body.customerEmail },
+      subscriber: {email_address: body.customerEmail},
       custom_id: body.dbPlanId ? String(body.dbPlanId) : '',
       application_context: {
         brand_name: 'ShopPay Demo',

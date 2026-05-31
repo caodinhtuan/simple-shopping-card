@@ -1,18 +1,19 @@
 <template>
   <div class="min-h-[calc(100vh-140px)] flex flex-col items-center justify-center px-4 py-16 relative overflow-hidden">
-    <div class="hero-glow hero-glow-cyan" />
+    <div class="hero-glow hero-glow-cyan"/>
 
     <!-- Confetti -->
     <div class="absolute inset-0 pointer-events-none overflow-hidden z-0">
-      <div v-for="n in 50" :key="n" :style="getConfetti(n)" />
+      <div v-for="n in 50" :key="n" :style="getConfetti(n)"/>
     </div>
 
     <div class="w-full max-w-xl glass-card p-8 md:p-12 text-center border-white/8 relative z-10 animate-in">
       <div
-        class="w-24 h-24 mx-auto mb-8 rounded-full border-2 border-cyan-500/30 flex items-center justify-center relative bg-[radial-gradient(circle,rgba(6,182,212,0.2),rgba(6,182,212,0.05))] ring-pulse-cyan before:content-[''] before:absolute before:inset-[-8px] before:rounded-full before:border-2 before:border-cyan-500/20 before:ring-expand-cyan"
+          class="w-24 h-24 mx-auto mb-8 rounded-full border-2 border-cyan-500/30 flex items-center justify-center relative bg-[radial-gradient(circle,rgba(6,182,212,0.2),rgba(6,182,212,0.05))] ring-pulse-cyan before:content-[''] before:absolute before:inset-[-8px] before:rounded-full before:border-2 before:border-cyan-500/20 before:ring-expand-cyan"
       >
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="w-12 h-12 text-cyan-400 check-draw">
-          <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+        <svg class="w-12 h-12 text-cyan-400 check-draw" fill="none" stroke="currentColor" stroke-width="2.5"
+             viewBox="0 0 24 24">
+          <path d="m4.5 12.75 6 6 9-13.5" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </div>
 
@@ -25,13 +26,15 @@
       <p v-if="isDemoMode" class="text-amber-400/80 text-xs mb-8">
         💡 Demo mode — no recurring charge was scheduled
       </p>
-      <p v-else class="mb-8" />
+      <p v-else class="mb-8"/>
 
       <!-- Plan Info -->
-      <div v-if="plan" class="bg-gradient-to-br from-purple-500/10 to-cyan-500/10 border border-purple-500/20 rounded-2xl p-6 mb-6 text-left">
+      <div v-if="plan"
+           class="bg-gradient-to-br from-purple-500/10 to-cyan-500/10 border border-purple-500/20 rounded-2xl p-6 mb-6 text-left">
         <div class="flex items-center justify-between mb-3">
           <p class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Active Plan</p>
-          <span class="px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-bold uppercase tracking-wider">
+          <span
+              class="px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-bold uppercase tracking-wider">
             Active · {{ interval }}
           </span>
         </div>
@@ -48,7 +51,7 @@
         <div class="flex items-center justify-between text-sm">
           <span class="text-slate-500 font-medium">Gateway</span>
           <span class="text-slate-200 font-semibold uppercase tracking-wider text-xs flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full" :style="{ background: gateway === 'paypal' ? '#0070ba' : '#8b5cf6' }" />
+            <span :style="{ background: gateway === 'paypal' ? '#0070ba' : '#8b5cf6' }" class="w-2 h-2 rounded-full"/>
             {{ gatewayName }}
           </span>
         </div>
@@ -63,13 +66,13 @@
       </div>
 
       <div class="flex flex-col sm:flex-row items-center gap-3 justify-center">
-        <NuxtLink to="/subscriptions" class="w-full sm:w-auto">
-          <n-button type="primary" size="large" class="btn-stripe w-full" :style="{ borderRadius: '12px' }">
+        <NuxtLink class="w-full sm:w-auto" to="/subscriptions">
+          <n-button :style="{ borderRadius: '12px' }" class="btn-stripe w-full" size="large" type="primary">
             View Plans
           </n-button>
         </NuxtLink>
-        <NuxtLink to="/" class="w-full sm:w-auto">
-          <n-button size="large" class="w-full" :style="{ borderRadius: '12px' }">
+        <NuxtLink class="w-full sm:w-auto" to="/">
+          <n-button :style="{ borderRadius: '12px' }" class="w-full" size="large">
             Go Home
           </n-button>
         </NuxtLink>
@@ -78,8 +81,8 @@
   </div>
 </template>
 
-<script setup lang="ts">
-useHead({ title: 'Subscription Activated — ShopPay' })
+<script lang="ts" setup>
+useHead({title: 'Subscription Activated — ShopPay'})
 
 const route = useRoute()
 
@@ -102,21 +105,21 @@ const nextBilling = computed(() => {
   } else {
     d.setMonth(d.getMonth() + 1)
   }
-  return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+  return d.toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'})
 })
 
 const plan = ref<any | null>(null)
 const displayPrice = computed(() => {
   if (!plan.value) return 0
   return interval.value === 'yearly'
-    ? (plan.value.price_yearly ?? Math.round(plan.value.price * 12 * 0.8))
-    : (plan.value.price_monthly ?? plan.value.price)
+      ? (plan.value.price_yearly ?? Math.round(plan.value.price * 12 * 0.8))
+      : (plan.value.price_monthly ?? plan.value.price)
 })
 
 const message = useAppMessage()
 
 onMounted(async () => {
-  message.success('Subscription activated successfully', { duration: 3500 })
+  message.success('Subscription activated successfully', {duration: 3500})
 
 
   if (planId.value) {

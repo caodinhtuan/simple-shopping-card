@@ -18,11 +18,11 @@ export default defineEventHandler(async (event) => {
   const body = await readBody<CreateSubscriptionBody>(event)
 
   if (!body.priceId) {
-    throw createError({ statusCode: 400, statusMessage: 'Price ID is required.' })
+    throw createError({statusCode: 400, statusMessage: 'Price ID is required.'})
   }
 
   if (!body.customerEmail) {
-    throw createError({ statusCode: 400, statusMessage: 'Customer email is required.' })
+    throw createError({statusCode: 400, statusMessage: 'Customer email is required.'})
   }
 
   const config = useRuntimeConfig()
@@ -49,7 +49,7 @@ export default defineEventHandler(async (event) => {
       payment_method_types: ['card'],
       mode: 'subscription',
       customer_email: body.customerEmail,
-      line_items: [{ price: body.priceId, quantity: 1 }],
+      line_items: [{price: body.priceId, quantity: 1}],
       metadata: {
         plan_id: body.planId ? String(body.planId) : '',
         interval,
@@ -58,7 +58,7 @@ export default defineEventHandler(async (event) => {
       cancel_url: `${config.public.baseUrl}/subscription/cancel`,
     })
 
-    return { url: session.url, sessionId: session.id, demoMode: false }
+    return {url: session.url, sessionId: session.id, demoMode: false}
   } catch (error: any) {
     console.error('[Stripe] Create subscription error:', error.message)
     // Fall back to demo flow if Stripe rejects

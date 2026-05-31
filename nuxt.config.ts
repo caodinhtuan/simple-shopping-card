@@ -1,7 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: '2025-05-15',
-  devtools: { enabled: true },
+  devtools: {enabled: true},
 
   modules: [
     '@nuxtjs/tailwindcss',
@@ -60,20 +60,26 @@ export default defineNuxtConfig({
   },
 
   app: {
-    pageTransition: { name: 'page', mode: 'out-in' },
-    layoutTransition: { name: 'page', mode: 'out-in' },
+    pageTransition: {name: 'page', mode: 'out-in'},
+    layoutTransition: {name: 'page', mode: 'out-in'},
     rootAttrs: {
       style: 'min-height: 100vh;',
     },
     head: {
       title: 'ShopPay — Payment Integration Demo',
       meta: [
-        { charset: 'utf-8' },
-        { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-        { name: 'description', content: 'Demo project for Stripe & PayPal payment integration with Shopping Cart and Subscription flows' },
+        {charset: 'utf-8'},
+        {name: 'viewport', content: 'width=device-width, initial-scale=1'},
+        {
+          name: 'description',
+          content: 'Demo project for Stripe & PayPal payment integration with Shopping Cart and Subscription flows'
+        },
       ],
       link: [
-        { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap' },
+        {
+          rel: 'stylesheet',
+          href: 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap'
+        },
       ],
       style: [
         {

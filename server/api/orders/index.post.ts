@@ -70,13 +70,13 @@ export default defineEventHandler(async (event) => {
 
   // Insert order and items in a transaction
   const insertOrder = db.prepare(`
-    INSERT INTO orders (order_number, status, total_amount, payment_gateway, customer_email)
-    VALUES (?, 'pending', ?, ?, ?)
+      INSERT INTO orders (order_number, status, total_amount, payment_gateway, customer_email)
+      VALUES (?, 'pending', ?, ?, ?)
   `)
 
   const insertItem = db.prepare(`
-    INSERT INTO order_items (order_id, product_id, quantity, unit_price)
-    VALUES (?, ?, ?, ?)
+      INSERT INTO order_items (order_id, product_id, quantity, unit_price)
+      VALUES (?, ?, ?, ?)
   `)
 
   const createOrderTx = db.transaction(() => {
@@ -94,15 +94,23 @@ export default defineEventHandler(async (event) => {
 
   // Fetch the created order
   const order = db.prepare(`
-    SELECT id, order_number, status, total_amount, payment_gateway, payment_id, customer_email, created_at
-    FROM orders WHERE id = ?
+      SELECT id,
+             order_number,
+             status,
+             total_amount,
+             payment_gateway,
+             payment_id,
+             customer_email,
+             created_at
+      FROM orders
+      WHERE id = ?
   `).get(orderId)
 
   const items = db.prepare(`
-    SELECT oi.id, oi.order_id, oi.product_id, oi.quantity, oi.unit_price, p.name as product_name
-    FROM order_items oi
-    LEFT JOIN products p ON oi.product_id = p.id
-    WHERE oi.order_id = ?
+      SELECT oi.id, oi.order_id, oi.product_id, oi.quantity, oi.unit_price, p.name as product_name
+      FROM order_items oi
+               LEFT JOIN products p ON oi.product_id = p.id
+      WHERE oi.order_id = ?
   `).all(orderId)
 
   return {

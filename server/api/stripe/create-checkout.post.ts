@@ -23,7 +23,7 @@ export default defineEventHandler(async (event) => {
   const body = await readBody<CreateCheckoutBody>(event)
 
   if (!body.items || !Array.isArray(body.items) || body.items.length === 0) {
-    throw createError({ statusCode: 400, statusMessage: 'Cart is empty.' })
+    throw createError({statusCode: 400, statusMessage: 'Cart is empty.'})
   }
 
   const config = useRuntimeConfig()
@@ -40,11 +40,11 @@ export default defineEventHandler(async (event) => {
       | undefined
 
     if (!product) {
-      throw createError({ statusCode: 404, statusMessage: `Product #${item.id} not found.` })
+      throw createError({statusCode: 404, statusMessage: `Product #${item.id} not found.`})
     }
     const quantity = Math.max(1, Math.floor(item.quantity))
     totalAmount += product.price * quantity
-    resolved.push({ ...product, quantity })
+    resolved.push({...product, quantity})
   }
 
   // 10% tax — same as the UI shows
@@ -55,12 +55,12 @@ export default defineEventHandler(async (event) => {
   // --- Create pending order ---
   const orderNumber = `ORD-${crypto.randomBytes(4).toString('hex').toUpperCase()}`
   const insertOrder = db.prepare(`
-    INSERT INTO orders (order_number, status, total_amount, payment_gateway, customer_email)
-    VALUES (?, 'pending', ?, 'stripe', ?)
+      INSERT INTO orders (order_number, status, total_amount, payment_gateway, customer_email)
+      VALUES (?, 'pending', ?, 'stripe', ?)
   `)
   const insertItem = db.prepare(`
-    INSERT INTO order_items (order_id, product_id, quantity, unit_price)
-    VALUES (?, ?, ?, ?)
+      INSERT INTO order_items (order_id, product_id, quantity, unit_price)
+      VALUES (?, ?, ?, ?)
   `)
 
   const orderId = db.transaction(() => {
@@ -90,7 +90,7 @@ export default defineEventHandler(async (event) => {
     const lineItems = resolved.map((p) => ({
       price_data: {
         currency: 'usd',
-        product_data: { name: p.name, description: `${p.category} • ShopPay` },
+        product_data: {name: p.name, description: `${p.category} • ShopPay`},
         unit_amount: p.price,
       },
       quantity: p.quantity,
@@ -101,7 +101,7 @@ export default defineEventHandler(async (event) => {
       lineItems.push({
         price_data: {
           currency: 'usd',
-          product_data: { name: 'Sales Tax (10%)', description: 'Demo tax line item' },
+          product_data: {name: 'Sales Tax (10%)', description: 'Demo tax line item'},
           unit_amount: taxAmount,
         },
         quantity: 1,
@@ -113,7 +113,7 @@ export default defineEventHandler(async (event) => {
       mode: 'payment',
       customer_email: customerEmail,
       line_items: lineItems,
-      metadata: { order_id: String(orderId), order_number: orderNumber },
+      metadata: {order_id: String(orderId), order_number: orderNumber},
       success_url: `${config.public.baseUrl}/checkout/success?gateway=stripe&order_id=${orderId}&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${config.public.baseUrl}/checkout/cancel?order_id=${orderId}`,
     })

@@ -7,12 +7,13 @@
 ## 1. Tổng quan dự án
 
 ### Mục tiêu
+
 Xây dựng một **demo web application** tích hợp thanh toán với **Stripe** và **PayPal**, hỗ trợ 2 luồng thanh toán:
 
-| Luồng | Mô tả |
-|-------|--------|
-| 🛒 **Shopping Cart** | Chọn sản phẩm → Thêm giỏ hàng → Checkout → Thanh toán qua Stripe hoặc PayPal |
-| 🔄 **Subscription** | Chọn gói subscription → Đăng ký → Thanh toán recurring qua Stripe hoặc PayPal |
+| Luồng                | Mô tả                                                                         |
+|----------------------|-------------------------------------------------------------------------------|
+| 🛒 **Shopping Cart** | Chọn sản phẩm → Thêm giỏ hàng → Checkout → Thanh toán qua Stripe hoặc PayPal  |
+| 🔄 **Subscription**  | Chọn gói subscription → Đăng ký → Thanh toán recurring qua Stripe hoặc PayPal |
 
 ### Demo Pages
 
@@ -38,23 +39,24 @@ graph TD
 
 ## 2. Tech Stack
 
-| Layer | Technology | Lý do |
-|-------|-----------|-------|
-| **Framework** | **Nuxt 3** | Vue 3 full-stack framework, server routes built-in, auto-imports |
-| **Frontend** | **Vue 3** (Composition API) | Reactive, modern, cùng ecosystem |
-| **UI Library** | **Naive UI** | Vue 3 component library, 80+ components, TypeScript support |
-| **Styling** | **TailwindCSS v3** | Utility-first, rapid prototyping, kết hợp với Naive UI |
-| **State Management** | **Pinia** | Official Vue store, devtools support |
-| **Payment - Stripe** | Stripe Checkout + Stripe Billing | One-time & Subscription |
-| **Payment - PayPal** | PayPal JS SDK + REST API | One-time & Subscription |
-| **Database** | SQLite (via **better-sqlite3**) | Zero config, đủ cho demo |
-| **Backend API** | Nuxt Server Routes (`server/api/`) | H3 framework, cùng codebase |
+| Layer                | Technology                         | Lý do                                                            |
+|----------------------|------------------------------------|------------------------------------------------------------------|
+| **Framework**        | **Nuxt 3**                         | Vue 3 full-stack framework, server routes built-in, auto-imports |
+| **Frontend**         | **Vue 3** (Composition API)        | Reactive, modern, cùng ecosystem                                 |
+| **UI Library**       | **Naive UI**                       | Vue 3 component library, 80+ components, TypeScript support      |
+| **Styling**          | **TailwindCSS v3**                 | Utility-first, rapid prototyping, kết hợp với Naive UI           |
+| **State Management** | **Pinia**                          | Official Vue store, devtools support                             |
+| **Payment - Stripe** | Stripe Checkout + Stripe Billing   | One-time & Subscription                                          |
+| **Payment - PayPal** | PayPal JS SDK + REST API           | One-time & Subscription                                          |
+| **Database**         | SQLite (via **better-sqlite3**)    | Zero config, đủ cho demo                                         |
+| **Backend API**      | Nuxt Server Routes (`server/api/`) | H3 framework, cùng codebase                                      |
 
 > [!NOTE]
 > Project này là **sample/demo** nên sử dụng SQLite để đơn giản hóa setup. Trong production, nên dùng PostgreSQL/MySQL.
 
 > [!TIP]
-> **Naive UI + TailwindCSS**: Naive UI xử lý complex components (Modal, DataTable, Form...), TailwindCSS xử lý layout & custom styling. Tránh conflict bằng cách disable TailwindCSS preflight.
+> **Naive UI + TailwindCSS**: Naive UI xử lý complex components (Modal, DataTable, Form...), TailwindCSS xử lý layout &
+> custom styling. Tránh conflict bằng cách disable TailwindCSS preflight.
 
 ---
 
@@ -229,28 +231,28 @@ erDiagram
 
 ### 5.1 Products & Orders
 
-| Method | File | Endpoint | Mô tả |
-|--------|------|----------|--------|
-| `GET` | `products.get.ts` | `/api/products` | Lấy danh sách sản phẩm |
-| `GET` | `orders/index.get.ts` | `/api/orders` | Lấy danh sách orders |
-| `POST` | `orders/index.post.ts` | `/api/orders` | Tạo order mới |
+| Method | File                   | Endpoint        | Mô tả                  |
+|--------|------------------------|-----------------|------------------------|
+| `GET`  | `products.get.ts`      | `/api/products` | Lấy danh sách sản phẩm |
+| `GET`  | `orders/index.get.ts`  | `/api/orders`   | Lấy danh sách orders   |
+| `POST` | `orders/index.post.ts` | `/api/orders`   | Tạo order mới          |
 
 ### 5.2 Stripe APIs
 
-| Method | File | Endpoint | Mô tả |
-|--------|------|----------|--------|
-| `POST` | `stripe/create-checkout.post.ts` | `/api/stripe/create-checkout` | Tạo Stripe Checkout Session (one-time) |
+| Method | File                                 | Endpoint                          | Mô tả                                      |
+|--------|--------------------------------------|-----------------------------------|--------------------------------------------|
+| `POST` | `stripe/create-checkout.post.ts`     | `/api/stripe/create-checkout`     | Tạo Stripe Checkout Session (one-time)     |
 | `POST` | `stripe/create-subscription.post.ts` | `/api/stripe/create-subscription` | Tạo Stripe Checkout Session (subscription) |
-| `POST` | `stripe/webhook.post.ts` | `/api/stripe/webhook` | Nhận webhook events từ Stripe |
+| `POST` | `stripe/webhook.post.ts`             | `/api/stripe/webhook`             | Nhận webhook events từ Stripe              |
 
 ### 5.3 PayPal APIs
 
-| Method | File | Endpoint | Mô tả |
-|--------|------|----------|--------|
-| `POST` | `paypal/create-order.post.ts` | `/api/paypal/create-order` | Tạo PayPal Order |
-| `POST` | `paypal/capture-order.post.ts` | `/api/paypal/capture-order` | Capture (confirm) PayPal Order |
-| `POST` | `paypal/create-subscription.post.ts` | `/api/paypal/create-subscription` | Tạo PayPal Subscription |
-| `POST` | `paypal/webhook.post.ts` | `/api/paypal/webhook` | Nhận webhook events từ PayPal |
+| Method | File                                 | Endpoint                          | Mô tả                          |
+|--------|--------------------------------------|-----------------------------------|--------------------------------|
+| `POST` | `paypal/create-order.post.ts`        | `/api/paypal/create-order`        | Tạo PayPal Order               |
+| `POST` | `paypal/capture-order.post.ts`       | `/api/paypal/capture-order`       | Capture (confirm) PayPal Order |
+| `POST` | `paypal/create-subscription.post.ts` | `/api/paypal/create-subscription` | Tạo PayPal Subscription        |
+| `POST` | `paypal/webhook.post.ts`             | `/api/paypal/webhook`             | Nhận webhook events từ PayPal  |
 
 ---
 
@@ -358,15 +360,15 @@ sequenceDiagram
 
 Các Naive UI component sẽ được sử dụng trong project:
 
-| Page/Feature | Naive UI Components |
-|-------------|-------------------|
-| **Layout** | `NLayout`, `NLayoutHeader`, `NLayoutContent`, `NLayoutFooter`, `NMenu`, `NBadge` |
-| **Products** | `NCard`, `NButton`, `NGrid`, `NGi`, `NTag`, `NImage` |
-| **Cart** | `NDataTable`, `NInputNumber`, `NButton`, `NDivider`, `NStatistic` |
-| **Checkout** | `NTabs`, `NTabPane`, `NCard`, `NButton`, `NSpin`, `NResult` |
-| **Subscription** | `NCard`, `NSwitch`, `NList`, `NListItem`, `NButton`, `NTag` |
-| **Success/Cancel** | `NResult`, `NButton`, `NCard` |
-| **Global** | `NMessageProvider`, `NDialogProvider`, `NNotificationProvider`, `NConfigProvider` |
+| Page/Feature       | Naive UI Components                                                               |
+|--------------------|-----------------------------------------------------------------------------------|
+| **Layout**         | `NLayout`, `NLayoutHeader`, `NLayoutContent`, `NLayoutFooter`, `NMenu`, `NBadge`  |
+| **Products**       | `NCard`, `NButton`, `NGrid`, `NGi`, `NTag`, `NImage`                              |
+| **Cart**           | `NDataTable`, `NInputNumber`, `NButton`, `NDivider`, `NStatistic`                 |
+| **Checkout**       | `NTabs`, `NTabPane`, `NCard`, `NButton`, `NSpin`, `NResult`                       |
+| **Subscription**   | `NCard`, `NSwitch`, `NList`, `NListItem`, `NButton`, `NTag`                       |
+| **Success/Cancel** | `NResult`, `NButton`, `NCard`                                                     |
+| **Global**         | `NMessageProvider`, `NDialogProvider`, `NNotificationProvider`, `NConfigProvider` |
 
 ---
 
@@ -390,37 +392,43 @@ NUXT_PUBLIC_PAYPAL_CLIENT_ID=xxxxx
 ```
 
 > [!NOTE]
-> Nuxt 3 convention: `NUXT_PUBLIC_*` cho client-side env vars, không prefix cho server-only vars. Sử dụng `useRuntimeConfig()` để access.
+> Nuxt 3 convention: `NUXT_PUBLIC_*` cho client-side env vars, không prefix cho server-only vars. Sử dụng
+`useRuntimeConfig()` để access.
 
 ---
 
 ## 9. Demo Pages Design
 
 ### 9.1 🏠 Home Page (`pages/index.vue`)
+
 - Hero section giới thiệu demo với gradient background
 - 2 `NCard` lớn: "🛒 Shopping Cart Demo" và "🔄 Subscription Demo"
 - Mỗi card có description + CTA button
 - Animated background, TailwindCSS glassmorphism
 
 ### 9.2 🛍️ Products Page (`pages/products.vue`)
+
 - `NGrid` 3-4 cột hiển thị `ProductCard`
 - Mỗi card: `NImage`, tên, giá (`NStatistic`), `NButton` "Add to Cart"
 - `useMessage()` toast notification khi add thành công
 - `CartBadge` component trên header với `NBadge`
 
 ### 9.3 🛒 Cart Page (`pages/cart.vue`)
+
 - `NDataTable` liệt kê items trong giỏ hàng
 - `NInputNumber` cho quantity, `NButton` icon xóa
 - `CartSummary`: subtotal, tax, total với `NStatistic`
 - 2 nút checkout: "Pay with Stripe" & "Pay with PayPal" (styled `NButton`)
 
 ### 9.4 💳 Checkout Page (`pages/checkout.vue`)
+
 - Order review summary
 - `NTabs` selector: Stripe tab / PayPal tab
 - Stripe tab: `NButton` redirect to Stripe Checkout
 - PayPal tab: PayPal JS SDK button rendered inline
 
 ### 9.5 📦 Subscription Plans Page (`pages/subscriptions.vue`)
+
 - 3 `PricingCard`: Basic, Pro, Enterprise
 - `NSwitch` toggle monthly/yearly
 - Feature list với `NList` + checkmarks
@@ -428,11 +436,13 @@ NUXT_PUBLIC_PAYPAL_CLIENT_ID=xxxxx
 - Highlighted "Popular" plan với `NTag`
 
 ### 9.6 ✅ Success Page (`pages/success.vue`)
+
 - `NResult` component với status="success"
 - Order/subscription details
 - `NButton` "Continue Shopping" / "View Plans"
 
 ### 9.7 ❌ Cancel Page (`pages/cancel.vue`)
+
 - `NResult` component với status="warning"
 - `NButton` "Try Again" / "Go Home"
 
@@ -441,6 +451,7 @@ NUXT_PUBLIC_PAYPAL_CLIENT_ID=xxxxx
 ## 10. Implementation Phases
 
 ### Phase 1: Project Setup & Foundation
+
 - [x] Initialize Nuxt 3 project (`npx nuxi@latest init`)
 - [x] Install & configure TailwindCSS (`@nuxtjs/tailwindcss`)
 - [x] Install & configure Naive UI (`naive-ui`, `@css-render/vue3-ssr-plugin`)
@@ -450,6 +461,7 @@ NUXT_PUBLIC_PAYPAL_CLIENT_ID=xxxxx
 - [x] Setup Naive UI global providers (`NMessageProvider`, etc.)
 
 ### Phase 2: Products & Cart Flow
+
 - [x] Create `ProductCard.vue` & `ProductGrid.vue` components
 - [x] Build Products page (`pages/products.vue`)
 - [x] Implement Pinia cart store (`stores/cart.ts`)
@@ -458,6 +470,7 @@ NUXT_PUBLIC_PAYPAL_CLIENT_ID=xxxxx
 - [x] `CartSummary` component với order total
 
 ### Phase 3: Stripe Integration
+
 - [x] Setup Stripe server util (`server/utils/stripe.ts`)
 - [x] Create `create-checkout.post.ts` API (one-time payment)
 - [x] Create `create-subscription.post.ts` API
@@ -467,6 +480,7 @@ NUXT_PUBLIC_PAYPAL_CLIENT_ID=xxxxx
 - [x] Success/Cancel pages
 
 ### Phase 4: PayPal Integration
+
 - [x] Setup PayPal server util (`server/utils/paypal.ts`)
 - [x] Create `create-order.post.ts` API
 - [x] Create `capture-order.post.ts` API
@@ -476,6 +490,7 @@ NUXT_PUBLIC_PAYPAL_CLIENT_ID=xxxxx
 - [x] Build `PayPalCheckoutButton.vue` component
 
 ### Phase 5: Subscription Plans
+
 - [x] Build `PricingCard.vue`, `PricingGrid.vue`, `PricingToggle.vue`
 - [x] Build Subscriptions page (`pages/subscriptions.vue`)
 - [x] Stripe subscription checkout flow
@@ -483,6 +498,7 @@ NUXT_PUBLIC_PAYPAL_CLIENT_ID=xxxxx
 - [x] Subscription status display
 
 ### Phase 6: Polish & Testing
+
 - [x] Responsive design (TailwindCSS breakpoints)
 - [x] Error handling & `NSpin` loading states
 - [x] Animations & micro-interactions (CSS transitions + Vue Transition)
@@ -563,10 +579,12 @@ export default defineNuxtConfig({
 ## 13. Lưu ý quan trọng
 
 > [!IMPORTANT]
-> **Stripe & PayPal Test Mode**: Project sử dụng sandbox/test keys. Cần tạo tài khoản test trên cả 2 platform trước khi chạy.
+> **Stripe & PayPal Test Mode**: Project sử dụng sandbox/test keys. Cần tạo tài khoản test trên cả 2 platform trước khi
+> chạy.
 
 > [!WARNING]
-> **Naive UI + TailwindCSS Conflict**: Phải disable TailwindCSS `preflight` (CSS reset) để không override Naive UI styles. Đã config sẵn trong `nuxt.config.ts`.
+> **Naive UI + TailwindCSS Conflict**: Phải disable TailwindCSS `preflight` (CSS reset) để không override Naive UI
+> styles. Đã config sẵn trong `nuxt.config.ts`.
 
 > [!WARNING]
 > **Webhook Setup**: Để test webhook locally, cần dùng:

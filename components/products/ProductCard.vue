@@ -1,21 +1,25 @@
 <template>
-  <div class="group relative overflow-hidden rounded-2xl border cursor-pointer transition-all duration-[400ms] ease-[cubic-bezier(0.4,0,0.2,1)] bg-white border-[#e0e0e6] shadow-sm hover:-translate-y-1 hover:border-purple-300 hover:shadow-lg dark:bg-white/[0.04] dark:border-white/[0.06] dark:backdrop-blur-2xl dark:shadow-[0_4px_16px_rgba(0,0,0,0.15)] dark:hover:border-purple-500/25 dark:hover:shadow-[0_16px_48px_rgba(0,0,0,0.35),0_0_60px_rgba(139,92,246,0.1)]">
+  <div
+      class="group relative overflow-hidden rounded-2xl border cursor-pointer transition-all duration-[400ms] ease-[cubic-bezier(0.4,0,0.2,1)] bg-white border-[#e0e0e6] shadow-sm hover:-translate-y-1 hover:border-purple-300 hover:shadow-lg dark:bg-white/[0.04] dark:border-white/[0.06] dark:backdrop-blur-2xl dark:shadow-[0_4px_16px_rgba(0,0,0,0.15)] dark:hover:border-purple-500/25 dark:hover:shadow-[0_16px_48px_rgba(0,0,0,0.35),0_0_60px_rgba(139,92,246,0.1)]">
     <!-- Product image / gradient -->
-    <div class="relative h-48 flex items-center justify-center overflow-hidden" :style="{ background: gradientBg }">
+    <div :style="{ background: gradientBg }" class="relative h-48 flex items-center justify-center overflow-hidden">
       <!-- Animated mesh overlay -->
-      <div class="absolute inset-0 opacity-30 mix-blend-overlay" :style="{ backgroundImage: 'radial-gradient(circle at 30% 20%, rgba(255,255,255,0.3), transparent 40%)' }" />
+      <div :style="{ backgroundImage: 'radial-gradient(circle at 30% 20%, rgba(255,255,255,0.3), transparent 40%)' }"
+           class="absolute inset-0 opacity-30 mix-blend-overlay"/>
 
-      <span class="text-7xl transition-all duration-500 group-hover:scale-110 group-hover:-rotate-3 select-none drop-shadow-lg">
+      <span
+          class="text-7xl transition-all duration-500 group-hover:scale-110 group-hover:-rotate-3 select-none drop-shadow-lg">
         {{ productEmoji }}
       </span>
 
       <!-- Dark overlay on hover -->
-      <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a1a]/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      <div
+          class="absolute inset-0 bg-gradient-to-t from-[#0a0a1a]/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"/>
 
       <!-- Category tag -->
       <span
-        v-if="product.category"
-        class="absolute top-3 left-3 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider text-white bg-black/40 backdrop-blur-md"
+          v-if="product.category"
+          class="absolute top-3 left-3 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider text-white bg-black/40 backdrop-blur-md"
       >
         {{ product.category }}
       </span>
@@ -23,8 +27,8 @@
       <!-- "In cart" badge -->
       <Transition name="badge-pop">
         <span
-          v-if="quantityInCart > 0"
-          class="absolute top-3 right-3 min-w-[24px] h-6 px-1.5 flex items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-cyan-500 text-white text-[11px] font-bold shadow-lg shadow-purple-500/30"
+            v-if="quantityInCart > 0"
+            class="absolute top-3 right-3 min-w-[24px] h-6 px-1.5 flex items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-cyan-500 text-white text-[11px] font-bold shadow-lg shadow-purple-500/30"
         >
           {{ quantityInCart }}
         </span>
@@ -42,26 +46,30 @@
 
       <div class="flex items-center justify-between gap-3">
         <div>
-          <p class="text-[10px] uppercase tracking-wider text-slate-600 font-semibold">{{ t('products.price_label') }}</p>
+          <p class="text-[10px] uppercase tracking-wider text-slate-600 font-semibold">{{
+              t('products.price_label')
+            }}</p>
           <span class="text-xl font-extrabold gradient-text-purple">${{ formatPrice(product.price) }}</span>
         </div>
         <n-button
-          type="primary"
-          size="medium"
-          class="transition-all duration-300"
-          :class="justAdded
+            :class="justAdded
             ? '!bg-gradient-to-br !from-emerald-500 !to-emerald-600 !shadow-[0_4px_16px_rgba(16,185,129,0.3)]'
             : 'btn-stripe'"
-          :style="{ borderRadius: '10px' }"
-          @click="handleAddToCart"
+            :style="{ borderRadius: '10px' }"
+            class="transition-all duration-300"
+            size="medium"
+            type="primary"
+            @click="handleAddToCart"
         >
           <template #icon>
-            <Transition name="fade-icon" mode="out-in">
-              <svg v-if="!justAdded" key="plus" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            <Transition mode="out-in" name="fade-icon">
+              <svg v-if="!justAdded" key="plus" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5"
+                   viewBox="0 0 24 24">
+                <path d="M12 4.5v15m7.5-7.5h-15" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
-              <svg v-else key="check" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+              <svg v-else key="check" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="3"
+                   viewBox="0 0 24 24">
+                <path d="m4.5 12.75 6 6 9-13.5" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
             </Transition>
           </template>
@@ -72,8 +80,8 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { NButton } from 'naive-ui'
+<script lang="ts" setup>
+import {NButton} from 'naive-ui'
 import {useCartStore} from '~/stores/cart'
 
 interface Product {
@@ -87,7 +95,7 @@ interface Product {
 
 const props = defineProps<{ product: Product }>()
 
-const { t } = useI18n()
+const {t} = useI18n()
 const message = useAppMessage()
 const cartStore = useCartStore()
 
@@ -137,7 +145,7 @@ function handleAddToCart() {
   })
 
   justAdded.value = true
-  message.success(`${props.product.name} added to cart`, { duration: 1800 })
+  message.success(`${props.product.name} added to cart`, {duration: 1800})
 
   setTimeout(() => {
     justAdded.value = false

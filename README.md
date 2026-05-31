@@ -1,6 +1,7 @@
 # 💳 ShopPay — Payment Integration Demo
 
-Production-ready reference implementation for **Stripe** and **PayPal** payment integration with shopping cart and subscription billing flows. Built with **Nuxt 3**, **Vue 3**, **Naive UI**, and **TailwindCSS**.
+Production-ready reference implementation for **Stripe** and **PayPal** payment integration with shopping cart and
+subscription billing flows. Built with **Nuxt 3**, **Vue 3**, **Naive UI**, and **TailwindCSS**.
 
 ![Stack](https://img.shields.io/badge/Nuxt-3-00DC82?logo=nuxt.js) ![Vue](https://img.shields.io/badge/Vue-3-42b883?logo=vue.js) ![TailwindCSS](https://img.shields.io/badge/Tailwind-3-38bdf8?logo=tailwind-css) ![Stripe](https://img.shields.io/badge/Stripe-API-635bff?logo=stripe) ![PayPal](https://img.shields.io/badge/PayPal-REST-0070ba?logo=paypal)
 
@@ -38,17 +39,18 @@ npm run dev
 App will be live at **http://localhost:3000** (or next available port).
 
 > [!NOTE]
-> No real Stripe/PayPal credentials? No problem — the demo gateway simulator kicks in automatically and walks through a realistic UI flow.
+> No real Stripe/PayPal credentials? No problem — the demo gateway simulator kicks in automatically and walks through a
+> realistic UI flow.
 
 ---
 
 ## 📚 Documentation
 
-| Document | Description |
-|----------|-------------|
-| [`docs/payment_integration_plan.md`](./docs/payment_integration_plan.md) | Original architecture plan |
-| [`docs/sandbox_setup_guide.md`](./docs/sandbox_setup_guide.md) | Step-by-step Stripe & PayPal sandbox setup |
-| [`docs/webhook_advanced_guide.md`](./docs/webhook_advanced_guide.md) | Advanced webhook event handling, signature verification, transaction tracking |
+| Document                                                                 | Description                                                                   |
+|--------------------------------------------------------------------------|-------------------------------------------------------------------------------|
+| [`docs/payment_integration_plan.md`](./docs/payment_integration_plan.md) | Original architecture plan                                                    |
+| [`docs/sandbox_setup_guide.md`](./docs/sandbox_setup_guide.md)           | Step-by-step Stripe & PayPal sandbox setup                                    |
+| [`docs/webhook_advanced_guide.md`](./docs/webhook_advanced_guide.md)     | Advanced webhook event handling, signature verification, transaction tracking |
 
 ---
 
@@ -96,17 +98,20 @@ simple-shopping-card/
 ## 🧪 Test Flows
 
 ### Cart → Stripe Checkout
+
 1. `/products` → Add to Cart
 2. `/cart` → Pay with Stripe
 3. Use test card `4242 4242 4242 4242`, any future expiry, any CVC
 4. → Redirects to `/checkout/success`
 
 ### Cart → PayPal
+
 1. Cart → Pay with PayPal
 2. Login with **PayPal Sandbox buyer** account
 3. → Redirects to `/checkout/success`
 
 ### Subscription (Monthly/Yearly)
+
 1. `/subscriptions` → toggle Monthly/Yearly
 2. Subscribe via Stripe or PayPal
 3. → Redirects to `/subscription/success`
@@ -134,20 +139,21 @@ PAYPAL_PLAN_PRO_MONTHLY=P-...            # From PayPal REST API
 # ...
 ```
 
-If a value is empty or contains demo placeholders, the app **automatically falls back** to the gateway simulator — no errors, demo always works.
+If a value is empty or contains demo placeholders, the app **automatically falls back** to the gateway simulator — no
+errors, demo always works.
 
 ---
 
 ## 🛠️ Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
-| Framework | [Nuxt 3](https://nuxt.com/) |
-| UI Library | [Naive UI](https://www.naiveui.com/) |
-| Styling | [TailwindCSS](https://tailwindcss.com/) |
-| State | [Pinia](https://pinia.vuejs.org/) |
-| Database | SQLite via [better-sqlite3](https://github.com/WiseLibs/better-sqlite3) |
-| Payments | [Stripe SDK](https://github.com/stripe/stripe-node) · [PayPal REST API](https://developer.paypal.com/api/rest/) |
+| Layer      | Technology                                                                                                      |
+|------------|-----------------------------------------------------------------------------------------------------------------|
+| Framework  | [Nuxt 3](https://nuxt.com/)                                                                                     |
+| UI Library | [Naive UI](https://www.naiveui.com/)                                                                            |
+| Styling    | [TailwindCSS](https://tailwindcss.com/)                                                                         |
+| State      | [Pinia](https://pinia.vuejs.org/)                                                                               |
+| Database   | SQLite via [better-sqlite3](https://github.com/WiseLibs/better-sqlite3)                                         |
+| Payments   | [Stripe SDK](https://github.com/stripe/stripe-node) · [PayPal REST API](https://developer.paypal.com/api/rest/) |
 
 ---
 

@@ -28,7 +28,7 @@ export default defineNuxtPlugin((nuxtApp) => {
 
   // SSR style collection
   if (import.meta.server) {
-    const { collect } = setup(nuxtApp.vueApp)
+    const {collect} = setup(nuxtApp.vueApp)
     nuxtApp.ssrContext!.head = nuxtApp.ssrContext!.head || []
     nuxtApp.hooks.hook('app:rendered', () => {
       const cssContent = collect()

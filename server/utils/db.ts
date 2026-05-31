@@ -18,7 +18,7 @@ export function getDb(): Database.Database {
   // Ensure the data directory exists
   const dataDir = join(process.cwd(), 'data')
   if (!fs.existsSync(dataDir)) {
-    fs.mkdirSync(dataDir, { recursive: true })
+    fs.mkdirSync(dataDir, {recursive: true})
   }
 
   db = new Database(dbPath)
@@ -35,62 +35,249 @@ export function getDb(): Database.Database {
 
 function createTables(db: Database.Database): void {
   db.exec(`
-    CREATE TABLE IF NOT EXISTS products (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT NOT NULL,
-      description TEXT NOT NULL,
-      price INTEGER NOT NULL,
-      image_url TEXT NOT NULL DEFAULT '',
-      category TEXT NOT NULL DEFAULT '',
-      stripe_price_id TEXT NOT NULL DEFAULT '',
-      created_at TEXT NOT NULL DEFAULT (datetime('now'))
-    );
+      CREATE TABLE IF NOT EXISTS products
+      (
+          id
+          INTEGER
+          PRIMARY
+          KEY
+          AUTOINCREMENT,
+          name
+          TEXT
+          NOT
+          NULL,
+          description
+          TEXT
+          NOT
+          NULL,
+          price
+          INTEGER
+          NOT
+          NULL,
+          image_url
+          TEXT
+          NOT
+          NULL
+          DEFAULT
+          '',
+          category
+          TEXT
+          NOT
+          NULL
+          DEFAULT
+          '',
+          stripe_price_id
+          TEXT
+          NOT
+          NULL
+          DEFAULT
+          '',
+          created_at
+          TEXT
+          NOT
+          NULL
+          DEFAULT (
+          datetime
+      (
+          'now'
+      ))
+          );
 
-    CREATE TABLE IF NOT EXISTS subscription_plans (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT NOT NULL,
-      description TEXT NOT NULL,
-      price INTEGER NOT NULL,
-      interval TEXT NOT NULL CHECK (interval IN ('monthly', 'yearly')),
-      stripe_price_id TEXT NOT NULL DEFAULT '',
-      paypal_plan_id TEXT NOT NULL DEFAULT '',
-      features TEXT NOT NULL DEFAULT '[]',
-      created_at TEXT NOT NULL DEFAULT (datetime('now'))
-    );
+      CREATE TABLE IF NOT EXISTS subscription_plans
+      (
+          id
+          INTEGER
+          PRIMARY
+          KEY
+          AUTOINCREMENT,
+          name
+          TEXT
+          NOT
+          NULL,
+          description
+          TEXT
+          NOT
+          NULL,
+          price
+          INTEGER
+          NOT
+          NULL,
+          interval
+          TEXT
+          NOT
+          NULL
+          CHECK (
+          interval
+          IN
+      (
+          'monthly',
+          'yearly'
+      )),
+          stripe_price_id TEXT NOT NULL DEFAULT '',
+          paypal_plan_id TEXT NOT NULL DEFAULT '',
+          features TEXT NOT NULL DEFAULT '[]',
+          created_at TEXT NOT NULL DEFAULT
+      (
+          datetime
+      (
+          'now'
+      ))
+          );
 
-    CREATE TABLE IF NOT EXISTS orders (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      order_number TEXT NOT NULL UNIQUE,
-      status TEXT NOT NULL DEFAULT 'pending',
-      total_amount INTEGER NOT NULL DEFAULT 0,
-      payment_gateway TEXT NOT NULL DEFAULT '',
-      payment_id TEXT NOT NULL DEFAULT '',
-      customer_email TEXT NOT NULL DEFAULT '',
-      created_at TEXT NOT NULL DEFAULT (datetime('now'))
-    );
+      CREATE TABLE IF NOT EXISTS orders
+      (
+          id
+          INTEGER
+          PRIMARY
+          KEY
+          AUTOINCREMENT,
+          order_number
+          TEXT
+          NOT
+          NULL
+          UNIQUE,
+          status
+          TEXT
+          NOT
+          NULL
+          DEFAULT
+          'pending',
+          total_amount
+          INTEGER
+          NOT
+          NULL
+          DEFAULT
+          0,
+          payment_gateway
+          TEXT
+          NOT
+          NULL
+          DEFAULT
+          '',
+          payment_id
+          TEXT
+          NOT
+          NULL
+          DEFAULT
+          '',
+          customer_email
+          TEXT
+          NOT
+          NULL
+          DEFAULT
+          '',
+          created_at
+          TEXT
+          NOT
+          NULL
+          DEFAULT (
+          datetime
+      (
+          'now'
+      ))
+          );
 
-    CREATE TABLE IF NOT EXISTS order_items (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      order_id INTEGER NOT NULL,
-      product_id INTEGER NOT NULL,
-      quantity INTEGER NOT NULL DEFAULT 1,
-      unit_price INTEGER NOT NULL DEFAULT 0,
-      FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
-      FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE RESTRICT
-    );
+      CREATE TABLE IF NOT EXISTS order_items
+      (
+          id
+          INTEGER
+          PRIMARY
+          KEY
+          AUTOINCREMENT,
+          order_id
+          INTEGER
+          NOT
+          NULL,
+          product_id
+          INTEGER
+          NOT
+          NULL,
+          quantity
+          INTEGER
+          NOT
+          NULL
+          DEFAULT
+          1,
+          unit_price
+          INTEGER
+          NOT
+          NULL
+          DEFAULT
+          0,
+          FOREIGN
+          KEY
+      (
+          order_id
+      ) REFERENCES orders
+      (
+          id
+      ) ON DELETE CASCADE,
+          FOREIGN KEY
+      (
+          product_id
+      ) REFERENCES products
+      (
+          id
+      )
+        ON DELETE RESTRICT
+          );
 
-    CREATE TABLE IF NOT EXISTS subscriptions (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      plan_id INTEGER NOT NULL,
-      status TEXT NOT NULL DEFAULT 'pending',
-      payment_gateway TEXT NOT NULL DEFAULT '',
-      subscription_id TEXT NOT NULL DEFAULT '',
-      customer_email TEXT NOT NULL DEFAULT '',
-      current_period_start TEXT,
-      current_period_end TEXT,
-      created_at TEXT NOT NULL DEFAULT (datetime('now')),
-      FOREIGN KEY (plan_id) REFERENCES subscription_plans(id) ON DELETE RESTRICT
-    );
+      CREATE TABLE IF NOT EXISTS subscriptions
+      (
+          id
+          INTEGER
+          PRIMARY
+          KEY
+          AUTOINCREMENT,
+          plan_id
+          INTEGER
+          NOT
+          NULL,
+          status
+          TEXT
+          NOT
+          NULL
+          DEFAULT
+          'pending',
+          payment_gateway
+          TEXT
+          NOT
+          NULL
+          DEFAULT
+          '',
+          subscription_id
+          TEXT
+          NOT
+          NULL
+          DEFAULT
+          '',
+          customer_email
+          TEXT
+          NOT
+          NULL
+          DEFAULT
+          '',
+          current_period_start
+          TEXT,
+          current_period_end
+          TEXT,
+          created_at
+          TEXT
+          NOT
+          NULL
+          DEFAULT (
+          datetime
+      (
+          'now'
+      )),
+          FOREIGN KEY
+      (
+          plan_id
+      ) REFERENCES subscription_plans
+      (
+          id
+      ) ON DELETE RESTRICT
+          );
   `)
 }
 
@@ -102,13 +289,13 @@ function seedData(db: Database.Database): void {
   }
 
   const insertProduct = db.prepare(`
-    INSERT INTO products (name, description, price, image_url, category, stripe_price_id)
-    VALUES (@name, @description, @price, @image_url, @category, @stripe_price_id)
+      INSERT INTO products (name, description, price, image_url, category, stripe_price_id)
+      VALUES (@name, @description, @price, @image_url, @category, @stripe_price_id)
   `)
 
   const insertPlan = db.prepare(`
-    INSERT INTO subscription_plans (name, description, price, interval, stripe_price_id, paypal_plan_id, features)
-    VALUES (@name, @description, @price, @interval, @stripe_price_id, @paypal_plan_id, @features)
+      INSERT INTO subscription_plans (name, description, price, interval, stripe_price_id, paypal_plan_id, features)
+      VALUES (@name, @description, @price, @interval, @stripe_price_id, @paypal_plan_id, @features)
   `)
 
   const seedTransaction = db.transaction(() => {

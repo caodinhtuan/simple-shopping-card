@@ -1,19 +1,20 @@
 <template>
   <div class="min-h-[calc(100vh-140px)] flex flex-col items-center justify-center px-4 py-16 relative overflow-hidden">
-    <div class="hero-glow hero-glow-cyan" />
+    <div class="hero-glow hero-glow-cyan"/>
 
     <!-- Confetti -->
     <div class="absolute inset-0 pointer-events-none overflow-hidden z-0">
-      <div v-for="n in 50" :key="n" :style="getConfetti(n)" />
+      <div v-for="n in 50" :key="n" :style="getConfetti(n)"/>
     </div>
 
     <div class="w-full max-w-xl glass-card p-8 md:p-12 text-center border-white/8 relative z-10 animate-in">
       <!-- Animated checkmark ring -->
       <div
-        class="w-24 h-24 mx-auto mb-8 rounded-full border-2 border-emerald-500/30 flex items-center justify-center relative bg-[radial-gradient(circle,rgba(16,185,129,0.2),rgba(16,185,129,0.05))] ring-pulse-emerald before:content-[''] before:absolute before:inset-[-8px] before:rounded-full before:border-2 before:border-emerald-500/20 before:ring-expand-emerald"
+          class="w-24 h-24 mx-auto mb-8 rounded-full border-2 border-emerald-500/30 flex items-center justify-center relative bg-[radial-gradient(circle,rgba(16,185,129,0.2),rgba(16,185,129,0.05))] ring-pulse-emerald before:content-[''] before:absolute before:inset-[-8px] before:rounded-full before:border-2 before:border-emerald-500/20 before:ring-expand-emerald"
       >
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="w-12 h-12 text-emerald-400 check-draw">
-          <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+        <svg class="w-12 h-12 text-emerald-400 check-draw" fill="none" stroke="currentColor" stroke-width="2.5"
+             viewBox="0 0 24 24">
+          <path d="m4.5 12.75 6 6 9-13.5" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </div>
 
@@ -26,14 +27,14 @@
       <p v-if="isDemoMode" class="text-amber-400/80 text-xs mb-8">
         💡 Demo mode — no real charge was made
       </p>
-      <p v-else class="mb-8" />
+      <p v-else class="mb-8"/>
 
       <!-- Details Card -->
       <div class="bg-white/[0.02] border border-white/5 rounded-2xl p-6 mb-8 text-left space-y-4">
         <div class="flex items-center justify-between text-sm">
           <span class="text-slate-500 font-medium">Payment Gateway</span>
           <span class="text-slate-200 font-semibold uppercase tracking-wider text-xs flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full" :style="{ background: gateway === 'paypal' ? '#0070ba' : '#8b5cf6' }" />
+            <span :style="{ background: gateway === 'paypal' ? '#0070ba' : '#8b5cf6' }" class="w-2 h-2 rounded-full"/>
             {{ gatewayName }}
           </span>
         </div>
@@ -64,13 +65,13 @@
 
       <!-- Actions -->
       <div class="flex flex-col sm:flex-row items-center gap-3 justify-center">
-        <NuxtLink to="/products" class="w-full sm:w-auto">
-          <n-button type="primary" size="large" class="btn-stripe w-full" :style="{ borderRadius: '12px' }">
+        <NuxtLink class="w-full sm:w-auto" to="/products">
+          <n-button :style="{ borderRadius: '12px' }" class="btn-stripe w-full" size="large" type="primary">
             Continue Shopping
           </n-button>
         </NuxtLink>
-        <NuxtLink to="/" class="w-full sm:w-auto">
-          <n-button size="large" class="w-full" :style="{ borderRadius: '12px' }">
+        <NuxtLink class="w-full sm:w-auto" to="/">
+          <n-button :style="{ borderRadius: '12px' }" class="w-full" size="large">
             Go Home
           </n-button>
         </NuxtLink>
@@ -79,10 +80,10 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import {useCartStore} from '~/stores/cart'
 
-useHead({ title: 'Order Completed — ShopPay' })
+useHead({title: 'Order Completed — ShopPay'})
 
 const route = useRoute()
 const cartStore = useCartStore()
@@ -90,7 +91,7 @@ const cartStore = useCartStore()
 const gateway = computed(() => String(route.query.gateway || 'stripe'))
 const isDemoMode = computed(() => route.query.demo === '1')
 const gatewayName = computed(() =>
-  gateway.value === 'paypal' ? 'PayPal' : 'Stripe',
+    gateway.value === 'paypal' ? 'PayPal' : 'Stripe',
 )
 const orderId = computed(() => route.query.order_id ? String(route.query.order_id) : '')
 const sessionId = computed(() => route.query.session_id ? String(route.query.session_id) : '')
@@ -104,13 +105,13 @@ const message = useAppMessage()
 
 onMounted(async () => {
   cartStore.clearCart()
-  message.success('Payment completed successfully', { duration: 3500 })
+  message.success('Payment completed successfully', {duration: 3500})
 
   if (orderId.value) {
     try {
       const ordersData = await $fetch<any>('/api/orders')
       const matched = ordersData.orders?.find(
-        (o: any) => String(o.id) === orderId.value || o.order_number === orderId.value,
+          (o: any) => String(o.id) === orderId.value || o.order_number === orderId.value,
       )
       if (matched) {
         orderNumber.value = matched.order_number

@@ -1,11 +1,13 @@
 <template>
   <div class="min-h-[calc(100vh-140px)] flex flex-col items-center justify-center px-4 py-16 relative overflow-hidden">
-    <div class="hero-glow" :style="{ background: '#f59e0b', top: '-200px', left: '-100px' }" />
+    <div :style="{ background: '#f59e0b', top: '-200px', left: '-100px' }" class="hero-glow"/>
 
     <div class="w-full max-w-xl glass-card p-8 md:p-12 text-center border-white/8 animate-in">
-      <div class="w-24 h-24 mx-auto mb-8 rounded-full border-2 border-amber-500/30 flex items-center justify-center bg-[radial-gradient(circle,rgba(245,158,11,0.2),rgba(245,158,11,0.05))] ring-pulse-amber">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="w-12 h-12 text-amber-400">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+      <div
+          class="w-24 h-24 mx-auto mb-8 rounded-full border-2 border-amber-500/30 flex items-center justify-center bg-[radial-gradient(circle,rgba(245,158,11,0.2),rgba(245,158,11,0.05))] ring-pulse-amber">
+        <svg class="w-12 h-12 text-amber-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <path d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" stroke-linecap="round"
+                stroke-linejoin="round"/>
         </svg>
       </div>
 
@@ -35,13 +37,13 @@
       </div>
 
       <div class="flex flex-col sm:flex-row items-center gap-3 justify-center">
-        <NuxtLink to="/checkout" class="w-full sm:w-auto">
-          <n-button type="primary" size="large" class="btn-stripe w-full" :style="{ borderRadius: '12px' }">
+        <NuxtLink class="w-full sm:w-auto" to="/checkout">
+          <n-button :style="{ borderRadius: '12px' }" class="btn-stripe w-full" size="large" type="primary">
             Try Again
           </n-button>
         </NuxtLink>
-        <NuxtLink to="/products" class="w-full sm:w-auto">
-          <n-button size="large" class="w-full" :style="{ borderRadius: '12px' }">
+        <NuxtLink class="w-full sm:w-auto" to="/products">
+          <n-button :style="{ borderRadius: '12px' }" class="w-full" size="large">
             Browse Products
           </n-button>
         </NuxtLink>
@@ -50,6 +52,6 @@
   </div>
 </template>
 
-<script setup lang="ts">
-useHead({ title: 'Payment Cancelled — ShopPay' })
+<script lang="ts" setup>
+useHead({title: 'Payment Cancelled — ShopPay'})
 </script>

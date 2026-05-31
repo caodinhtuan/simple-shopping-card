@@ -81,14 +81,18 @@ export default defineEventHandler(async (event) => {
 
           if (!existing) {
             db.prepare(`
-              INSERT INTO subscriptions (plan_id, status, payment_gateway, subscription_id, customer_email, current_period_start)
-              VALUES (?, 'active', 'paypal', ?, ?, ?)
+                INSERT INTO subscriptions (plan_id, status, payment_gateway, subscription_id, customer_email,
+                                           current_period_start)
+                VALUES (?, 'active', 'paypal', ?, ?, ?)
             `).run(plan.id, subscriptionId, subscriberEmail, startTime)
 
             console.log(`[PayPal Webhook] Subscription ${subscriptionId} activated for plan ${plan.id}.`)
           } else {
             db.prepare(`
-              UPDATE subscriptions SET status = 'active' WHERE subscription_id = ? AND payment_gateway = 'paypal'
+                UPDATE subscriptions
+                SET status = 'active'
+                WHERE subscription_id = ?
+                  AND payment_gateway = 'paypal'
             `).run(subscriptionId)
 
             console.log(`[PayPal Webhook] Subscription ${subscriptionId} status updated to active.`)
@@ -109,7 +113,10 @@ export default defineEventHandler(async (event) => {
         // or by custom_id if set
         if (customId) {
           db.prepare(`
-            UPDATE orders SET status = 'paid' WHERE id = ? AND status = 'pending'
+              UPDATE orders
+              SET status = 'paid'
+              WHERE id = ?
+                AND status = 'pending'
           `).run(customId)
 
           console.log(`[PayPal Webhook] Payment captured for order ${customId} (capture: ${captureId}).`)
@@ -131,5 +138,5 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  return { received: true }
+  return {received: true}
 })

@@ -37,7 +37,7 @@ export const useCartStore = defineStore('cart', {
       if (existing) {
         existing.quantity += quantity
       } else {
-        this.items.push({ ...product, quantity })
+        this.items.push({...product, quantity})
       }
       this._saveToStorage()
     },

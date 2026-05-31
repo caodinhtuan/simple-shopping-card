@@ -14,17 +14,17 @@ export default defineEventHandler(async (event) => {
   const body = await readBody<MarkPaidBody>(event)
 
   if (!body.orderId) {
-    throw createError({ statusCode: 400, statusMessage: 'orderId is required.' })
+    throw createError({statusCode: 400, statusMessage: 'orderId is required.'})
   }
 
   const db = getDb()
   const result = db.prepare(`
-    UPDATE orders
-       SET status = 'paid',
-           payment_gateway = COALESCE(NULLIF(payment_gateway, ''), ?),
-           payment_id = COALESCE(NULLIF(payment_id, ''), ?)
-     WHERE id = ?
+      UPDATE orders
+      SET status          = 'paid',
+          payment_gateway = COALESCE(NULLIF(payment_gateway, ''), ?),
+          payment_id      = COALESCE(NULLIF(payment_id, ''), ?)
+      WHERE id = ?
   `).run(body.gateway || 'stripe', body.paymentId || `demo_${Date.now()}`, body.orderId)
 
-  return { ok: true, updated: result.changes }
+  return {ok: true, updated: result.changes}
 })

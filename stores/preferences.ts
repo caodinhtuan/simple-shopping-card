@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia'
+import {defineStore} from 'pinia'
 
 export type Locale = 'en' | 'vi'
 
@@ -11,7 +11,7 @@ interface PreferencesState {
  * Theme (dark/light) is managed by @nuxtjs/color-mode via useColorMode().
  */
 export const usePreferencesStore = defineStore('preferences', {
-  state: (): PreferencesState => ({ locale: 'en' }),
+  state: (): PreferencesState => ({locale: 'en'}),
 
   actions: {
     setLocale(locale: Locale) {

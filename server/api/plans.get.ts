@@ -27,9 +27,9 @@ export default defineEventHandler(() => {
   const config = useRuntimeConfig()
 
   const plans = db.prepare(`
-    SELECT id, name, description, price, interval, stripe_price_id, paypal_plan_id, features, created_at
-    FROM subscription_plans
-    ORDER BY price ASC
+      SELECT id, name, description, price, interval, stripe_price_id, paypal_plan_id, features, created_at
+      FROM subscription_plans
+      ORDER BY price ASC
   `).all() as PlanRow[]
 
   // Build a lookup by lowercased plan name so we can pull env-configured IDs.
@@ -81,7 +81,7 @@ export default defineEventHandler(() => {
     }
   })
 
-  return { plans: enriched }
+  return {plans: enriched}
 })
 
 function safeParseFeatures(raw: string): string[] {

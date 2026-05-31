@@ -348,7 +348,7 @@ const vi: Dict = {
   'common.loading': 'Đang tải...',
 }
 
-const messages: Record<string, Dict> = { en, vi }
+const messages: Record<string, Dict> = {en, vi}
 
 export function useI18n() {
   const prefs = usePreferencesStore()
@@ -364,5 +364,5 @@ export function useI18n() {
     return str
   }
 
-  return { t, locale: computed(() => prefs.locale) }
+  return {t, locale: computed(() => prefs.locale)}
 }

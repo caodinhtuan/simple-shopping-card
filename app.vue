@@ -3,14 +3,14 @@
     <n-message-provider>
       <n-dialog-provider>
         <n-notification-provider>
-          <MessageApi />
-          <NuxtLoadingIndicator color="linear-gradient(90deg,#8b5cf6,#06b6d4,#ec4899)" :height="3" />
-          <n-layout class="min-h-screen" :style="{ background: layoutBg }">
-            <AppHeader />
+          <MessageApi/>
+          <NuxtLoadingIndicator :height="3" color="linear-gradient(90deg,#8b5cf6,#06b6d4,#ec4899)"/>
+          <n-layout :style="{ background: layoutBg }" class="min-h-screen">
+            <AppHeader/>
             <n-layout-content class="min-h-[calc(100vh-140px)]">
-              <NuxtPage />
+              <NuxtPage/>
             </n-layout-content>
-            <AppFooter />
+            <AppFooter/>
           </n-layout>
         </n-notification-provider>
       </n-dialog-provider>
@@ -18,7 +18,7 @@
   </n-config-provider>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import type {GlobalThemeOverrides} from 'naive-ui'
 import {
   darkTheme,
@@ -94,7 +94,7 @@ const themeOverrides = computed<GlobalThemeOverrides | undefined>(() => {
       borderRadiusMedium: '10px',
       borderRadiusLarge: '12px',
     },
-    Tag: { borderRadius: '8px' },
+    Tag: {borderRadius: '8px'},
     Menu: {
       itemTextColor: '#94a3b8',
       itemTextColorHover: '#f1f5f9',
@@ -121,9 +121,9 @@ const themeOverrides = computed<GlobalThemeOverrides | undefined>(() => {
       barColor: '#8b5cf6',
       tabColor: 'transparent',
     },
-    Result: { titleTextColor: '#f1f5f9', textColor: '#cbd5e1' },
-    Empty: { textColor: '#94a3b8' },
-    Statistic: { labelTextColor: '#94a3b8', valueTextColor: '#f1f5f9' },
+    Result: {titleTextColor: '#f1f5f9', textColor: '#cbd5e1'},
+    Empty: {textColor: '#94a3b8'},
+    Statistic: {labelTextColor: '#94a3b8', valueTextColor: '#f1f5f9'},
   }
 })
 

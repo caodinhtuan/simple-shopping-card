@@ -53,9 +53,10 @@ export default defineEventHandler(async (event) => {
           const orderId = session.metadata?.order_id
           if (orderId) {
             db.prepare(`
-              UPDATE orders
-              SET status = 'paid', payment_id = ?
-              WHERE id = ?
+                UPDATE orders
+                SET status     = 'paid',
+                    payment_id = ?
+                WHERE id = ?
             `).run(session.payment_intent as string, orderId)
 
             console.log(`[Stripe Webhook] Order ${orderId} marked as paid (payment_intent: ${session.payment_intent}).`)
@@ -80,8 +81,9 @@ export default defineEventHandler(async (event) => {
 
         if (plan) {
           db.prepare(`
-            INSERT INTO subscriptions (plan_id, status, payment_gateway, subscription_id, customer_email, current_period_start, current_period_end)
-            VALUES (?, ?, 'stripe', ?, ?, ?, ?)
+              INSERT INTO subscriptions (plan_id, status, payment_gateway, subscription_id, customer_email,
+                                         current_period_start, current_period_end)
+              VALUES (?, ?, 'stripe', ?, ?, ?, ?)
           `).run(
             plan.id,
             subscription.status,
@@ -110,5 +112,5 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  return { received: true }
+  return {received: true}
 })

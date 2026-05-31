@@ -32,11 +32,11 @@ export default defineEventHandler(async (event) => {
     if (isCompleted) {
       const db = getDb()
       db.prepare(`
-        UPDATE orders
-           SET status = 'paid',
-               payment_id = ?,
-               payment_gateway = 'paypal'
-         WHERE id = ?
+          UPDATE orders
+          SET status          = 'paid',
+              payment_id      = ?,
+              payment_gateway = 'paypal'
+          WHERE id = ?
       `).run(paypalOrderId, dbOrderId)
 
       console.log(`[PayPal] Order ${dbOrderId} captured successfully (${paypalOrderId}).`)

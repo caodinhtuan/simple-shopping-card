@@ -1,8 +1,8 @@
 <template>
-  <div class="hidden" />
+  <div class="hidden"/>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import {useDialog, useMessage, useNotification} from 'naive-ui'
 
 const message = useMessage()

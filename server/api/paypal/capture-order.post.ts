@@ -33,9 +33,10 @@ export default defineEventHandler(async (event) => {
     // Update the order in the database
     const db = getDb()
     db.prepare(`
-      UPDATE orders
-      SET status = 'paid', payment_id = ?
-      WHERE id = ?
+        UPDATE orders
+        SET status     = 'paid',
+            payment_id = ?
+        WHERE id = ?
     `).run(body.orderId, body.dbOrderId)
 
     console.log(`[PayPal] Order ${body.dbOrderId} captured and marked as paid (PayPal ID: ${body.orderId}).`)

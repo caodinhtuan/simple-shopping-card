@@ -23,7 +23,7 @@ export default defineEventHandler(async (event) => {
   const body = await readBody<CreatePayPalOrderBody>(event)
 
   if (!body.items || !Array.isArray(body.items) || body.items.length === 0) {
-    throw createError({ statusCode: 400, statusMessage: 'Cart is empty.' })
+    throw createError({statusCode: 400, statusMessage: 'Cart is empty.'})
   }
 
   const config = useRuntimeConfig()
@@ -37,11 +37,11 @@ export default defineEventHandler(async (event) => {
   for (const item of body.items) {
     const product = getProduct.get(item.id) as { id: number; name: string; price: number } | undefined
     if (!product) {
-      throw createError({ statusCode: 404, statusMessage: `Product #${item.id} not found.` })
+      throw createError({statusCode: 404, statusMessage: `Product #${item.id} not found.`})
     }
     const quantity = Math.max(1, Math.floor(item.quantity))
     subtotal += product.price * quantity
-    resolved.push({ ...product, quantity })
+    resolved.push({...product, quantity})
   }
 
   const taxAmount = Math.round(subtotal * 0.1)
@@ -51,12 +51,12 @@ export default defineEventHandler(async (event) => {
   // --- Create pending order ---
   const orderNumber = `ORD-${crypto.randomBytes(4).toString('hex').toUpperCase()}`
   const insertOrder = db.prepare(`
-    INSERT INTO orders (order_number, status, total_amount, payment_gateway, customer_email)
-    VALUES (?, 'pending', ?, 'paypal', ?)
+      INSERT INTO orders (order_number, status, total_amount, payment_gateway, customer_email)
+      VALUES (?, 'pending', ?, 'paypal', ?)
   `)
   const insertItem = db.prepare(`
-    INSERT INTO order_items (order_id, product_id, quantity, unit_price)
-    VALUES (?, ?, ?, ?)
+      INSERT INTO order_items (order_id, product_id, quantity, unit_price)
+      VALUES (?, ?, ?, ?)
   `)
 
   const orderId = db.transaction(() => {
@@ -94,7 +94,7 @@ export default defineEventHandler(async (event) => {
     const purchaseItems = resolved.map((it) => ({
       name: it.name.slice(0, 127),
       quantity: String(it.quantity),
-      unit_amount: { currency_code: 'USD', value: (it.price / 100).toFixed(2) },
+      unit_amount: {currency_code: 'USD', value: (it.price / 100).toFixed(2)},
     }))
 
     const orderPayload = {
@@ -107,8 +107,8 @@ export default defineEventHandler(async (event) => {
             currency_code: 'USD',
             value: totalDollars,
             breakdown: {
-              item_total: { currency_code: 'USD', value: subtotalDollars },
-              tax_total: { currency_code: 'USD', value: taxDollars },
+              item_total: {currency_code: 'USD', value: subtotalDollars},
+              tax_total: {currency_code: 'USD', value: taxDollars},
             },
           },
           items: purchaseItems,

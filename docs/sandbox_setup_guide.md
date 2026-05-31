@@ -1,13 +1,14 @@
 # 📘 Sandbox Integration Setup Guide
+
 ### ShopPay Demo · Stripe & PayPal
 
-| | |
-|---|---|
-| **Document version** | 1.0 |
-| **Last updated** | 2026-05-31 |
-| **Audience** | Engineering team, QA, Demo presenters |
-| **Estimated setup time** | ~45–60 minutes (first time) |
-| **Maintained by** | ShopPay Platform Team |
+|                          |                                       |
+|--------------------------|---------------------------------------|
+| **Document version**     | 1.0                                   |
+| **Last updated**         | 2026-05-31                            |
+| **Audience**             | Engineering team, QA, Demo presenters |
+| **Estimated setup time** | ~45–60 minutes (first time)           |
+| **Maintained by**        | ShopPay Platform Team                 |
 
 ---
 
@@ -33,21 +34,21 @@
 
 ### Software requirements
 
-| Tool | Minimum version | Verification command |
-|------|-----------------|----------------------|
-| Node.js | `≥ 18.0.0` | `node -v` |
-| npm | `≥ 9.0.0` | `npm -v` |
-| Git | any | `git --version` |
-| curl | any (for testing) | `curl --version` |
-| (Optional) Stripe CLI | latest | `stripe version` |
-| (Optional) ngrok | latest | `ngrok version` |
+| Tool                  | Minimum version   | Verification command |
+|-----------------------|-------------------|----------------------|
+| Node.js               | `≥ 18.0.0`        | `node -v`            |
+| npm                   | `≥ 9.0.0`         | `npm -v`             |
+| Git                   | any               | `git --version`      |
+| curl                  | any (for testing) | `curl --version`     |
+| (Optional) Stripe CLI | latest            | `stripe version`     |
+| (Optional) ngrok      | latest            | `ngrok version`      |
 
 ### Accounts to register (15 minutes)
 
-| Provider | URL | Notes |
-|----------|-----|-------|
-| Stripe | https://dashboard.stripe.com/register | Free. Test mode does **not** require business verification. |
-| PayPal Developer | https://developer.paypal.com/ | Free. Auto-creates sandbox buyer/seller accounts. |
+| Provider         | URL                                   | Notes                                                       |
+|------------------|---------------------------------------|-------------------------------------------------------------|
+| Stripe           | https://dashboard.stripe.com/register | Free. Test mode does **not** require business verification. |
+| PayPal Developer | https://developer.paypal.com/         | Free. Auto-creates sandbox buyer/seller accounts.           |
 
 ### Pre-setup checklist
 
@@ -88,12 +89,14 @@ npm run dev
 ```
 
 **✓ Expected result:**
+
 - Console shows `➜ Local: http://localhost:3000/`
 - Browser opens to home page with hero section
 - No red errors in terminal
 
 > [!TIP]
-> If port 3000 is in use, Nuxt will pick the next available port (e.g., 3001/3002). Check terminal output for actual URL.
+> If port 3000 is in use, Nuxt will pick the next available port (e.g., 3001/3002). Check terminal output for actual
+> URL.
 
 ### Phase 1 Sign-off ✅
 
@@ -117,13 +120,14 @@ npm run dev
 
 You will use **two** keys:
 
-| Key | Format | Where used |
-|-----|--------|-----------|
-| Publishable key | `pk_test_51XXXX...` | Frontend (Stripe.js) |
-| Secret key | `sk_test_51XXXX...` | Backend (server-side only) |
+| Key             | Format              | Where used                 |
+|-----------------|---------------------|----------------------------|
+| Publishable key | `pk_test_51XXXX...` | Frontend (Stripe.js)       |
+| Secret key      | `sk_test_51XXXX...` | Backend (server-side only) |
 
 > [!WARNING]
-> The secret key (`sk_test_...`) must **never** be committed to Git or exposed client-side. The `.env` file is already in `.gitignore`.
+> The secret key (`sk_test_...`) must **never** be committed to Git or exposed client-side. The `.env` file is already
+> in `.gitignore`.
 
 **✓ Expected result:** Both keys copied to a temporary scratchpad.
 
@@ -138,31 +142,32 @@ Create **3 products**, each with **2 recurring prices** (Monthly + Yearly):
 
 #### Product 1 — Starter
 
-| Field | Monthly price | Yearly price |
-|-------|--------------|--------------|
-| Product name | Starter | (same product) |
-| Description | Perfect for individuals getting started | — |
-| Pricing model | Standard pricing — recurring | Standard pricing — recurring |
-| Amount | `$9.99` | `$95.90` *(12 × $9.99 × 0.8)* |
-| Billing period | Monthly | Yearly |
+| Field          | Monthly price                           | Yearly price                  |
+|----------------|-----------------------------------------|-------------------------------|
+| Product name   | Starter                                 | (same product)                |
+| Description    | Perfect for individuals getting started | —                             |
+| Pricing model  | Standard pricing — recurring            | Standard pricing — recurring  |
+| Amount         | `$9.99`                                 | `$95.90` *(12 × $9.99 × 0.8)* |
+| Billing period | Monthly                                 | Yearly                        |
 
 #### Product 2 — Pro
 
-| Field | Monthly | Yearly |
-|-------|---------|--------|
-| Amount | `$29.99` | `$287.90` |
-| Billing period | Monthly | Yearly |
+| Field          | Monthly  | Yearly    |
+|----------------|----------|-----------|
+| Amount         | `$29.99` | `$287.90` |
+| Billing period | Monthly  | Yearly    |
 
 #### Product 3 — Enterprise
 
-| Field | Monthly | Yearly |
-|-------|---------|--------|
-| Amount | `$99.99` | `$959.90` |
-| Billing period | Monthly | Yearly |
+| Field          | Monthly  | Yearly    |
+|----------------|----------|-----------|
+| Amount         | `$99.99` | `$959.90` |
+| Billing period | Monthly  | Yearly    |
 
 ### Step 2.3 — Copy Price IDs
 
-After creating each price, click into it and copy the **price ID** (starts with `price_1...`, **not** the `prod_...` product ID).
+After creating each price, click into it and copy the **price ID** (starts with `price_1...`, **not** the `prod_...`
+product ID).
 
 Record the **6 price IDs** in a temporary list:
 
@@ -181,14 +186,15 @@ Enterprise Yearly:   price_1________________
 
 You will use these cards in [Phase 5](#phase-5--end-to-end-verification).
 
-| Use case | Card number | Behavior |
-|----------|-------------|----------|
-| ✅ Success | `4242 4242 4242 4242` | Normal success |
-| 🔐 3D Secure | `4000 0027 6000 3184` | Triggers authentication popup |
-| ❌ Insufficient funds | `4000 0000 0000 9995` | Declined |
-| ❌ Generic decline | `4000 0000 0000 0002` | Declined |
+| Use case             | Card number           | Behavior                      |
+|----------------------|-----------------------|-------------------------------|
+| ✅ Success            | `4242 4242 4242 4242` | Normal success                |
+| 🔐 3D Secure         | `4000 0027 6000 3184` | Triggers authentication popup |
+| ❌ Insufficient funds | `4000 0000 0000 9995` | Declined                      |
+| ❌ Generic decline    | `4000 0000 0000 0002` | Declined                      |
 
 For all test cards:
+
 - **Expiry:** any future date (e.g. `12/30`)
 - **CVC:** any 3 digits (e.g. `123`)
 - **ZIP:** any 5 digits (e.g. `12345`)
@@ -217,16 +223,16 @@ For all test cards:
 3. Ensure **Sandbox** tab is selected (not Live)
 4. Click **Create App**
 5. Fill in:
-   - **App Name:** ShopPay Demo
-   - **Type:** Merchant
+    - **App Name:** ShopPay Demo
+    - **Type:** Merchant
 6. Click **Create**
 
 **✓ Expected result:** Two credentials displayed:
 
-| Field | Format |
-|-------|--------|
+| Field     | Format                        |
+|-----------|-------------------------------|
 | Client ID | `AaXxXxXxXxXx...` (~80 chars) |
-| Secret | `EbYyYyYyYyYy...` (~80 chars) |
+| Secret    | `EbYyYyYyYyYy...` (~80 chars) |
 
 Click **Show** next to Secret and copy both values to your scratchpad.
 
@@ -238,8 +244,8 @@ PayPal auto-creates 2 default sandbox accounts (1 buyer + 1 facilitator/seller).
 2. Find the **Personal** account (this is your buyer)
 3. Click **⋮ (kebab menu) → View/edit account**
 4. Record:
-   - **Email** (e.g., `sb-xxxxx@personal.example.com`)
-   - **System-generated password**
+    - **Email** (e.g., `sb-xxxxx@personal.example.com`)
+    - **System-generated password**
 
 **✓ Expected result:** You can use this credential to login when PayPal redirects you during testing.
 
@@ -330,6 +336,7 @@ curl -X POST https://api-m.sandbox.paypal.com/v1/billing/plans \
 ```
 
 **Example: Pro Yearly** — replace:
+
 - `"name": "Pro Yearly"`
 - `"interval_unit": "YEAR"`
 - `"value": "287.90"`
@@ -432,7 +439,8 @@ npm run dev
 curl http://localhost:3000/api/plans | head -c 1500
 ```
 
-**✓ Expected result:** Response includes your real `stripe_price_id_monthly` (`price_1...`) and `paypal_plan_id_monthly` (`P-...`) — not the `_demo` placeholder values.
+**✓ Expected result:** Response includes your real `stripe_price_id_monthly` (`price_1...`) and
+`paypal_plan_id_monthly` (`P-...`) — not the `_demo` placeholder values.
 
 ### Phase 4 Sign-off ✅
 
@@ -449,60 +457,60 @@ curl http://localhost:3000/api/plans | head -c 1500
 
 ### Test Scenario 1 — Cart → Stripe (one-time)
 
-| Step | Action | Expected result |
-|------|--------|----------------|
-| 1 | Go to `/products` | Product grid loads with 8 items |
-| 2 | Click **Add to Cart** on any item | Toast: "X added to cart" + cart badge increments |
-| 3 | Click cart icon → goes to `/cart` | Cart shows item + summary |
-| 4 | Click **Pay with Stripe** | Email modal opens |
-| 5 | Enter `test@example.com` → **Continue to Stripe** | Browser redirects to `checkout.stripe.com` |
-| 6 | Card: `4242 4242 4242 4242`, expiry `12/30`, CVC `123`, ZIP `12345` | Form accepts |
-| 7 | Click **Pay** | Redirects to `/checkout/success?gateway=stripe&order_id=X` |
-| 8 | Success page shows confetti + order details | DB updated: order status = `paid` |
+| Step | Action                                                              | Expected result                                            |
+|------|---------------------------------------------------------------------|------------------------------------------------------------|
+| 1    | Go to `/products`                                                   | Product grid loads with 8 items                            |
+| 2    | Click **Add to Cart** on any item                                   | Toast: "X added to cart" + cart badge increments           |
+| 3    | Click cart icon → goes to `/cart`                                   | Cart shows item + summary                                  |
+| 4    | Click **Pay with Stripe**                                           | Email modal opens                                          |
+| 5    | Enter `test@example.com` → **Continue to Stripe**                   | Browser redirects to `checkout.stripe.com`                 |
+| 6    | Card: `4242 4242 4242 4242`, expiry `12/30`, CVC `123`, ZIP `12345` | Form accepts                                               |
+| 7    | Click **Pay**                                                       | Redirects to `/checkout/success?gateway=stripe&order_id=X` |
+| 8    | Success page shows confetti + order details                         | DB updated: order status = `paid`                          |
 
 ### Test Scenario 2 — Cart → PayPal (one-time)
 
-| Step | Action | Expected result |
-|------|--------|----------------|
-| 1 | Add item to cart | Cart updates |
-| 2 | Cart → **Pay with PayPal** → Continue | Redirects to PayPal sandbox login page |
-| 3 | Login with **personal sandbox buyer** credentials | PayPal approval screen shows order detail |
-| 4 | Click **Continue** / **Pay Now** | Redirects back to app |
-| 5 | Success page renders | DB order status = `paid` |
+| Step | Action                                            | Expected result                           |
+|------|---------------------------------------------------|-------------------------------------------|
+| 1    | Add item to cart                                  | Cart updates                              |
+| 2    | Cart → **Pay with PayPal** → Continue             | Redirects to PayPal sandbox login page    |
+| 3    | Login with **personal sandbox buyer** credentials | PayPal approval screen shows order detail |
+| 4    | Click **Continue** / **Pay Now**                  | Redirects back to app                     |
+| 5    | Success page renders                              | DB order status = `paid`                  |
 
 ### Test Scenario 3 — Subscription → Stripe (Monthly)
 
-| Step | Action | Expected result |
-|------|--------|----------------|
-| 1 | Go to `/subscriptions` | 3 plan cards visible, Monthly toggle active |
-| 2 | Click **Subscribe via Stripe** on **Pro** | Modal: "Subscribe via Stripe · Pro plan" |
-| 3 | Enter email → **Confirm & Subscribe** | Redirects to Stripe Checkout (subscription mode) |
-| 4 | Card: `4242 4242 4242 4242`, etc. | Form accepts |
-| 5 | Click **Subscribe** | Redirects to `/subscription/success?gateway=stripe&interval=monthly` |
-| 6 | Page shows Active plan + next billing in 1 month | ✓ |
+| Step | Action                                           | Expected result                                                      |
+|------|--------------------------------------------------|----------------------------------------------------------------------|
+| 1    | Go to `/subscriptions`                           | 3 plan cards visible, Monthly toggle active                          |
+| 2    | Click **Subscribe via Stripe** on **Pro**        | Modal: "Subscribe via Stripe · Pro plan"                             |
+| 3    | Enter email → **Confirm & Subscribe**            | Redirects to Stripe Checkout (subscription mode)                     |
+| 4    | Card: `4242 4242 4242 4242`, etc.                | Form accepts                                                         |
+| 5    | Click **Subscribe**                              | Redirects to `/subscription/success?gateway=stripe&interval=monthly` |
+| 6    | Page shows Active plan + next billing in 1 month | ✓                                                                    |
 
 ### Test Scenario 4 — Subscription → Stripe (Yearly)
 
-| Step | Action | Expected result |
-|------|--------|----------------|
-| 1 | Subscriptions page → toggle to **Yearly** | Prices update to yearly amounts, "Save 20%" badge visible |
-| 2 | Subscribe via Stripe on Pro | Modal shows yearly price ($287.90) |
-| 3 | Complete checkout | Success page shows interval=yearly, next billing in 1 year |
+| Step | Action                                    | Expected result                                            |
+|------|-------------------------------------------|------------------------------------------------------------|
+| 1    | Subscriptions page → toggle to **Yearly** | Prices update to yearly amounts, "Save 20%" badge visible  |
+| 2    | Subscribe via Stripe on Pro               | Modal shows yearly price ($287.90)                         |
+| 3    | Complete checkout                         | Success page shows interval=yearly, next billing in 1 year |
 
 ### Test Scenario 5 — Subscription → PayPal
 
-| Step | Action | Expected result |
-|------|--------|----------------|
-| 1 | Subscriptions → Subscribe via PayPal | Email modal |
-| 2 | Continue → redirects to PayPal sandbox | Subscription approval screen |
-| 3 | Login with buyer sandbox → **Subscribe** | Redirects to `/subscription/success?gateway=paypal` |
+| Step | Action                                   | Expected result                                     |
+|------|------------------------------------------|-----------------------------------------------------|
+| 1    | Subscriptions → Subscribe via PayPal     | Email modal                                         |
+| 2    | Continue → redirects to PayPal sandbox   | Subscription approval screen                        |
+| 3    | Login with buyer sandbox → **Subscribe** | Redirects to `/subscription/success?gateway=paypal` |
 
 ### Test Scenario 6 — Cancel/Decline path
 
-| Step | Action | Expected result |
-|------|--------|----------------|
-| 1 | At Stripe Checkout, click back/cancel | Redirects to `/checkout/cancel` with warn UI |
-| 2 | Try Stripe with declined card `4000 0000 0000 0002` | Stripe shows decline error; user can retry |
+| Step | Action                                              | Expected result                              |
+|------|-----------------------------------------------------|----------------------------------------------|
+| 1    | At Stripe Checkout, click back/cancel               | Redirects to `/checkout/cancel` with warn UI |
+| 2    | Try Stripe with declined card `4000 0000 0000 0002` | Stripe shows decline error; user can retry   |
 
 ### Phase 5 Sign-off ✅
 
@@ -518,7 +526,8 @@ curl http://localhost:3000/api/plans | head -c 1500
 
 > **Goal:** Receive real-time payment confirmation events from Stripe and PayPal.
 > **Estimated time:** 10 minutes
-> **When to do this:** Required for production. Optional for local demo since `/api/orders/mark-paid` is called by the demo simulator.
+> **When to do this:** Required for production. Optional for local demo since `/api/orders/mark-paid` is called by the
+> demo simulator.
 
 ### Step 6.1 — Stripe Webhooks (local development)
 
@@ -588,9 +597,9 @@ Forwarding https://xxxx-xx-xx-xx-xx.ngrok-free.app -> http://localhost:3000
 2. Scroll to **Webhooks** → **Add Webhook**
 3. **Webhook URL:** `https://xxxx-xx-xx-xx-xx.ngrok-free.app/api/paypal/webhook`
 4. **Event types** (select these):
-   - `PAYMENT.CAPTURE.COMPLETED`
-   - `BILLING.SUBSCRIPTION.ACTIVATED`
-   - `BILLING.SUBSCRIPTION.CANCELLED`
+    - `PAYMENT.CAPTURE.COMPLETED`
+    - `BILLING.SUBSCRIPTION.ACTIVATED`
+    - `BILLING.SUBSCRIPTION.CANCELLED`
 5. Save → copy **Webhook ID** → paste into `PAYPAL_WEBHOOK_ID` in `.env` → restart Nuxt.
 
 ### Phase 6 Sign-off ✅
@@ -605,40 +614,43 @@ Forwarding https://xxxx-xx-xx-xx-xx.ngrok-free.app -> http://localhost:3000
 
 ## Appendix A — Troubleshooting Matrix
 
-| Symptom | Likely cause | Fix |
-|---------|-------------|-----|
-| `"No such price: 'price_xxx_demo'"` | Using demo placeholder | Replace with real `price_1Xxx...` in `.env`, restart |
-| `"Resource not found"` (PayPal) | Empty/invalid plan ID | Verify with `GET /v1/billing/plans/<id>` |
-| `"AUTHENTICATION_FAILURE"` (PayPal) | Wrong client secret or wrong mode | Confirm `PAYPAL_MODE=sandbox` matches the credentials |
-| `"Invalid API Key provided"` (Stripe) | Wrong key or live/test mix-up | Confirm key starts with `sk_test_` in test mode |
-| Webhook not received | Tunnel disconnected or wrong URL | Restart `stripe listen` / `ngrok`, verify env secret |
-| Stripe Checkout shows declined | Used decline test card | Use `4242 4242 4242 4242` for success |
-| `Failed to resolve component: n-button` | Plugin not loaded | Restart dev server; plugin at `plugins/naive-ui.ts` |
-| Cancel redirect loop | Browser back-button after cancel | Clear URL or navigate fresh to `/products` |
-| Subscription redirects but DB has no record | Webhook not configured | Set up Phase 6, or rely on demo `mark-paid` flow |
+| Symptom                                     | Likely cause                      | Fix                                                   |
+|---------------------------------------------|-----------------------------------|-------------------------------------------------------|
+| `"No such price: 'price_xxx_demo'"`         | Using demo placeholder            | Replace with real `price_1Xxx...` in `.env`, restart  |
+| `"Resource not found"` (PayPal)             | Empty/invalid plan ID             | Verify with `GET /v1/billing/plans/<id>`              |
+| `"AUTHENTICATION_FAILURE"` (PayPal)         | Wrong client secret or wrong mode | Confirm `PAYPAL_MODE=sandbox` matches the credentials |
+| `"Invalid API Key provided"` (Stripe)       | Wrong key or live/test mix-up     | Confirm key starts with `sk_test_` in test mode       |
+| Webhook not received                        | Tunnel disconnected or wrong URL  | Restart `stripe listen` / `ngrok`, verify env secret  |
+| Stripe Checkout shows declined              | Used decline test card            | Use `4242 4242 4242 4242` for success                 |
+| `Failed to resolve component: n-button`     | Plugin not loaded                 | Restart dev server; plugin at `plugins/naive-ui.ts`   |
+| Cancel redirect loop                        | Browser back-button after cancel  | Clear URL or navigate fresh to `/products`            |
+| Subscription redirects but DB has no record | Webhook not configured            | Set up Phase 6, or rely on demo `mark-paid` flow      |
 
 ---
 
 ## Appendix B — Demo Mode Fallback
 
-When `.env` is incomplete or contains demo placeholders, the app **automatically falls back** to a built-in gateway simulator at `/demo/gateway`. This ensures the UI demo never breaks during a presentation.
+When `.env` is incomplete or contains demo placeholders, the app **automatically falls back** to a built-in gateway
+simulator at `/demo/gateway`. This ensures the UI demo never breaks during a presentation.
 
-| Condition | Fallback behavior |
-|-----------|-------------------|
-| `STRIPE_SECRET_KEY` missing or doesn't start with `sk_` | Redirect to demo gateway as Stripe |
-| Stripe price ID contains `_demo` | Redirect to demo gateway |
-| Stripe API rejects (invalid price, etc.) | Redirect to demo gateway + `&fallback=1` flag |
-| `NUXT_PUBLIC_PAYPAL_CLIENT_ID` or `PAYPAL_CLIENT_SECRET` contains `xxxxx` | Redirect to demo gateway as PayPal |
-| PayPal plan ID contains `DEMO` | Redirect to demo gateway |
+| Condition                                                                 | Fallback behavior                             |
+|---------------------------------------------------------------------------|-----------------------------------------------|
+| `STRIPE_SECRET_KEY` missing or doesn't start with `sk_`                   | Redirect to demo gateway as Stripe            |
+| Stripe price ID contains `_demo`                                          | Redirect to demo gateway                      |
+| Stripe API rejects (invalid price, etc.)                                  | Redirect to demo gateway + `&fallback=1` flag |
+| `NUXT_PUBLIC_PAYPAL_CLIENT_ID` or `PAYPAL_CLIENT_SECRET` contains `xxxxx` | Redirect to demo gateway as PayPal            |
+| PayPal plan ID contains `DEMO`                                            | Redirect to demo gateway                      |
 
 The simulator:
+
 - Shows a realistic Stripe/PayPal-branded checkout screen
 - Runs a 4-step animation (Authenticating → Authorizing → Confirming → Finalizing)
 - Marks the order as `paid` in the database via `/api/orders/mark-paid`
 - Redirects to the appropriate success page with all query params preserved
 
 > [!CAUTION]
-> Before going live to production, ensure **no** plan or price IDs contain `_demo` / `DEMO` strings, otherwise legitimate transactions would silently fall back to the simulator.
+> Before going live to production, ensure **no** plan or price IDs contain `_demo` / `DEMO` strings, otherwise
+> legitimate transactions would silently fall back to the simulator.
 
 ---
 
@@ -647,12 +659,14 @@ The simulator:
 Before promoting from sandbox to production:
 
 ### Credentials
+
 - [ ] Replace `sk_test_...` with **live** `sk_live_...` (Stripe)
 - [ ] Replace `pk_test_...` with **live** `pk_live_...` (Stripe)
 - [ ] Replace sandbox client ID/secret with **live** ones (PayPal)
 - [ ] Set `PAYPAL_MODE=production`
 
 ### Webhooks
+
 - [ ] Stripe webhook endpoint deployed at `https://yourapp.com/api/stripe/webhook`
 - [ ] Live Stripe webhook secret in env
 - [ ] PayPal webhook registered with live app
@@ -660,12 +674,14 @@ Before promoting from sandbox to production:
 - [ ] Signature verification enabled (already implemented in `webhook.post.ts` handlers)
 
 ### Catalog re-creation
+
 - [ ] Re-create all Stripe Products + Prices in **live** account
 - [ ] Re-create all PayPal Products + Plans in **live** account
 - [ ] Update `.env` with **live** price/plan IDs
 - [ ] Verify **none** of them contain `_demo` or `DEMO` substring
 
 ### Security
+
 - [ ] HTTPS enforced
 - [ ] CSP headers configured
 - [ ] `.env` not in source control
@@ -675,6 +691,7 @@ Before promoting from sandbox to production:
 - [ ] Email receipts enabled (Stripe Dashboard → Settings → Customer emails)
 
 ### Operational
+
 - [ ] Monitoring/alerting on `payment_intent.payment_failed` events
 - [ ] Dashboard for ops to view orders / subscriptions
 - [ ] Customer support workflow for chargebacks
@@ -684,37 +701,37 @@ Before promoting from sandbox to production:
 
 ## Appendix D — Code References
 
-| Layer | File | Purpose |
-|-------|------|---------|
-| Config | `nuxt.config.ts` | Runtime config (env mapping) |
-| Config | `.env.example` | Env template for teammates |
-| API | `server/api/plans.get.ts` | Returns plans + env-overridden IDs |
-| API | `server/api/stripe/create-checkout.post.ts` | Cart → Stripe one-time |
-| API | `server/api/stripe/create-subscription.post.ts` | Plan → Stripe subscription |
-| API | `server/api/stripe/webhook.post.ts` | Stripe event handler |
-| API | `server/api/paypal/create-order.post.ts` | Cart → PayPal one-time |
-| API | `server/api/paypal/create-subscription.post.ts` | Plan → PayPal subscription |
-| API | `server/api/paypal/capture-order.post.ts` | Capture approved PayPal order |
-| API | `server/api/paypal/webhook.post.ts` | PayPal event handler |
-| API | `server/api/orders/mark-paid.post.ts` | Demo-mode: flip order to paid |
-| Util | `server/utils/stripe.ts` | Stripe SDK singleton |
-| Util | `server/utils/paypal.ts` | PayPal OAuth + REST helpers |
-| Util | `server/utils/db.ts` | SQLite schema + seed |
-| UI | `pages/demo/gateway.vue` | Sandbox gateway simulator |
-| UI | `pages/subscriptions.vue` | Plans page with interval toggle |
-| UI | `components/subscription/PricingGrid.vue` | Pricing toggle + grid |
+| Layer  | File                                            | Purpose                            |
+|--------|-------------------------------------------------|------------------------------------|
+| Config | `nuxt.config.ts`                                | Runtime config (env mapping)       |
+| Config | `.env.example`                                  | Env template for teammates         |
+| API    | `server/api/plans.get.ts`                       | Returns plans + env-overridden IDs |
+| API    | `server/api/stripe/create-checkout.post.ts`     | Cart → Stripe one-time             |
+| API    | `server/api/stripe/create-subscription.post.ts` | Plan → Stripe subscription         |
+| API    | `server/api/stripe/webhook.post.ts`             | Stripe event handler               |
+| API    | `server/api/paypal/create-order.post.ts`        | Cart → PayPal one-time             |
+| API    | `server/api/paypal/create-subscription.post.ts` | Plan → PayPal subscription         |
+| API    | `server/api/paypal/capture-order.post.ts`       | Capture approved PayPal order      |
+| API    | `server/api/paypal/webhook.post.ts`             | PayPal event handler               |
+| API    | `server/api/orders/mark-paid.post.ts`           | Demo-mode: flip order to paid      |
+| Util   | `server/utils/stripe.ts`                        | Stripe SDK singleton               |
+| Util   | `server/utils/paypal.ts`                        | PayPal OAuth + REST helpers        |
+| Util   | `server/utils/db.ts`                            | SQLite schema + seed               |
+| UI     | `pages/demo/gateway.vue`                        | Sandbox gateway simulator          |
+| UI     | `pages/subscriptions.vue`                       | Plans page with interval toggle    |
+| UI     | `components/subscription/PricingGrid.vue`       | Pricing toggle + grid              |
 
 ---
 
 ## 📞 Support
 
-| Issue type | Contact |
-|-----------|---------|
-| Webhook signature verification failing | Backend team |
-| Production go-live review | Platform Lead |
-| Tax/VAT configuration (Stripe Tax) | Finance + Backend |
-| Multi-currency setup | Backend team |
-| UI/UX polish | Frontend team |
+| Issue type                             | Contact           |
+|----------------------------------------|-------------------|
+| Webhook signature verification failing | Backend team      |
+| Production go-live review              | Platform Lead     |
+| Tax/VAT configuration (Stripe Tax)     | Finance + Backend |
+| Multi-currency setup                   | Backend team      |
+| UI/UX polish                           | Frontend team     |
 
 ---
 
