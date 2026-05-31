@@ -45,9 +45,10 @@ export default defineNuxtConfig({
     },
   },
 
-  // TailwindCSS: disable preflight to avoid conflict with Naive UI
+  // TailwindCSS: disable preflight (Naive UI conflict) + use class-based dark mode
   tailwindcss: {
     config: {
+      darkMode: 'class',
       corePlugins: {
         preflight: false,
       },

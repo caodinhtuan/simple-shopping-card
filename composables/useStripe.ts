@@ -1,6 +1,6 @@
-import { ref } from 'vue'
-import { loadStripe } from '@stripe/stripe-js'
-import type { Stripe } from '@stripe/stripe-js'
+import {ref} from 'vue'
+import type {Stripe} from '@stripe/stripe-js'
+import {loadStripe} from '@stripe/stripe-js'
 
 export function useStripe() {
   const stripe = ref<Stripe | null>(null)

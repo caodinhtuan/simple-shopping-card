@@ -1,11 +1,11 @@
 <template>
-  <n-config-provider :theme="darkTheme" :theme-overrides="themeOverrides">
+  <n-config-provider :theme="currentNaiveTheme" :theme-overrides="themeOverrides">
     <n-message-provider>
       <n-dialog-provider>
         <n-notification-provider>
           <MessageApi />
           <NuxtLoadingIndicator color="linear-gradient(90deg,#8b5cf6,#06b6d4,#ec4899)" :height="3" />
-          <n-layout class="min-h-screen" style="background: #0a0a1a">
+          <n-layout class="min-h-screen" :style="{ background: layoutBg }">
             <AppHeader />
             <n-layout-content class="min-h-[calc(100vh-140px)]">
               <NuxtPage />
@@ -19,102 +19,116 @@
 </template>
 
 <script setup lang="ts">
+import type {GlobalThemeOverrides} from 'naive-ui'
 import {
   darkTheme,
   NConfigProvider,
-  NMessageProvider,
   NDialogProvider,
-  NNotificationProvider,
   NLayout,
   NLayoutContent,
+  NMessageProvider,
+  NNotificationProvider,
 } from 'naive-ui'
-import type { GlobalThemeOverrides } from 'naive-ui'
-import { useCartStore } from '~/stores/cart'
+import {useCartStore} from '~/stores/cart'
+import {usePreferencesStore} from '~/stores/preferences'
 import AppHeader from '~/components/layout/AppHeader.vue'
 import AppFooter from '~/components/layout/AppFooter.vue'
 import MessageApi from '~/components/MessageApi.vue'
 
-const themeOverrides: GlobalThemeOverrides = {
-  common: {
-    primaryColor: '#8b5cf6',
-    primaryColorHover: '#a78bfa',
-    primaryColorPressed: '#7c3aed',
-    primaryColorSuppl: '#8b5cf6',
-    bodyColor: '#0a0a1a',
-    cardColor: 'rgba(255, 255, 255, 0.04)',
-    modalColor: '#1a1a2e',
-    popoverColor: '#1a1a2e',
-    tableColor: 'rgba(255, 255, 255, 0.02)',
-    inputColor: 'rgba(255, 255, 255, 0.06)',
-    actionColor: 'rgba(255, 255, 255, 0.04)',
-    borderColor: 'rgba(255, 255, 255, 0.08)',
-    dividerColor: 'rgba(255, 255, 255, 0.06)',
-    hoverColor: 'rgba(139, 92, 246, 0.1)',
-    fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-    borderRadius: '12px',
-    borderRadiusSmall: '8px',
-    fontSize: '14px',
-    textColorBase: '#f1f5f9',
-    textColor1: '#f1f5f9',
-    textColor2: '#cbd5e1',
-    textColor3: '#94a3b8',
-  },
-  Card: {
-    color: 'rgba(255, 255, 255, 0.04)',
-    borderColor: 'rgba(255, 255, 255, 0.06)',
-    borderRadius: '16px',
-    titleTextColor: '#f1f5f9',
-    textColor: '#cbd5e1',
-  },
-  Button: {
-    borderRadiusMedium: '10px',
-    borderRadiusLarge: '12px',
-  },
-  Tag: {
-    borderRadius: '8px',
-  },
-  Menu: {
-    itemTextColor: '#94a3b8',
-    itemTextColorHover: '#f1f5f9',
-    itemTextColorActive: '#8b5cf6',
-    itemTextColorActiveHover: '#a78bfa',
-    itemColorActive: 'rgba(139, 92, 246, 0.1)',
-    itemColorActiveHover: 'rgba(139, 92, 246, 0.15)',
-    color: 'transparent',
-  },
-  Input: {
-    color: 'rgba(255, 255, 255, 0.06)',
-    borderColor: 'rgba(255, 255, 255, 0.1)',
-    textColor: '#f1f5f9',
-  },
-  InputNumber: {
-    color: 'rgba(255, 255, 255, 0.06)',
-    borderColor: 'rgba(255, 255, 255, 0.1)',
-    textColor: '#f1f5f9',
-  },
-  Tabs: {
-    tabTextColorLine: '#94a3b8',
-    tabTextColorActiveLine: '#8b5cf6',
-    tabTextColorHoverLine: '#a78bfa',
-    barColor: '#8b5cf6',
-    tabColor: 'transparent',
-  },
-  Result: {
-    titleTextColor: '#f1f5f9',
-    textColor: '#cbd5e1',
-  },
-  Empty: {
-    textColor: '#94a3b8',
-  },
-  Statistic: {
-    labelTextColor: '#94a3b8',
-    valueTextColor: '#f1f5f9',
-  },
-}
-
-// Load cart from localStorage on mount
 const cartStore = useCartStore()
+const prefs = usePreferencesStore()
+
+const currentNaiveTheme = computed(() => (prefs.theme === 'light' ? null : darkTheme))
+const layoutBg = computed(() => (prefs.theme === 'light' ? '#f7f8fb' : '#0a0a1a'))
+
+const themeOverrides = computed<GlobalThemeOverrides>(() => {
+  if (prefs.theme === 'light') {
+    return {
+      common: {
+        primaryColor: '#8b5cf6',
+        primaryColorHover: '#a78bfa',
+        primaryColorPressed: '#7c3aed',
+        primaryColorSuppl: '#8b5cf6',
+        bodyColor: '#f7f8fb',
+        cardColor: '#ffffff',
+        modalColor: '#ffffff',
+        popoverColor: '#ffffff',
+        fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+        borderRadius: '12px',
+      },
+    }
+  }
+  return {
+    common: {
+      primaryColor: '#8b5cf6',
+      primaryColorHover: '#a78bfa',
+      primaryColorPressed: '#7c3aed',
+      primaryColorSuppl: '#8b5cf6',
+      bodyColor: '#0a0a1a',
+      cardColor: 'rgba(255, 255, 255, 0.04)',
+      modalColor: '#1a1a2e',
+      popoverColor: '#1a1a2e',
+      tableColor: 'rgba(255, 255, 255, 0.02)',
+      inputColor: 'rgba(255, 255, 255, 0.06)',
+      actionColor: 'rgba(255, 255, 255, 0.04)',
+      borderColor: 'rgba(255, 255, 255, 0.08)',
+      dividerColor: 'rgba(255, 255, 255, 0.06)',
+      hoverColor: 'rgba(139, 92, 246, 0.1)',
+      fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+      borderRadius: '12px',
+      borderRadiusSmall: '8px',
+      fontSize: '14px',
+      textColorBase: '#f1f5f9',
+      textColor1: '#f1f5f9',
+      textColor2: '#cbd5e1',
+      textColor3: '#94a3b8',
+    },
+    Card: {
+      color: 'rgba(255, 255, 255, 0.04)',
+      borderColor: 'rgba(255, 255, 255, 0.06)',
+      borderRadius: '16px',
+      titleTextColor: '#f1f5f9',
+      textColor: '#cbd5e1',
+    },
+    Button: {
+      borderRadiusMedium: '10px',
+      borderRadiusLarge: '12px',
+    },
+    Tag: { borderRadius: '8px' },
+    Menu: {
+      itemTextColor: '#94a3b8',
+      itemTextColorHover: '#f1f5f9',
+      itemTextColorActive: '#8b5cf6',
+      itemTextColorActiveHover: '#a78bfa',
+      itemColorActive: 'rgba(139, 92, 246, 0.1)',
+      itemColorActiveHover: 'rgba(139, 92, 246, 0.15)',
+      color: 'transparent',
+    },
+    Input: {
+      color: 'rgba(255, 255, 255, 0.06)',
+      borderColor: 'rgba(255, 255, 255, 0.1)',
+      textColor: '#f1f5f9',
+    },
+    InputNumber: {
+      color: 'rgba(255, 255, 255, 0.06)',
+      borderColor: 'rgba(255, 255, 255, 0.1)',
+      textColor: '#f1f5f9',
+    },
+    Tabs: {
+      tabTextColorLine: '#94a3b8',
+      tabTextColorActiveLine: '#8b5cf6',
+      tabTextColorHoverLine: '#a78bfa',
+      barColor: '#8b5cf6',
+      tabColor: 'transparent',
+    },
+    Result: { titleTextColor: '#f1f5f9', textColor: '#cbd5e1' },
+    Empty: { textColor: '#94a3b8' },
+    Statistic: { labelTextColor: '#94a3b8', valueTextColor: '#f1f5f9' },
+  }
+})
+
 onMounted(() => {
+  prefs.loadFromStorage()
   cartStore.loadFromStorage()
 })
 </script>

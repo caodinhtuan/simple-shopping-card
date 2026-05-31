@@ -53,7 +53,7 @@ export default defineEventHandler(async (event) => {
         locale: 'en-US',
         shipping_preference: 'NO_SHIPPING',
         user_action: 'SUBSCRIBE_NOW',
-        return_url: `${config.public.baseUrl}/subscription/success?gateway=paypal&interval=${interval}`,
+        return_url: `${config.public.baseUrl}/subscription/success?gateway=paypal&interval=${interval}${planParam}`,
         cancel_url: `${config.public.baseUrl}/subscription/cancel`,
       },
     }

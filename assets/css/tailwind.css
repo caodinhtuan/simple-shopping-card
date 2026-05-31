@@ -550,10 +550,8 @@
   filter: blur(2px);
 }
 
-/* Force transparent Naive UI layout containers (lets background show through) */
-.n-layout {
-  background-color: #0a0a1a !important;
-}
+/* Naive UI layout containers transparent so body bg shows through */
+.n-layout,
 .n-layout-content {
   background-color: transparent !important;
 }

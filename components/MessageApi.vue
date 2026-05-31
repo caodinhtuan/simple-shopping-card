@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import { useMessage, useDialog, useNotification } from 'naive-ui'
+import {useDialog, useMessage, useNotification} from 'naive-ui'
 
 const message = useMessage()
 const dialog = useDialog()

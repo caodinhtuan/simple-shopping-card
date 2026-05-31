@@ -80,7 +80,7 @@
 </template>
 
 <script setup lang="ts">
-import { useCartStore } from '~/stores/cart'
+import {useCartStore} from '~/stores/cart'
 
 useHead({ title: 'Order Completed — ShopPay' })
 
@@ -100,8 +100,11 @@ const customerEmail = ref('')
 const totalAmount = ref(0)
 const orderItems = ref<any[]>([])
 
+const message = useAppMessage()
+
 onMounted(async () => {
   cartStore.clearCart()
+  message.success('Payment completed successfully', { duration: 3500 })
 
   if (orderId.value) {
     try {

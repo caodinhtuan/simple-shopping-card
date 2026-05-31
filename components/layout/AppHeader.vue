@@ -2,7 +2,6 @@
   <header class="sticky top-0 z-50 glass-strong">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between h-16">
-        <!-- Logo -->
         <NuxtLink to="/" class="flex items-center gap-2 group">
           <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-cyan-500 flex items-center justify-center text-white font-bold text-sm transition-transform group-hover:scale-110">
             S
@@ -10,7 +9,6 @@
           <span class="text-xl font-bold gradient-text">ShopPay</span>
         </NuxtLink>
 
-        <!-- Navigation -->
         <nav class="hidden md:flex items-center gap-1">
           <NuxtLink
             v-for="item in navItems"
@@ -27,11 +25,10 @@
           </NuxtLink>
         </nav>
 
-        <!-- Right side: Cart + Mobile menu -->
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-2">
+          <PreferencesMenu />
           <CartBadge />
 
-          <!-- Mobile menu button -->
           <button
             class="btn-reset md:hidden p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition-colors"
             @click="showMobileMenu = !showMobileMenu"
@@ -44,7 +41,6 @@
         </div>
       </div>
 
-      <!-- Mobile Navigation -->
       <Transition name="slide">
         <div v-if="showMobileMenu" class="md:hidden pb-4 border-t border-white/5 mt-2 pt-3">
           <NuxtLink
@@ -69,12 +65,14 @@
 
 <script setup lang="ts">
 import CartBadge from '~/components/layout/CartBadge.vue'
+import PreferencesMenu from '~/components/layout/PreferencesMenu.vue'
 
 const showMobileMenu = ref(false)
+const { t } = useI18n()
 
-const navItems = [
-  { label: 'Home', path: '/' },
-  { label: 'Products', path: '/products' },
-  { label: 'Subscriptions', path: '/subscriptions' },
-]
+const navItems = computed(() => [
+  { label: t('nav.home'), path: '/' },
+  { label: t('nav.products'), path: '/products' },
+  { label: t('nav.subscriptions'), path: '/subscriptions' },
+])
 </script>

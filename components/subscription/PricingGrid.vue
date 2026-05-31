@@ -11,7 +11,7 @@
             : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.03]'"
           @click="isYearly = false"
         >
-          Monthly
+          {{ t('subs.monthly') }}
         </button>
         <button
           type="button"
@@ -21,9 +21,9 @@
             : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.03]'"
           @click="isYearly = true"
         >
-          Yearly
+          {{ t('subs.yearly') }}
           <span class="px-1.5 py-px rounded-full text-[9px] font-extrabold tracking-wider text-white bg-gradient-to-br from-emerald-500 to-emerald-600">
-            −20%
+            {{ t('subs.save') }}
           </span>
         </button>
       </div>
@@ -51,19 +51,19 @@
         <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
         </svg>
-        Cancel anytime
+        {{ t('subs.cancel_anytime') }}
       </div>
       <div class="flex items-center gap-2">
         <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
         </svg>
-        Secure billing via Stripe / PayPal
+        {{ t('subs.secure_billing') }}
       </div>
       <div class="flex items-center gap-2">
         <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18 9 11.25l4.306 4.306a11.95 11.95 0 0 1 5.814-5.518l2.74-1.22m0 0-5.94-2.281m5.94 2.28-2.28 5.941" />
         </svg>
-        Scale up or down anytime
+        {{ t('subs.scale') }}
       </div>
     </div>
   </div>
@@ -89,6 +89,7 @@ defineEmits<{
   subscribe: [payload: { planId: number; gateway: string; interval?: string }]
 }>()
 
+const { t } = useI18n()
 const isYearly = ref(false)
 
 interface EnrichedPlan extends Plan {

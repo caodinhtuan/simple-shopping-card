@@ -52,7 +52,7 @@
 </template>
 
 <script setup lang="ts">
-import type { CartItem } from '~/stores/cart'
+import type {CartItem} from '~/stores/cart'
 
 defineProps<{ item: CartItem }>()
 

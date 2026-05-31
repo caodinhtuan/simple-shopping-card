@@ -36,13 +36,13 @@
       <h3 class="text-base font-semibold text-slate-100 mb-1 group-hover:text-purple-300 transition-colors line-clamp-1">
         {{ product.name }}
       </h3>
-      <p class="text-xs text-slate-500 mb-5 line-clamp-2 leading-relaxed h-8">
+      <p class="text-xs text-slate-500 mb-5 line-clamp-2 leading-relaxed min-h-[2.5rem]">
         {{ product.description }}
       </p>
 
       <div class="flex items-center justify-between gap-3">
         <div>
-          <p class="text-[10px] uppercase tracking-wider text-slate-600 font-semibold">Price</p>
+          <p class="text-[10px] uppercase tracking-wider text-slate-600 font-semibold">{{ t('products.price_label') }}</p>
           <span class="text-xl font-extrabold gradient-text-purple">${{ formatPrice(product.price) }}</span>
         </div>
         <n-button
@@ -65,7 +65,7 @@
               </svg>
             </Transition>
           </template>
-          <span class="text-xs">{{ justAdded ? 'Added' : 'Add to Cart' }}</span>
+          <span class="text-xs">{{ justAdded ? t('products.added') : t('products.add_to_cart') }}</span>
         </n-button>
       </div>
     </div>
@@ -73,7 +73,7 @@
 </template>
 
 <script setup lang="ts">
-import { useCartStore } from '~/stores/cart'
+import {useCartStore} from '~/stores/cart'
 
 interface Product {
   id: number
@@ -86,6 +86,7 @@ interface Product {
 
 const props = defineProps<{ product: Product }>()
 
+const { t } = useI18n()
 const message = useAppMessage()
 const cartStore = useCartStore()
 

@@ -17,22 +17,20 @@
           <span class="absolute inset-0 rounded-full bg-purple-500 animate-ping opacity-75" />
           <span class="relative w-2 h-2 rounded-full bg-purple-400" />
         </span>
-        Vue 3 · Nuxt 3 · Naive UI · TailwindCSS
+        {{ t('home.eyebrow') }}
       </div>
 
       <!-- Headline -->
       <h1 class="text-center text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight max-w-4xl mb-6 animate-in stagger-1">
-        Next-Gen
-        <span class="gradient-text whitespace-nowrap">Payment Integration</span>
+        {{ t('home.title_part1') }}
+        <span class="gradient-text whitespace-nowrap">{{ t('home.title_part2') }}</span>
         <br class="hidden sm:block" />
-        Demo Built for Show
+        {{ t('home.title_part3') }}
       </h1>
 
       <!-- Subhead -->
       <p class="text-center text-lg md:text-xl text-slate-400 leading-relaxed max-w-2xl mb-10 animate-in stagger-2">
-        A production-ready reference implementation for <span class="text-purple-300 font-semibold">Stripe</span>
-        and <span class="text-cyan-300 font-semibold">PayPal</span>. Supports
-        one-time cart checkouts and recurring subscription billing — end-to-end.
+        <span v-html="t('home.subhead', { stripe: '<span class=\'text-purple-300 font-semibold\'>Stripe</span>', paypal: '<span class=\'text-cyan-300 font-semibold\'>PayPal</span>' })" />
       </p>
 
       <!-- CTAs -->
@@ -40,7 +38,7 @@
         <NuxtLink to="/products">
           <n-button type="primary" size="large" class="btn-stripe" :style="{ height: '52px', padding: '0 28px', borderRadius: '12px', fontSize: '15px' }">
             <div class="flex items-center gap-2">
-              Start Shopping
+              {{ t('home.cta_shop') }}
               <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
               </svg>
@@ -49,7 +47,7 @@
         </NuxtLink>
         <NuxtLink to="/subscriptions">
           <n-button size="large" :style="{ height: '52px', padding: '0 28px', borderRadius: '12px', fontSize: '15px' }">
-            View Subscriptions
+            {{ t('home.cta_subs') }}
           </n-button>
         </NuxtLink>
       </div>
@@ -66,14 +64,13 @@
             🛒
           </div>
           <h2 class="text-2xl font-bold text-slate-100 mb-2 group-hover:text-purple-300 transition-colors">
-            One-Time Payments
+            {{ t('home.card1_title') }}
           </h2>
           <p class="text-slate-400 leading-relaxed mb-6 text-sm">
-            Browse 8 curated tech products, build a cart with quantity controls, and complete checkout via Stripe or PayPal.
-            Includes order persistence, webhook handlers, and a polished success flow.
+            {{ t('home.card1_desc') }}
           </p>
           <div class="flex items-center gap-2 text-purple-400 font-semibold text-sm">
-            <span>Enter Shop</span>
+            <span>{{ t('home.card1_cta') }}</span>
             <span class="transition-transform duration-300 group-hover:translate-x-1.5">&rarr;</span>
           </div>
         </NuxtLink>
@@ -88,14 +85,13 @@
             🔄
           </div>
           <h2 class="text-2xl font-bold text-slate-100 mb-2 group-hover:text-cyan-300 transition-colors">
-            Recurring Subscriptions
+            {{ t('home.card2_title') }}
           </h2>
           <p class="text-slate-400 leading-relaxed mb-6 text-sm">
-            Three subscription tiers — Starter, Pro, Enterprise — with monthly/yearly toggle, feature comparison, and full
-            recurring billing flows via Stripe Subscriptions and PayPal Billing.
+            {{ t('home.card2_desc') }}
           </p>
           <div class="flex items-center gap-2 text-cyan-400 font-semibold text-sm">
-            <span>View Pricing</span>
+            <span>{{ t('home.card2_cta') }}</span>
             <span class="transition-transform duration-300 group-hover:translate-x-1.5">&rarr;</span>
           </div>
         </NuxtLink>
@@ -106,19 +102,19 @@
         <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
           <div class="px-1">
             <p class="text-3xl sm:text-4xl font-extrabold gradient-text-purple">2</p>
-            <p class="text-xs text-slate-500 uppercase tracking-wider font-semibold mt-1">Payment Gateways</p>
+            <p class="text-xs text-slate-500 uppercase tracking-wider font-semibold mt-1">{{ t('home.stat_gateways') }}</p>
           </div>
           <div class="px-1 border-l-0 md:border-l border-white/5">
             <p class="text-3xl sm:text-4xl font-extrabold gradient-text-cyan">2</p>
-            <p class="text-xs text-slate-500 uppercase tracking-wider font-semibold mt-1">Billing Modes</p>
+            <p class="text-xs text-slate-500 uppercase tracking-wider font-semibold mt-1">{{ t('home.stat_modes') }}</p>
           </div>
           <div class="px-1 border-l-0 md:border-l border-white/5">
             <p class="text-3xl sm:text-4xl font-extrabold gradient-text-emerald">8</p>
-            <p class="text-xs text-slate-500 uppercase tracking-wider font-semibold mt-1">Tech Products</p>
+            <p class="text-xs text-slate-500 uppercase tracking-wider font-semibold mt-1">{{ t('home.stat_products') }}</p>
           </div>
           <div class="px-1 border-l-0 md:border-l border-white/5">
             <p class="text-3xl sm:text-4xl font-extrabold gradient-text-pink">3</p>
-            <p class="text-xs text-slate-500 uppercase tracking-wider font-semibold mt-1">Pricing Tiers</p>
+            <p class="text-xs text-slate-500 uppercase tracking-wider font-semibold mt-1">{{ t('home.stat_tiers') }}</p>
           </div>
         </div>
       </div>
@@ -126,7 +122,7 @@
       <!-- Tech Stack Strip -->
       <div class="mt-12 animate-in stagger-6 w-full max-w-5xl">
         <p class="text-center text-xs text-slate-600 uppercase tracking-wider font-semibold mb-4">
-          Built with the modern stack
+          {{ t('home.stack_label') }}
         </p>
         <div class="flex flex-wrap items-center justify-center gap-3">
           <span
@@ -143,6 +139,8 @@
 </template>
 
 <script setup lang="ts">
+const { t } = useI18n()
+
 useHead({
   title: 'ShopPay — Payment Integration Demo',
   meta: [

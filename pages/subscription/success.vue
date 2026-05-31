@@ -113,7 +113,12 @@ const displayPrice = computed(() => {
     : (plan.value.price_monthly ?? plan.value.price)
 })
 
+const message = useAppMessage()
+
 onMounted(async () => {
+  message.success('Subscription activated successfully', { duration: 3500 })
+
+
   if (planId.value) {
     try {
       const res = await $fetch<any>('/api/plans')

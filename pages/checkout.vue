@@ -180,7 +180,7 @@
 </template>
 
 <script setup lang="ts">
-import { useCartStore } from '~/stores/cart'
+import {useCartStore} from '~/stores/cart'
 
 useHead({ title: 'Checkout — ShopPay' })
 
@@ -254,7 +254,10 @@ async function proceed() {
 
     if (res?.demoMode) {
       message.info('Demo mode — simulating gateway flow', { duration: 1800 })
+    } else {
+      message.loading(`Redirecting to ${selectedGateway.value === 'stripe' ? 'Stripe' : 'PayPal'}…`, { duration: 0 })
     }
+    await new Promise((r) => setTimeout(r, 300))
     window.location.href = redirect
   } catch (err: any) {
     isProcessing.value = false

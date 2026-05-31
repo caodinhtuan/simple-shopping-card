@@ -188,7 +188,7 @@
 </template>
 
 <script setup lang="ts">
-import { useCartStore } from '~/stores/cart'
+import {useCartStore} from '~/stores/cart'
 
 definePageMeta({ layout: false })
 

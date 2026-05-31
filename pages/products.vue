@@ -3,10 +3,10 @@
     <!-- Page Header -->
     <div class="text-center mb-10 animate-in stagger-1">
       <h1 class="section-title text-3xl sm:text-4xl mb-3">
-        <span class="gradient-text">Curated Tech Store</span>
+        <span class="gradient-text">{{ t('products.title') }}</span>
       </h1>
       <p class="text-slate-400 text-base sm:text-lg max-w-xl mx-auto">
-        Browse our premium tech collection — add items to your cart and check out via Stripe or PayPal.
+        {{ t('products.subtitle') }}
       </p>
     </div>
 
@@ -16,7 +16,7 @@
         <div class="flex-1">
           <n-input
             v-model:value="searchQuery"
-            placeholder="Search products..."
+            :placeholder="t('products.search_placeholder')"
             size="large"
             clearable
           >
@@ -36,7 +36,7 @@
               : 'bg-white/[0.03] border-white/[0.06] text-slate-400 hover:bg-white/[0.06] hover:text-slate-200 hover:border-white/[0.12]'"
             @click="selectedCategory = ''"
           >
-            All
+            {{ t('products.filter_all') }}
           </button>
           <button
             v-for="cat in categories"
@@ -53,7 +53,7 @@
       </div>
 
       <p v-if="filteredProducts.length !== products.length" class="text-xs text-slate-500 mt-3">
-        Showing {{ filteredProducts.length }} of {{ products.length }} products
+        {{ t('products.showing', { n: filteredProducts.length, total: products.length }) }}
       </p>
     </div>
 
@@ -66,11 +66,11 @@
     <div v-else-if="error" class="flex items-center justify-center py-20">
       <n-result
         status="error"
-        title="Failed to load products"
-        :description="error.message || 'Something went wrong'"
+        :title="t('products.error_title')"
+        :description="error.message || ''"
       >
         <template #footer>
-          <n-button type="primary" @click="refresh()">Try Again</n-button>
+          <n-button type="primary" @click="refresh()">{{ t('products.try_again') }}</n-button>
         </template>
       </n-result>
     </div>
@@ -79,9 +79,9 @@
     <div v-else-if="filteredProducts.length === 0" class="flex items-center justify-center py-20 animate-in">
       <div class="text-center">
         <div class="text-5xl mb-4">🔍</div>
-        <h3 class="text-lg font-semibold text-slate-200 mb-1">No products match your filter</h3>
-        <p class="text-sm text-slate-500 mb-4">Try a different search term or category</p>
-        <n-button size="small" @click="clearFilters">Clear filters</n-button>
+        <h3 class="text-lg font-semibold text-slate-200 mb-1">{{ t('products.empty_title') }}</h3>
+        <p class="text-sm text-slate-500 mb-4">{{ t('products.empty_desc') }}</p>
+        <n-button size="small" @click="clearFilters">{{ t('products.empty_action') }}</n-button>
       </div>
     </div>
 
@@ -95,6 +95,7 @@
 <script setup lang="ts">
 import ProductGrid from '~/components/products/ProductGrid.vue'
 
+const { t } = useI18n()
 useHead({ title: 'Products — ShopPay' })
 
 const searchQuery = ref('')

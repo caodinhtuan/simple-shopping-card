@@ -1,6 +1,6 @@
-import { setup } from '@css-render/vue3-ssr'
+import {setup} from '@css-render/vue3-ssr'
 import * as naive from 'naive-ui'
-import { defineNuxtPlugin } from '#app'
+import {defineNuxtPlugin} from '#app'
 
 /**
  * Nuxt plugin that:

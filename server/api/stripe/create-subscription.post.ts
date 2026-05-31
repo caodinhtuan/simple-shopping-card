@@ -54,7 +54,7 @@ export default defineEventHandler(async (event) => {
         plan_id: body.planId ? String(body.planId) : '',
         interval,
       },
-      success_url: `${config.public.baseUrl}/subscription/success?gateway=stripe&interval=${interval}&session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `${config.public.baseUrl}/subscription/success?gateway=stripe&interval=${interval}${planParam}&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${config.public.baseUrl}/subscription/cancel`,
     })
 

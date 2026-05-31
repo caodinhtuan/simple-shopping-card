@@ -4,20 +4,20 @@
     <div class="mb-10 text-center animate-in">
       <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-cyan-500/20 bg-cyan-500/10 text-cyan-300 text-xs font-semibold uppercase tracking-wider mb-5">
         <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
-        Recurring Billing
+        {{ t('subs.eyebrow') }}
       </div>
       <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight mb-3">
-        Flexible <span class="gradient-text-cyan">Subscription Plans</span>
+        {{ t('subs.title_part1') }} <span class="gradient-text-cyan">{{ t('subs.title_part2') }}</span>
       </h1>
       <p class="text-slate-400 max-w-2xl mx-auto text-base md:text-lg">
-        Choose a billing tier that matches your team. Scale up or down at any time — full Stripe & PayPal recurring billing integrated.
+        {{ t('subs.subtitle') }}
       </p>
     </div>
 
     <!-- Loading State -->
     <div v-if="pending" class="flex flex-col items-center justify-center py-32 animate-in">
       <n-spin size="large" stroke="#06b6d4" />
-      <span class="text-slate-400 mt-4 font-semibold text-sm">Loading pricing plans...</span>
+      <span class="text-slate-400 mt-4 font-semibold text-sm">{{ t('subs.loading') }}</span>
     </div>
 
     <!-- Error State -->
@@ -25,10 +25,10 @@
       <div class="w-16 h-16 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-500 text-2xl mb-4">
         ⚠️
       </div>
-      <h3 class="text-lg font-semibold text-slate-200 mb-1">Failed to load plans</h3>
-      <p class="text-sm text-slate-500 mb-6 max-w-md text-center">{{ error.message || 'Something went wrong while fetching plans.' }}</p>
+      <h3 class="text-lg font-semibold text-slate-200 mb-1">{{ t('subs.error_title') }}</h3>
+      <p class="text-sm text-slate-500 mb-6 max-w-md text-center">{{ error.message || '' }}</p>
       <n-button type="primary" secondary @click="refresh">
-        Try Again
+        {{ t('products.try_again') }}
       </n-button>
     </div>
 
@@ -61,9 +61,9 @@
           </div>
           <div>
             <p class="text-sm font-bold text-slate-100">
-              Subscribe via {{ selectedGateway === 'stripe' ? 'Stripe' : 'PayPal' }}
+              {{ t('subs.modal_title', { gateway: selectedGateway === 'stripe' ? 'Stripe' : 'PayPal' }) }}
             </p>
-            <p class="text-xs text-slate-500">{{ selectedPlan?.name }} plan</p>
+            <p class="text-xs text-slate-500">{{ t('subs.modal_plan', { name: selectedPlan?.name || '' }) }}</p>
           </div>
         </div>
       </template>
@@ -72,8 +72,8 @@
         <!-- Plan summary -->
         <div class="p-4 rounded-xl bg-gradient-to-br from-purple-500/10 to-cyan-500/5 border border-white/5">
           <div class="flex items-center justify-between mb-1">
-            <span class="text-xs text-slate-500 uppercase tracking-wider font-semibold">Selected Plan</span>
-            <span class="text-xs text-slate-400 capitalize">{{ selectedInterval }} billing</span>
+            <span class="text-xs text-slate-500 uppercase tracking-wider font-semibold">{{ t('subs.selected_plan') }}</span>
+            <span class="text-xs text-slate-400">{{ selectedInterval === 'yearly' ? t('subs.billing_yearly') : t('subs.billing_monthly') }}</span>
           </div>
           <div class="flex items-baseline justify-between">
             <span class="text-lg font-bold text-slate-100">{{ selectedPlan?.name }}</span>
@@ -83,12 +83,12 @@
             </span>
           </div>
           <p v-if="selectedInterval === 'yearly'" class="text-[10px] text-emerald-400 mt-2 font-semibold">
-            ✓ Save 20% with annual billing
+            {{ t('subs.yearly_save') }}
           </p>
         </div>
 
         <div>
-          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Your Email</label>
+          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">{{ t('subs.your_email') }}</label>
           <n-input
             v-model:value="customerEmail"
             type="text"
@@ -100,7 +100,7 @@
         </div>
 
         <div class="flex items-center gap-3 pt-2 justify-end">
-          <n-button :disabled="isSubmitting" @click="showEmailModal = false">Cancel</n-button>
+          <n-button :disabled="isSubmitting" @click="showEmailModal = false">{{ t('common.cancel') }}</n-button>
           <n-button
             type="primary"
             :class="selectedGateway === 'stripe' ? 'btn-stripe' : 'btn-paypal'"
@@ -108,7 +108,7 @@
             :loading="isSubmitting"
             @click="processSubscription"
           >
-            Confirm &amp; Subscribe
+            {{ t('subs.confirm_pay') }}
           </n-button>
         </div>
       </div>
@@ -118,6 +118,8 @@
 
 <script setup lang="ts">
 import PricingGrid from "~/components/subscription/PricingGrid.vue";
+
+const { t } = useI18n()
 
 // Page configuration
 useHead({
