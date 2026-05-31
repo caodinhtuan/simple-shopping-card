@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-wrap items-center gap-4 p-4 rounded-2xl bg-white/[0.03] backdrop-blur-xl border border-white/[0.05] transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] hover:bg-white/[0.05] hover:border-purple-500/20 hover:shadow-[0_8px_24px_rgba(0,0,0,0.2)]">
+  <div class="flex flex-wrap items-center gap-4 p-4 rounded-2xl border transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] bg-white border-[#e0e0e6] shadow-sm hover:border-purple-300 hover:shadow-md dark:bg-white/[0.03] dark:border-white/[0.05] dark:backdrop-blur-xl dark:shadow-none dark:hover:bg-white/[0.05] dark:hover:border-purple-500/20 dark:hover:shadow-[0_8px_24px_rgba(0,0,0,0.2)]">
     <!-- Image / gradient -->
     <div
       class="w-16 h-16 sm:w-[72px] sm:h-[72px] rounded-2xl flex items-center justify-center shrink-0 shadow-[0_4px_16px_rgba(0,0,0,0.3)]"

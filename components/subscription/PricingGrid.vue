@@ -2,13 +2,13 @@
   <div>
     <!-- Billing toggle pill -->
     <div class="flex items-center justify-center mb-12">
-      <div class="relative inline-flex items-center gap-1 p-1 rounded-2xl bg-white/[0.04] border border-white/[0.08] backdrop-blur-md box-border">
+      <div class="relative inline-flex items-center gap-1 p-1 rounded-2xl bg-slate-100 dark:bg-white/[0.04] border border-slate-300 dark:border-white/[0.08] backdrop-blur-md box-border">
         <button
           type="button"
           class="btn-reset flex-1 min-w-[140px] relative z-[1] px-[22px] py-[10px] rounded-[10px] text-[13px] font-semibold flex items-center justify-center gap-1.5 leading-none whitespace-nowrap transition-[color,background,box-shadow] duration-300 ease-out"
           :class="!isYearly
             ? 'text-slate-100 bg-[linear-gradient(135deg,rgba(139,92,246,0.22),rgba(6,182,212,0.18))] shadow-[inset_0_0_0_1px_rgba(139,92,246,0.35),0_4px_12px_rgba(139,92,246,0.15)]'
-            : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.03]'"
+            : 'text-slate-500 hover:text-slate-800 hover:bg-black/[0.02] dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-white/[0.03]'"
           @click="isYearly = false"
         >
           {{ t('subs.monthly') }}
@@ -18,7 +18,7 @@
           class="btn-reset flex-1 min-w-[140px] relative z-[1] px-[22px] py-[10px] rounded-[10px] text-[13px] font-semibold flex items-center justify-center gap-1.5 leading-none whitespace-nowrap transition-[color,background,box-shadow] duration-300 ease-out"
           :class="isYearly
             ? 'text-slate-100 bg-[linear-gradient(135deg,rgba(139,92,246,0.22),rgba(6,182,212,0.18))] shadow-[inset_0_0_0_1px_rgba(139,92,246,0.35),0_4px_12px_rgba(139,92,246,0.15)]'
-            : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.03]'"
+            : 'text-slate-500 hover:text-slate-800 hover:bg-black/[0.02] dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-white/[0.03]'"
           @click="isYearly = true"
         >
           {{ t('subs.yearly') }}

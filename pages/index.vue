@@ -12,7 +12,7 @@
 
     <div class="container mx-auto px-4 py-16 lg:py-24 flex flex-col items-center justify-center min-h-[calc(100vh-140px)] relative z-10">
       <!-- Eyebrow -->
-      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-purple-500/20 bg-purple-500/10 text-purple-300 text-xs font-semibold uppercase tracking-wider mb-6 animate-in">
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-purple-500/20 bg-purple-500/10 text-purple-600 dark:text-purple-300 text-xs font-semibold uppercase tracking-wider mb-6 animate-in">
         <span class="relative flex w-2 h-2">
           <span class="absolute inset-0 rounded-full bg-purple-500 animate-ping opacity-75" />
           <span class="relative w-2 h-2 rounded-full bg-purple-400" />
@@ -30,7 +30,7 @@
 
       <!-- Subhead -->
       <p class="text-center text-lg md:text-xl text-slate-400 leading-relaxed max-w-2xl mb-10 animate-in stagger-2">
-        <span v-html="t('home.subhead', { stripe: '<span class=\'text-purple-300 font-semibold\'>Stripe</span>', paypal: '<span class=\'text-cyan-300 font-semibold\'>PayPal</span>' })" />
+        <span v-html="t('home.subhead', { stripe: '<span class=\'text-purple-600 dark:text-purple-300 font-semibold\'>Stripe</span>', paypal: '<span class=\'text-cyan-600 dark:text-cyan-300 font-semibold\'>PayPal</span>' })" />
       </p>
 
       <!-- CTAs -->
@@ -56,20 +56,20 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-5xl mb-16 animate-in stagger-4">
         <NuxtLink
           to="/products"
-          class="group relative block overflow-hidden p-7 rounded-[20px] bg-white/[0.03] backdrop-blur-2xl border border-white/[0.06] transition-all duration-[400ms] ease-[cubic-bezier(0.4,0,0.2,1)] hover:bg-white/[0.05] hover:-translate-y-1.5 hover:shadow-[0_20px_60px_rgba(0,0,0,0.4),0_0_60px_rgba(139,92,246,0.1)] before:content-[''] before:absolute before:inset-0 before:rounded-[inherit] before:p-px before:bg-[linear-gradient(135deg,transparent,rgba(139,92,246,0.4),transparent)] before:opacity-0 before:transition-opacity before:duration-[400ms] hover:before:opacity-100 before:[-webkit-mask:linear-gradient(#fff_0_0)_content-box,linear-gradient(#fff_0_0)] before:[mask-composite:exclude] before:[-webkit-mask-composite:xor]"
+          class="group relative block overflow-hidden p-7 rounded-[20px] border transition-all duration-[400ms] ease-[cubic-bezier(0.4,0,0.2,1)] bg-white border-[#e0e0e6] shadow-sm hover:-translate-y-1.5 hover:shadow-xl hover:border-purple-300 dark:bg-white/[0.03] dark:border-white/[0.06] dark:backdrop-blur-2xl dark:hover:bg-white/[0.05] dark:hover:shadow-[0_20px_60px_rgba(0,0,0,0.4),0_0_60px_rgba(139,92,246,0.1)]"
         >
           <div
             class="w-14 h-14 rounded-2xl flex items-center justify-center text-[28px] mb-5 transition-transform duration-[400ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:scale-110 group-hover:-rotate-6 bg-[linear-gradient(135deg,#8b5cf6,#6d28d9)] shadow-[0_8px_24px_rgba(139,92,246,0.3)]"
           >
             🛒
           </div>
-          <h2 class="text-2xl font-bold text-slate-100 mb-2 group-hover:text-purple-300 transition-colors">
+          <h2 class="text-2xl font-bold text-slate-100 mb-2 group-hover:text-purple-600 dark:group-hover:text-purple-300 transition-colors">
             {{ t('home.card1_title') }}
           </h2>
           <p class="text-slate-400 leading-relaxed mb-6 text-sm">
             {{ t('home.card1_desc') }}
           </p>
-          <div class="flex items-center gap-2 text-purple-400 font-semibold text-sm">
+          <div class="flex items-center gap-2 text-purple-600 dark:text-purple-400 font-semibold text-sm">
             <span>{{ t('home.card1_cta') }}</span>
             <span class="transition-transform duration-300 group-hover:translate-x-1.5">&rarr;</span>
           </div>
@@ -77,20 +77,20 @@
 
         <NuxtLink
           to="/subscriptions"
-          class="group relative block overflow-hidden p-7 rounded-[20px] bg-white/[0.03] backdrop-blur-2xl border border-white/[0.06] transition-all duration-[400ms] ease-[cubic-bezier(0.4,0,0.2,1)] hover:bg-white/[0.05] hover:-translate-y-1.5 hover:shadow-[0_20px_60px_rgba(0,0,0,0.4),0_0_60px_rgba(6,182,212,0.1)] before:content-[''] before:absolute before:inset-0 before:rounded-[inherit] before:p-px before:bg-[linear-gradient(135deg,transparent,rgba(6,182,212,0.4),transparent)] before:opacity-0 before:transition-opacity before:duration-[400ms] hover:before:opacity-100 before:[-webkit-mask:linear-gradient(#fff_0_0)_content-box,linear-gradient(#fff_0_0)] before:[mask-composite:exclude] before:[-webkit-mask-composite:xor]"
+          class="group relative block overflow-hidden p-7 rounded-[20px] border transition-all duration-[400ms] ease-[cubic-bezier(0.4,0,0.2,1)] bg-white border-[#e0e0e6] shadow-sm hover:-translate-y-1.5 hover:shadow-xl hover:border-cyan-300 dark:bg-white/[0.03] dark:border-white/[0.06] dark:backdrop-blur-2xl dark:hover:bg-white/[0.05] dark:hover:shadow-[0_20px_60px_rgba(0,0,0,0.4),0_0_60px_rgba(6,182,212,0.1)]"
         >
           <div
             class="w-14 h-14 rounded-2xl flex items-center justify-center text-[28px] mb-5 transition-transform duration-[400ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:scale-110 group-hover:-rotate-6 bg-[linear-gradient(135deg,#06b6d4,#0e7490)] shadow-[0_8px_24px_rgba(6,182,212,0.3)]"
           >
             🔄
           </div>
-          <h2 class="text-2xl font-bold text-slate-100 mb-2 group-hover:text-cyan-300 transition-colors">
+          <h2 class="text-2xl font-bold text-slate-100 mb-2 group-hover:text-cyan-600 dark:group-hover:text-cyan-300 transition-colors">
             {{ t('home.card2_title') }}
           </h2>
           <p class="text-slate-400 leading-relaxed mb-6 text-sm">
             {{ t('home.card2_desc') }}
           </p>
-          <div class="flex items-center gap-2 text-cyan-400 font-semibold text-sm">
+          <div class="flex items-center gap-2 text-cyan-600 dark:text-cyan-400 font-semibold text-sm">
             <span>{{ t('home.card2_cta') }}</span>
             <span class="transition-transform duration-300 group-hover:translate-x-1.5">&rarr;</span>
           </div>
@@ -139,6 +139,8 @@
 </template>
 
 <script setup lang="ts">
+import { NButton } from 'naive-ui'
+
 const { t } = useI18n()
 
 useHead({

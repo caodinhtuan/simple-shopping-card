@@ -80,5 +80,5 @@ export async function paypalRequest<T = any>(
     return {} as T
   }
 
-  return response.json() as Promise<T>
+  return await response.json() as Promise<T>
 }

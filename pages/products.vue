@@ -32,7 +32,7 @@
           <button
             class="btn-reset px-3.5 py-2 rounded-[10px] text-[13px] font-medium whitespace-nowrap border transition-all duration-200 ease-[cubic-bezier(0.4,0,0.2,1)]"
             :class="selectedCategory === ''
-              ? 'bg-purple-500/15 border-purple-500/40 text-purple-200 shadow-[0_0_0_3px_rgba(139,92,246,0.08)]'
+              ? 'bg-purple-500/15 border-purple-500/40 text-purple-600 dark:text-purple-200 shadow-[0_0_0_3px_rgba(139,92,246,0.08)]'
               : 'bg-white/[0.03] border-white/[0.06] text-slate-400 hover:bg-white/[0.06] hover:text-slate-200 hover:border-white/[0.12]'"
             @click="selectedCategory = ''"
           >
@@ -43,7 +43,7 @@
             :key="cat"
             class="btn-reset px-3.5 py-2 rounded-[10px] text-[13px] font-medium whitespace-nowrap border transition-all duration-200 ease-[cubic-bezier(0.4,0,0.2,1)]"
             :class="selectedCategory === cat
-              ? 'bg-purple-500/15 border-purple-500/40 text-purple-200 shadow-[0_0_0_3px_rgba(139,92,246,0.08)]'
+              ? 'bg-purple-500/15 border-purple-500/40 text-purple-600 dark:text-purple-200 shadow-[0_0_0_3px_rgba(139,92,246,0.08)]'
               : 'bg-white/[0.03] border-white/[0.06] text-slate-400 hover:bg-white/[0.06] hover:text-slate-200 hover:border-white/[0.12]'"
             @click="selectedCategory = cat"
           >
@@ -93,6 +93,7 @@
 </template>
 
 <script setup lang="ts">
+import { NButton, NInput, NResult } from 'naive-ui'
 import ProductGrid from '~/components/products/ProductGrid.vue'
 
 const { t } = useI18n()

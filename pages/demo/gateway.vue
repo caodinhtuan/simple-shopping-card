@@ -71,12 +71,12 @@
           :style="{ height: '52px', borderRadius: '12px', fontSize: '15px', fontWeight: '600' }"
           @click="processPayment"
         >
-          <div class="flex items-center justify-center gap-2">
+          <template #icon>
             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
             </svg>
-            Pay ${{ formattedAmount }}
-          </div>
+          </template>
+          Pay ${{ formattedAmount }}
         </n-button>
 
         <button
@@ -270,7 +270,7 @@ async function processPayment() {
 
   await new Promise((r) => setTimeout(r, 400))
   if (isSubscription.value) {
-    router.replace({
+    await router.replace({
       path: '/subscription/success',
       query: {
         gateway: gateway.value,
@@ -280,7 +280,7 @@ async function processPayment() {
       },
     })
   } else {
-    router.replace({
+    await router.replace({
       path: '/checkout/success',
       query: { gateway: gateway.value, order_id: orderId.value, demo: '1' },
     })

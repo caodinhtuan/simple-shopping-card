@@ -73,7 +73,13 @@
       :close-on-esc="!isSubmitting"
       preset="card"
       :bordered="false"
-      :style="{ maxWidth: '460px', width: '95%', background: '#1a1a2e', borderColor: 'rgba(255,255,255,0.08)' }"
+      :style="{
+        maxWidth: '460px',
+        width: '95%',
+        background: isLight ? '#ffffff' : '#1a1a2e',
+        borderColor: isLight ? '#e0e0e6' : 'rgba(255,255,255,0.08)',
+        color: isLight ? '#1f2937' : '#f1f5f9'
+      }"
       title=""
       :show-icon="false"
     >
@@ -135,14 +141,19 @@
 </template>
 
 <script setup lang="ts">
+import { NButton, NEmpty, NInput, NModal } from 'naive-ui'
 import {useCartStore} from '~/stores/cart'
+import CartItem from "~/components/cart/CartItem.vue";
+import CartSummary from "~/components/cart/CartSummary.vue";
 
 useHead({ title: 'Cart — ShopPay' })
 
 const cartStore = useCartStore()
 const message = useAppMessage()
 const dialog = useAppDialog()
+const colorMode = useColorMode()
 
+const isLight = computed(() => colorMode.value === 'light')
 const showEmailModal = ref(false)
 const pendingGateway = ref<'stripe' | 'paypal'>('stripe')
 const customerEmail = ref('')

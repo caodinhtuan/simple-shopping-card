@@ -5,8 +5,16 @@ export default defineNuxtConfig({
 
   modules: [
     '@nuxtjs/tailwindcss',
+    '@nuxtjs/color-mode',
     '@pinia/nuxt',
   ],
+
+  colorMode: {
+    classSuffix: '',          // adds `dark` / `light` class on <html> (not `dark-mode`)
+    preference: 'dark',       // default for new visitors
+    fallback: 'dark',
+    storageKey: 'shoppay-theme',
+  },
 
   // Naive UI SSR setup
   build: {
@@ -45,21 +53,17 @@ export default defineNuxtConfig({
     },
   },
 
-  // TailwindCSS: disable preflight (Naive UI conflict) + use class-based dark mode
+  // TailwindCSS module will pick up `tailwind.config.ts` from project root
+  // (darkMode: 'class', preflight: false — see that file)
   tailwindcss: {
-    config: {
-      darkMode: 'class',
-      corePlugins: {
-        preflight: false,
-      },
-    },
+    configPath: '~/tailwind.config.ts',
   },
 
   app: {
     pageTransition: { name: 'page', mode: 'out-in' },
     layoutTransition: { name: 'page', mode: 'out-in' },
     rootAttrs: {
-      style: 'min-height: 100vh; background: #0a0a1a;',
+      style: 'min-height: 100vh;',
     },
     head: {
       title: 'ShopPay — Payment Integration Demo',
@@ -73,7 +77,7 @@ export default defineNuxtConfig({
       ],
       style: [
         {
-          children: `
+          innerHTML: `
             html,body{margin:0;padding:0;font-family:'Inter',system-ui,sans-serif}
             #__nuxt:empty::before{
               content:'';display:block;position:fixed;inset:0;z-index:9999;
@@ -87,13 +91,6 @@ export default defineNuxtConfig({
             }
             @keyframes nuxt-spin{to{transform:rotate(360deg)}}
           `,
-        },
-      ],
-      script: [
-        {
-          // Apply saved theme before Vue mounts to avoid Flash-Of-Wrong-Theme
-          children: `(function(){try{var t=localStorage.getItem('shoppay-theme');if(t!=='light'){document.documentElement.classList.add('dark');}}catch(e){document.documentElement.classList.add('dark');}})();`,
-          tagPosition: 'head',
         },
       ],
     },

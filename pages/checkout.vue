@@ -91,17 +91,18 @@
           <h3 class="text-lg font-bold text-slate-100 mb-4">Payment Method</h3>
 
           <div class="space-y-3">
-            <button
-              type="button"
-              class="btn-reset w-full flex items-center gap-3 px-4 py-3 rounded-2xl border-[1.5px] transition-all duration-[250ms] ease-[cubic-bezier(0.4,0,0.2,1)]"
+            <div
+              role="button"
+              tabindex="0"
+              class="w-full flex items-center gap-3 px-4 py-3 rounded-2xl border-[1.5px] transition-all duration-[250ms] ease-[cubic-bezier(0.4,0,0.2,1)] cursor-pointer select-none"
               :class="[
                 selectedGateway === 'stripe'
                   ? 'bg-purple-500/[0.08] border-purple-500/50 shadow-[0_0_0_4px_rgba(139,92,246,0.08)]'
                   : 'bg-white/[0.03] border-white/[0.06] hover:bg-white/[0.05] hover:border-purple-500/30',
-                isProcessing && 'opacity-60 cursor-not-allowed'
+                isProcessing && 'opacity-60 cursor-not-allowed pointer-events-none'
               ]"
-              :disabled="isProcessing"
-              @click="selectedGateway = 'stripe'"
+              @click="!isProcessing && (selectedGateway = 'stripe')"
+              @keydown.enter="!isProcessing && (selectedGateway = 'stripe')"
             >
               <div class="w-10 h-10 rounded-xl flex items-center justify-center" :style="{ background: 'linear-gradient(135deg,#8b5cf6,#6d28d9)' }">
                 <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
@@ -116,19 +117,20 @@
                 class="w-[18px] h-[18px] rounded-full border-2 shrink-0 relative transition-all duration-[250ms]"
                 :class="selectedGateway === 'stripe' ? 'border-purple-400 bg-purple-500 after:content-[\'\'] after:absolute after:inset-[3px] after:rounded-full after:bg-white' : 'border-white/20'"
               />
-            </button>
+            </div>
 
-            <button
-              type="button"
-              class="btn-reset w-full flex items-center gap-3 px-4 py-3 rounded-2xl border-[1.5px] transition-all duration-[250ms] ease-[cubic-bezier(0.4,0,0.2,1)]"
+            <div
+              role="button"
+              tabindex="0"
+              class="w-full flex items-center gap-3 px-4 py-3 rounded-2xl border-[1.5px] transition-all duration-[250ms] ease-[cubic-bezier(0.4,0,0.2,1)] cursor-pointer select-none"
               :class="[
                 selectedGateway === 'paypal'
                   ? 'bg-purple-500/[0.08] border-purple-500/50 shadow-[0_0_0_4px_rgba(139,92,246,0.08)]'
                   : 'bg-white/[0.03] border-white/[0.06] hover:bg-white/[0.05] hover:border-purple-500/30',
-                isProcessing && 'opacity-60 cursor-not-allowed'
+                isProcessing && 'opacity-60 cursor-not-allowed pointer-events-none'
               ]"
-              :disabled="isProcessing"
-              @click="selectedGateway = 'paypal'"
+              @click="!isProcessing && (selectedGateway = 'paypal')"
+              @keydown.enter="!isProcessing && (selectedGateway = 'paypal')"
             >
               <div class="w-10 h-10 rounded-xl flex items-center justify-center" :style="{ background: 'linear-gradient(135deg,#0070ba,#003087)' }">
                 <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
@@ -143,7 +145,7 @@
                 class="w-[18px] h-[18px] rounded-full border-2 shrink-0 relative transition-all duration-[250ms]"
                 :class="selectedGateway === 'paypal' ? 'border-purple-400 bg-purple-500 after:content-[\'\'] after:absolute after:inset-[3px] after:rounded-full after:bg-white' : 'border-white/20'"
               />
-            </button>
+            </div>
           </div>
 
           <n-button
@@ -155,12 +157,12 @@
             :style="{ height: '52px', borderRadius: '12px', fontSize: '15px', fontWeight: '600', marginTop: '24px' }"
             @click="proceed"
           >
-            <div class="flex items-center justify-center gap-2">
+            <template #icon>
               <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
               </svg>
-              <span>Pay ${{ formatPrice(Math.round(cartStore.totalPrice * 1.1)) }} with {{ selectedGateway === 'stripe' ? 'Stripe' : 'PayPal' }}</span>
-            </div>
+            </template>
+            Pay ${{ formatPrice(Math.round(cartStore.totalPrice * 1.1)) }} with {{ selectedGateway === 'stripe' ? 'Stripe' : 'PayPal' }}
           </n-button>
 
           <p class="text-center text-xs text-slate-600 mt-4">
@@ -180,6 +182,7 @@
 </template>
 
 <script setup lang="ts">
+import { NButton, NInput, NResult } from 'naive-ui'
 import {useCartStore} from '~/stores/cart'
 
 useHead({ title: 'Checkout — ShopPay' })

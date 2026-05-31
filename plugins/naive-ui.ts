@@ -32,7 +32,7 @@ export default defineNuxtPlugin((nuxtApp) => {
     nuxtApp.ssrContext!.head = nuxtApp.ssrContext!.head || []
     nuxtApp.hooks.hook('app:rendered', () => {
       const cssContent = collect()
-      ;(nuxtApp.ssrContext!.head as any[]).push(cssContent)
+      ;(nuxtApp.ssrContext!.head as any).push(cssContent)
     })
   }
 })

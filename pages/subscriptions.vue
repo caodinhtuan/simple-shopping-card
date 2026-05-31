@@ -2,7 +2,7 @@
   <div class="container mx-auto px-4 py-12 max-w-7xl relative">
     <!-- Page Header -->
     <div class="mb-10 text-center animate-in">
-      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-cyan-500/20 bg-cyan-500/10 text-cyan-300 text-xs font-semibold uppercase tracking-wider mb-5">
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-cyan-500/20 bg-cyan-500/10 text-cyan-600 dark:text-cyan-300 text-xs font-semibold uppercase tracking-wider mb-5">
         <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
         {{ t('subs.eyebrow') }}
       </div>
@@ -27,7 +27,7 @@
       </div>
       <h3 class="text-lg font-semibold text-slate-200 mb-1">{{ t('subs.error_title') }}</h3>
       <p class="text-sm text-slate-500 mb-6 max-w-md text-center">{{ error.message || '' }}</p>
-      <n-button type="primary" secondary @click="refresh">
+      <n-button type="primary" secondary @click="() => refresh()">
         {{ t('products.try_again') }}
       </n-button>
     </div>
@@ -43,7 +43,13 @@
       :mask-closable="!isSubmitting"
       :close-on-esc="!isSubmitting"
       preset="card"
-      :style="{ maxWidth: '480px', width: '95%', background: '#1a1a2e', borderColor: 'rgba(255,255,255,0.08)' }"
+      :style="{
+        maxWidth: '480px',
+        width: '95%',
+        background: isLight ? '#ffffff' : '#1a1a2e',
+        borderColor: isLight ? '#e0e0e6' : 'rgba(255,255,255,0.08)',
+        color: isLight ? '#1f2937' : '#f1f5f9'
+      }"
       :bordered="false"
       :show-icon="false"
       title=""
@@ -117,6 +123,7 @@
 </template>
 
 <script setup lang="ts">
+import { NButton, NInput, NModal, NSpin } from 'naive-ui'
 import PricingGrid from "~/components/subscription/PricingGrid.vue";
 
 const { t } = useI18n()
@@ -130,6 +137,9 @@ useHead({
 })
 
 const message = useAppMessage()
+const colorMode = useColorMode()
+
+const isLight = computed(() => colorMode.value === 'light')
 const showEmailModal = ref(false)
 const customerEmail = ref('')
 const selectedPlan = ref<any | null>(null)
@@ -145,7 +155,7 @@ const { data: plansData, pending, error, refresh } = await useFetch<any>('/api/p
 // Normalize plans features
 const plans = computed(() => {
   if (!plansData.value) return []
-  return plansData.value.map(plan => {
+  return plansData.value.map((plan: any) => {
     let featuresArray: string[] = []
     if (typeof plan.features === 'string') {
       try {
@@ -170,7 +180,7 @@ const isValidEmail = computed(() => {
 
 // Trigger modal with selected plan + interval details
 function initiateSubscriptionFlow(payload: { planId: number; gateway: string; interval?: string }) {
-  const plan = plans.value.find(p => p.id === payload.planId)
+  const plan = plans.value.find((p: any) => p.id === payload.planId)
   if (!plan) return
 
   selectedPlan.value = plan

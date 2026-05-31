@@ -37,17 +37,16 @@ import MessageApi from '~/components/MessageApi.vue'
 
 const cartStore = useCartStore()
 const prefs = usePreferencesStore()
+const colorMode = useColorMode()
 
-const currentNaiveTheme = computed(() => (prefs.theme === 'light' ? null : darkTheme))
-// Light mode: use Naive UI's native body color (#fff).
-// Dark mode: our custom near-black.
-const layoutBg = computed(() => (prefs.theme === 'light' ? '#ffffff' : '#0a0a1a'))
+const isLight = computed(() => colorMode.value === 'light')
+const currentNaiveTheme = computed(() => (isLight.value ? null : darkTheme))
+// Light: subtle grey body so white cards stand out (Naive UI pattern)
+const layoutBg = computed(() => (isLight.value ? '#f8fafc' : '#0a0a1a'))
 
 const themeOverrides = computed<GlobalThemeOverrides | undefined>(() => {
-  // Light mode → return undefined so Naive UI uses its base light theme verbatim.
-  // The only thing we customize is brand primary (purple) which already cascades
-  // through Tailwind's btn-stripe / gradient-text classes, so we leave it out here too.
-  if (prefs.theme === 'light') {
+  // Light → undefined so Naive UI uses its native light theme. Only keep brand primary.
+  if (isLight.value) {
     return {
       common: {
         primaryColor: '#8b5cf6',

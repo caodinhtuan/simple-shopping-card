@@ -138,7 +138,7 @@ function getConfetti(index: number) {
   const duration = 4 + Math.random() * 4
   const scale = 0.5 + Math.random() * 0.8
   return {
-    position: 'absolute',
+    position: 'absolute' as const,
     backgroundColor: c,
     left: `${left}%`,
     top: '-20px',

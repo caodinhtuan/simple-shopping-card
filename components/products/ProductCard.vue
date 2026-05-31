@@ -1,5 +1,5 @@
 <template>
-  <div class="group relative overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.04] backdrop-blur-2xl shadow-[0_4px_16px_rgba(0,0,0,0.15)] cursor-pointer transition-all duration-[400ms] ease-[cubic-bezier(0.4,0,0.2,1)] hover:-translate-y-1 hover:border-purple-500/25 hover:shadow-[0_16px_48px_rgba(0,0,0,0.35),0_0_60px_rgba(139,92,246,0.1)]">
+  <div class="group relative overflow-hidden rounded-2xl border cursor-pointer transition-all duration-[400ms] ease-[cubic-bezier(0.4,0,0.2,1)] bg-white border-[#e0e0e6] shadow-sm hover:-translate-y-1 hover:border-purple-300 hover:shadow-lg dark:bg-white/[0.04] dark:border-white/[0.06] dark:backdrop-blur-2xl dark:shadow-[0_4px_16px_rgba(0,0,0,0.15)] dark:hover:border-purple-500/25 dark:hover:shadow-[0_16px_48px_rgba(0,0,0,0.35),0_0_60px_rgba(139,92,246,0.1)]">
     <!-- Product image / gradient -->
     <div class="relative h-48 flex items-center justify-center overflow-hidden" :style="{ background: gradientBg }">
       <!-- Animated mesh overlay -->
@@ -33,7 +33,7 @@
 
     <!-- Body -->
     <div class="p-5">
-      <h3 class="text-base font-semibold text-slate-100 mb-1 group-hover:text-purple-300 transition-colors line-clamp-1">
+      <h3 class="text-base font-semibold text-slate-800 dark:text-slate-100 mb-1 group-hover:text-purple-600 dark:group-hover:text-purple-300 transition-colors line-clamp-1">
         {{ product.name }}
       </h3>
       <p class="text-xs text-slate-500 mb-5 line-clamp-2 leading-relaxed min-h-[2.5rem]">
@@ -73,6 +73,7 @@
 </template>
 
 <script setup lang="ts">
+import { NButton } from 'naive-ui'
 import {useCartStore} from '~/stores/cart'
 
 interface Product {
