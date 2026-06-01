@@ -39,3 +39,4 @@ Thumbs.db
 .eslintcache
 .tsbuildinfo
 .claude/
+storage/*

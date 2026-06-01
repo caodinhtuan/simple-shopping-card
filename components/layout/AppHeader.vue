@@ -2,12 +2,12 @@
   <header class="sticky top-0 z-50 glass-strong">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between h-16">
-        <NuxtLink class="flex items-center gap-2 group" to="/">
-          <div
-              class="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-cyan-500 flex items-center justify-center text-white font-bold text-sm transition-transform group-hover:scale-110">
-            S
-          </div>
-          <span class="text-xl font-bold gradient-text">ShopPay</span>
+        <NuxtLink class="flex items-center group" to="/">
+          <img
+            src="~/assets/logo.png"
+            alt="ShopPay"
+            class="h-9 w-auto transition-opacity group-hover:opacity-80"
+          />
         </NuxtLink>
 
         <nav class="hidden md:flex items-center gap-1">
@@ -76,5 +76,7 @@ const navItems = computed(() => [
   {label: t('nav.home'), path: '/'},
   {label: t('nav.products'), path: '/products'},
   {label: t('nav.subscriptions'), path: '/subscriptions'},
+  {label: '📦 My Orders', path: '/orders'},
+  {label: '⚙️ Admin', path: '/admin'},
 ])
 </script>

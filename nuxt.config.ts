@@ -3,6 +3,16 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-05-15',
   devtools: {enabled: true},
 
+  // Allow external tunnels (ngrok, cloudflare tunnel, etc.) to forward
+  // webhook requests to the Vite dev server without being blocked by
+  // Vite's host header validation (DNS rebinding protection).
+  // This only affects development — production is not impacted.
+  vite: {
+    server: {
+      allowedHosts: true,
+    },
+  },
+
   modules: [
     '@nuxtjs/tailwindcss',
     '@nuxtjs/color-mode',
@@ -53,6 +63,17 @@ export default defineNuxtConfig({
     },
   },
 
+  // Disable CSRF for payment gateway webhook endpoints
+  // These endpoints receive POST requests from Stripe/PayPal servers (not the browser)
+  routeRules: {
+    '/api/stripe/webhook': {
+      headers: { 'x-nuxt-csrf': '0' },
+    },
+    '/api/paypal/webhook': {
+      headers: { 'x-nuxt-csrf': '0' },
+    },
+  },
+
   // TailwindCSS module will pick up `tailwind.config.ts` from project root
   // (darkMode: 'class', preflight: false — see that file)
   tailwindcss: {
@@ -76,6 +97,11 @@ export default defineNuxtConfig({
         },
       ],
       link: [
+        {
+          rel: 'icon',
+          type: 'image/png',
+          href: '/favicon.png'
+        },
         {
           rel: 'stylesheet',
           href: 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap'

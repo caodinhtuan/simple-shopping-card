@@ -3,20 +3,20 @@
     <!-- Page Header -->
     <div class="text-center mb-8 animate-in stagger-1">
       <h1 class="section-title text-3xl sm:text-4xl mb-2">
-        <span class="gradient-text">Checkout</span>
+        <span class="gradient-text">{{ t('checkout.title') }}</span>
       </h1>
-      <p class="text-slate-400">Review your order and select a payment method</p>
+      <p class="text-slate-400">{{ t('checkout.subtitle') }}</p>
     </div>
 
     <!-- Empty cart -->
     <div v-if="cartStore.cartItems.length === 0" class="flex items-center justify-center py-20 animate-in stagger-2">
       <div class="text-center">
         <div class="text-6xl mb-6">🤔</div>
-        <n-result description="Your cart is empty. Add some products first!" status="info" title="Nothing to checkout">
+        <n-result :description="t('checkout.empty_desc')" status="info" :title="t('checkout.empty_title')">
           <template #footer>
             <NuxtLink to="/products">
               <n-button :style="{ borderRadius: '10px' }" class="btn-stripe" type="primary">
-                Browse Products
+               {{ t('checkout.browse')}}
               </n-button>
             </NuxtLink>
           </template>
@@ -30,9 +30,9 @@
       <div class="animate-in stagger-2">
         <div class="glass-card p-6">
           <div class="flex items-center justify-between mb-5">
-            <h3 class="text-lg font-bold text-slate-100">Order Review</h3>
-            <span class="text-xs text-slate-500">{{ cartStore.totalItems }} item{{
-                cartStore.totalItems > 1 ? 's' : ''
+            <h3 class="text-lg font-bold text-slate-100">{{ t('checkout.review') }}</h3>
+            <span class="text-xs text-slate-500">{{
+                cartStore.totalItems === 1 ? t('cart.item_count_single') : t('cart.items_count', { n: cartStore.totalItems })
               }}</span>
           </div>
 
@@ -59,15 +59,15 @@
           <!-- Totals -->
           <div class="border-t border-white/5 pt-4 space-y-2">
             <div class="flex justify-between text-sm">
-              <span class="text-slate-500">Subtotal</span>
+              <span class="text-slate-500">{{ t('summary.subtotal') }}</span>
               <span class="text-slate-300">${{ formatPrice(cartStore.totalPrice) }}</span>
             </div>
             <div class="flex justify-between text-sm">
-              <span class="text-slate-500">Tax (10%)</span>
+              <span class="text-slate-500">{{ t('summary.tax') }}</span>
               <span class="text-slate-300">${{ formatPrice(Math.round(cartStore.totalPrice * 0.1)) }}</span>
             </div>
             <div class="flex justify-between text-lg font-bold pt-3 mt-1 border-t border-white/5">
-              <span class="text-slate-100">Total</span>
+              <span class="text-slate-100">{{ t('summary.total') }}</span>
               <span class="gradient-text">${{ formatPrice(Math.round(cartStore.totalPrice * 1.1)) }}</span>
             </div>
           </div>
@@ -77,10 +77,9 @@
       <!-- Payment -->
       <div class="animate-in stagger-3">
         <div class="glass-card p-6">
-          <h3 class="text-lg font-bold text-slate-100 mb-5">Customer Info</h3>
+          <h3 class="text-lg font-bold text-slate-100 mb-5">{{ t('checkout.customer_info') }}</h3>
           <div class="mb-6">
-            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Email
-              Address</label>
+            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">{{ t('checkout.email_label') }}</label>
             <n-input
                 v-model:value="customerEmail"
                 :disabled="isProcessing"
@@ -88,11 +87,10 @@
                 size="large"
                 type="text"
             />
-            <p v-if="customerEmail && !isValidEmail" class="text-xs text-red-400 mt-1">Please enter a valid email
-              address.</p>
+            <p v-if="customerEmail && !isValidEmail" class="text-xs text-red-400 mt-1">{{ t('checkout.email_invalid') }}</p>
           </div>
 
-          <h3 class="text-lg font-bold text-slate-100 mb-4">Payment Method</h3>
+          <h3 class="text-lg font-bold text-slate-100 mb-4">{{ t('checkout.method') }}</h3>
 
           <div class="space-y-3">
             <div
@@ -116,8 +114,8 @@
                 </svg>
               </div>
               <div class="flex-1 text-left">
-                <p class="text-sm font-semibold text-slate-200">Stripe</p>
-                <p class="text-xs text-slate-500">Credit / debit card</p>
+                <p class="text-sm font-semibold text-slate-200">{{ t('checkout.stripe_label') }}</p>
+                <p class="text-xs text-slate-500">{{ t('checkout.stripe_desc') }}</p>
               </div>
               <div
                   :class="selectedGateway === 'stripe' ? 'border-purple-400 bg-purple-500 after:content-[\'\'] after:absolute after:inset-[3px] after:rounded-full after:bg-white' : 'border-white/20'"
@@ -146,8 +144,8 @@
                 </svg>
               </div>
               <div class="flex-1 text-left">
-                <p class="text-sm font-semibold text-slate-200">PayPal</p>
-                <p class="text-xs text-slate-500">PayPal balance, bank or card</p>
+                <p class="text-sm font-semibold text-slate-200">{{ t('checkout.paypal_label') }}</p>
+                <p class="text-xs text-slate-500">{{ t('checkout.paypal_desc') }}</p>
               </div>
               <div
                   :class="selectedGateway === 'paypal' ? 'border-purple-400 bg-purple-500 after:content-[\'\'] after:absolute after:inset-[3px] after:rounded-full after:bg-white' : 'border-white/20'"
@@ -171,19 +169,18 @@
                       stroke-linejoin="round"/>
               </svg>
             </template>
-            Pay ${{ formatPrice(Math.round(cartStore.totalPrice * 1.1)) }} with
-            {{ selectedGateway === 'stripe' ? 'Stripe' : 'PayPal' }}
+            {{ t('checkout.pay_button', { amount: '$' + formatPrice(Math.round(cartStore.totalPrice * 1.1)), gateway: selectedGateway === 'stripe' ? 'Stripe' : 'PayPal' }) }}
           </n-button>
 
           <p class="text-center text-xs text-slate-600 mt-4">
-            🔒 Your payment is processed securely. Test mode only — no real charges.
+            {{ t('checkout.secure_note') }}
           </p>
 
           <NuxtLink
               class="block text-center text-slate-500 hover:text-slate-300 text-sm transition-colors mt-3"
               to="/cart"
           >
-            ← Back to Cart
+            {{ t('checkout.back') }}
           </NuxtLink>
         </div>
       </div>
@@ -194,8 +191,9 @@
 <script lang="ts" setup>
 import {NButton, NInput, NResult} from 'naive-ui'
 import {useCartStore} from '~/stores/cart'
+const {t} = useI18n()
 
-useHead({title: 'Checkout — ShopPay'})
+useHead({title: computed(() => t('meta.checkout'))})
 
 const cartStore = useCartStore()
 const message = useAppMessage()
@@ -274,7 +272,7 @@ async function proceed() {
     if (!redirect) throw new Error('Gateway did not return a redirect URL.')
 
     if (res?.demoMode) {
-      message.info('Demo mode — simulating gateway flow', {duration: 1800})
+      message.info(t('checkout.demo_toast'), {duration: 1800})
     } else {
       message.loading(`Redirecting to ${selectedGateway.value === 'stripe' ? 'Stripe' : 'PayPal'}…`, {duration: 0})
     }
@@ -282,7 +280,7 @@ async function proceed() {
     window.location.href = redirect
   } catch (err: any) {
     isProcessing.value = false
-    message.error(err?.data?.statusMessage || err?.message || 'Payment failed. Please try again.')
+    message.error(err?.data?.statusMessage || err?.message || t('checkout.failed'))
   }
 }
 </script>

@@ -14,7 +14,7 @@
       <h4 class="text-slate-100 font-semibold text-sm sm:text-base truncate">{{ item.name }}</h4>
       <p class="text-slate-500 text-xs mt-0.5 flex items-center gap-1.5 justify-center sm:justify-start">
         <span class="inline-block w-1.5 h-1.5 rounded-full bg-purple-400"/>
-        ${{ formatPrice(item.price) }} each · {{ item.image }}
+        ${{ formatPrice(item.price) }} {{ t('summary.each') }} · {{ item.image }}
       </p>
     </div>
 
@@ -39,7 +39,7 @@
 
     <!-- Line Total -->
     <div class="text-right min-w-[88px]">
-      <p class="text-[10px] text-slate-600 uppercase tracking-wider font-semibold">Subtotal</p>
+      <p class="text-[10px] text-slate-600 uppercase tracking-wider font-semibold">{{ t('summary.subtotal_label') }}</p>
       <p class="text-lg font-bold gradient-text-purple">${{ formatPrice(item.price * item.quantity) }}</p>
     </div>
 
@@ -59,6 +59,8 @@
 
 <script lang="ts" setup>
 import type {CartItem} from '~/stores/cart'
+
+const { t } = useI18n()
 
 defineProps<{ item: CartItem }>()
 

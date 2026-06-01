@@ -12,26 +12,26 @@
       </div>
 
       <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight mb-2">
-        Subscription <span class="gradient-text-orange">Cancelled</span>
+        {{ t('cancel.sub_title') }} <span class="gradient-text-orange">{{ t('cancel.payment_status') }}</span>
       </h1>
       <p class="text-slate-400 text-sm mb-8 leading-relaxed">
-        The subscription authorization was cancelled. No subscription was created and no charges were made.
+        {{ t('cancel.sub_desc') }}
       </p>
 
       <div class="bg-white/[0.02] border border-white/5 rounded-2xl p-6 mb-8 text-left">
-        <p class="mb-3 text-xs uppercase tracking-wider text-slate-400 font-semibold">What happened?</p>
+        <p class="mb-3 text-xs uppercase tracking-wider text-slate-400 font-semibold">{{ t('cancel.sub_reasons') }}</p>
         <ul class="space-y-2 text-xs text-slate-500">
           <li class="flex items-start gap-2">
             <span class="text-amber-500 mt-0.5">•</span>
-            <span>You exited Stripe Checkout or PayPal approval screens.</span>
+            <span>{{ t('cancel.sub_reason1') }}</span>
           </li>
           <li class="flex items-start gap-2">
             <span class="text-amber-500 mt-0.5">•</span>
-            <span>The selected payment method couldn't be authorized for recurring billing.</span>
+            <span>{{ t('cancel.sub_reason2') }}</span>
           </li>
           <li class="flex items-start gap-2">
             <span class="text-amber-500 mt-0.5">•</span>
-            <span>The secure session closed or timed out.</span>
+            <span>{{ t('cancel.sub_reason3') }}</span>
           </li>
         </ul>
       </div>
@@ -39,12 +39,12 @@
       <div class="flex flex-col sm:flex-row items-center gap-3 justify-center">
         <NuxtLink class="w-full sm:w-auto" to="/subscriptions">
           <n-button :style="{ borderRadius: '12px' }" class="btn-stripe w-full" size="large" type="primary">
-            Back to Plans
+            {{ t('cancel.back_plans') }}
           </n-button>
         </NuxtLink>
         <NuxtLink class="w-full sm:w-auto" to="/">
           <n-button :style="{ borderRadius: '12px' }" class="w-full" size="large">
-            Go Home
+            {{ t('success.home') }}
           </n-button>
         </NuxtLink>
       </div>
@@ -53,5 +53,6 @@
 </template>
 
 <script lang="ts" setup>
-useHead({title: 'Subscription Cancelled — ShopPay'})
+const { t } = useI18n()
+useHead({title: computed(() => t('meta.sub_cancel'))})
 </script>

@@ -60,16 +60,34 @@ export default defineEventHandler(async (event) => {
     switch (body.event_type) {
       case 'BILLING.SUBSCRIPTION.ACTIVATED': {
         const resource = body.resource
+        console.log('[PayPal Webhook] Successful Subscription Info:', JSON.stringify(resource, null, 2))
+        if (resource?.id) {
+          await logPayment('paypal', body.event_type, resource.id, resource)
+        }
+
         const paypalPlanId = resource?.plan_id
         const subscriptionId = resource?.id
         const subscriberEmail = resource?.subscriber?.email_address || ''
 
-        // Look up the plan in the DB
-        const plan = db.prepare(
-          'SELECT id FROM subscription_plans WHERE paypal_plan_id = ?',
-        ).get(paypalPlanId) as { id: number } | undefined
+        // Look up the plan in the DB or config
+        const config = useRuntimeConfig()
+        let planId: number | undefined = undefined
 
-        if (plan) {
+        if (resource?.custom_id) {
+          planId = parseInt(resource.custom_id, 10)
+        }
+
+        if (!planId && paypalPlanId) {
+          if (paypalPlanId === config.paypalPlanStarterMonthly || paypalPlanId === config.paypalPlanStarterYearly) planId = 1
+          else if (paypalPlanId === config.paypalPlanProMonthly || paypalPlanId === config.paypalPlanProYearly) planId = 2
+          else if (paypalPlanId === config.paypalPlanEnterpriseMonthly || paypalPlanId === config.paypalPlanEnterpriseYearly) planId = 3
+          else {
+            const plan = db.prepare('SELECT id FROM subscription_plans WHERE paypal_plan_id = ?').get(paypalPlanId) as { id: number } | undefined
+            planId = plan?.id
+          }
+        }
+
+        if (planId) {
           const startTime = resource?.billing_info?.last_payment?.time
             || resource?.start_time
             || new Date().toISOString()
@@ -84,9 +102,9 @@ export default defineEventHandler(async (event) => {
                 INSERT INTO subscriptions (plan_id, status, payment_gateway, subscription_id, customer_email,
                                            current_period_start)
                 VALUES (?, 'active', 'paypal', ?, ?, ?)
-            `).run(plan.id, subscriptionId, subscriberEmail, startTime)
+            `).run(planId, subscriptionId, subscriberEmail, startTime)
 
-            console.log(`[PayPal Webhook] Subscription ${subscriptionId} activated for plan ${plan.id}.`)
+            console.log(`[PayPal Webhook] Subscription ${subscriptionId} activated for plan ${planId}.`)
           } else {
             db.prepare(`
                 UPDATE subscriptions
@@ -106,6 +124,11 @@ export default defineEventHandler(async (event) => {
 
       case 'PAYMENT.CAPTURE.COMPLETED': {
         const resource = body.resource
+        console.log('[PayPal Webhook] Successful Payment Info:', JSON.stringify(resource, null, 2))
+        if (resource?.id) {
+          await logPayment('paypal', body.event_type, resource.id, resource)
+        }
+
         const captureId = resource?.id
         const customId = resource?.custom_id // We can set this to our order ID
 

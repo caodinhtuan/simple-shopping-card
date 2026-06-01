@@ -3,9 +3,11 @@
     <div class="hero-glow hero-glow-cyan"/>
 
     <!-- Confetti -->
-    <div class="absolute inset-0 pointer-events-none overflow-hidden z-0">
-      <div v-for="n in 50" :key="n" :style="getConfetti(n)"/>
-    </div>
+    <ClientOnly>
+      <div class="absolute inset-0 pointer-events-none overflow-hidden z-0">
+        <div v-for="n in 50" :key="n" :style="getConfetti(n)"/>
+      </div>
+    </ClientOnly>
 
     <div class="w-full max-w-xl glass-card p-8 md:p-12 text-center border-white/8 relative z-10 animate-in">
       <!-- Animated checkmark ring -->
@@ -19,20 +21,27 @@
       </div>
 
       <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight mb-2">
-        Payment <span class="gradient-text-emerald">Successful!</span>
+        {{ t('success.payment_title') }} <span class="gradient-text-emerald">{{ t('success.payment_status') }}</span>
       </h1>
       <p class="text-slate-400 text-sm mb-2">
-        Thank you for your purchase. Your transaction was processed successfully.
+        {{ t('success.payment_desc') }}
       </p>
       <p v-if="isDemoMode" class="text-amber-400/80 text-xs mb-8">
-        💡 Demo mode — no real charge was made
+        {{ t('success.demo_note') }}
       </p>
       <p v-else class="mb-8"/>
 
-      <!-- Details Card -->
-      <div class="bg-white/[0.02] border border-white/5 rounded-2xl p-6 mb-8 text-left space-y-4">
+      <!-- Loading State -->
+      <div v-if="pending" class="flex flex-col items-center justify-center py-12">
+        <n-spin size="large" stroke="#10b981" />
+        <p class="text-slate-400 mt-4 text-sm font-medium">Verifying your payment...</p>
+      </div>
+
+      <template v-else>
+        <!-- Details Card -->
+        <div class="bg-white/[0.02] border border-white/5 rounded-2xl p-6 mb-8 text-left space-y-4">
         <div class="flex items-center justify-between text-sm">
-          <span class="text-slate-500 font-medium">Payment Gateway</span>
+          <span class="text-slate-500 font-medium">{{ t('success.gateway') }}</span>
           <span class="text-slate-200 font-semibold uppercase tracking-wider text-xs flex items-center gap-2">
             <span :style="{ background: gateway === 'paypal' ? '#0070ba' : '#8b5cf6' }" class="w-2 h-2 rounded-full"/>
             {{ gatewayName }}
@@ -40,22 +49,22 @@
         </div>
 
         <div v-if="orderNumber" class="flex items-center justify-between text-sm">
-          <span class="text-slate-500 font-medium">Order Number</span>
+          <span class="text-slate-500 font-medium">{{ t('success.order_number') }}</span>
           <span class="text-slate-200 font-mono font-bold">{{ orderNumber }}</span>
         </div>
 
         <div v-if="customerEmail" class="flex items-center justify-between text-sm">
-          <span class="text-slate-500 font-medium">Receipt Sent To</span>
+          <span class="text-slate-500 font-medium">{{ t('success.receipt_to') }}</span>
           <span class="text-slate-200 font-medium truncate ml-3">{{ customerEmail }}</span>
         </div>
 
         <div v-if="totalAmount" class="flex items-center justify-between text-sm pt-3 border-t border-white/5">
-          <span class="text-slate-500 font-medium">Total Paid</span>
+          <span class="text-slate-500 font-medium">{{ t('success.total_paid') }}</span>
           <span class="text-emerald-400 font-bold text-base">${{ (totalAmount / 100).toFixed(2) }}</span>
         </div>
 
         <div v-if="orderItems.length" class="pt-3 border-t border-white/5 space-y-2">
-          <p class="text-xs uppercase tracking-wider text-slate-500 font-semibold mb-2">Items</p>
+          <p class="text-xs uppercase tracking-wider text-slate-500 font-semibold mb-2">{{ t('success.items') }}</p>
           <div v-for="(item, i) in orderItems" :key="i" class="flex items-center justify-between text-xs">
             <span class="text-slate-300 truncate flex-1">{{ item.product_name }}</span>
             <span class="text-slate-500 ml-3">×{{ item.quantity }}</span>
@@ -63,27 +72,31 @@
         </div>
       </div>
 
-      <!-- Actions -->
-      <div class="flex flex-col sm:flex-row items-center gap-3 justify-center">
-        <NuxtLink class="w-full sm:w-auto" to="/products">
-          <n-button :style="{ borderRadius: '12px' }" class="btn-stripe w-full" size="large" type="primary">
-            Continue Shopping
-          </n-button>
-        </NuxtLink>
-        <NuxtLink class="w-full sm:w-auto" to="/">
-          <n-button :style="{ borderRadius: '12px' }" class="w-full" size="large">
-            Go Home
-          </n-button>
-        </NuxtLink>
-      </div>
+        <!-- Actions -->
+        <div class="flex flex-col sm:flex-row items-center gap-3 justify-center">
+          <NuxtLink class="w-full sm:w-auto" to="/products">
+            <n-button :style="{ borderRadius: '12px' }" class="btn-stripe w-full" size="large" type="primary">
+              {{ t('success.continue') }}
+            </n-button>
+          </NuxtLink>
+          <NuxtLink class="w-full sm:w-auto" to="/">
+            <n-button :style="{ borderRadius: '12px' }" class="w-full" size="large">
+              {{ t('success.home') }}
+            </n-button>
+          </NuxtLink>
+        </div>
+      </template>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
+import {NButton, NSpin} from 'naive-ui'
 import {useCartStore} from '~/stores/cart'
 
-useHead({title: 'Order Completed — ShopPay'})
+const { t } = useI18n()
+
+useHead({title: computed(() => t('meta.checkout_success'))})
 
 const route = useRoute()
 const cartStore = useCartStore()
@@ -100,6 +113,7 @@ const orderNumber = ref('')
 const customerEmail = ref('')
 const totalAmount = ref(0)
 const orderItems = ref<any[]>([])
+const pending = ref(true)
 
 const message = useAppMessage()
 
@@ -109,21 +123,28 @@ onMounted(async () => {
 
   if (orderId.value) {
     try {
-      const ordersData = await $fetch<any>('/api/orders')
-      const matched = ordersData.orders?.find(
-          (o: any) => String(o.id) === orderId.value || o.order_number === orderId.value,
-      )
-      if (matched) {
-        orderNumber.value = matched.order_number
-        customerEmail.value = matched.customer_email
-        totalAmount.value = matched.total_amount
-        orderItems.value = matched.items || []
+      const { order } = await $fetch<any>(`/api/orders/${orderId.value}`, {
+        params: {
+          session_id: sessionId.value,
+          gateway: gateway.value
+        }
+      })
+      if (order) {
+        orderNumber.value = order.order_number
+        customerEmail.value = order.customer_email
+        totalAmount.value = order.total_amount
+        orderItems.value = order.items || []
       }
     } catch (e) {
       console.warn('Failed to resolve order details', e)
+    } finally {
+      pending.value = false
     }
   } else if (sessionId.value) {
     orderNumber.value = `STR-${sessionId.value.slice(8, 14).toUpperCase()}`
+    pending.value = false
+  } else {
+    pending.value = false
   }
 })
 

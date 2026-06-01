@@ -82,7 +82,8 @@
 </template>
 
 <script lang="ts" setup>
-useHead({title: 'Subscription Activated — ShopPay'})
+const { t } = useI18n()
+useHead({title: computed(() => t('meta.sub_success'))})
 
 const route = useRoute()
 

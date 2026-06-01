@@ -15,6 +15,22 @@
       </p>
     </div>
 
+    <!-- Active Subscription Banner -->
+    <div v-if="activeSubscription" class="mb-10 animate-in stagger-1">
+      <div class="max-w-3xl mx-auto bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border border-emerald-500/20 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between">
+        <div>
+          <h3 class="text-lg font-bold text-emerald-400 mb-1">Active Subscription: {{ activeSubscription.plan_name }}</h3>
+          <p class="text-slate-400 text-sm">
+            You are currently subscribed to the {{ activeSubscription.plan_name }} plan ({{ activeSubscription.interval }}).
+          </p>
+        </div>
+        <div class="mt-4 md:mt-0 md:text-right">
+          <p class="text-xs text-slate-500 uppercase tracking-wider font-semibold">Subscription ID</p>
+          <p class="font-mono text-sm text-slate-300">{{ activeSubscription.subscription_id }}</p>
+        </div>
+      </div>
+    </div>
+
     <!-- Loading State -->
     <div v-if="pending" class="flex flex-col items-center justify-center py-32 animate-in">
       <n-spin size="large" stroke="#06b6d4"/>
@@ -142,9 +158,9 @@ const {t} = useI18n()
 
 // Page configuration
 useHead({
-  title: 'Subscriptions - Payment Integration Demo',
+  title: computed(() => t('meta.subscriptions')),
   meta: [
-    {name: 'description', content: 'Subscribe to Starter, Pro, or Enterprise recurring billing tiers.'}
+    {name: 'description', content: computed(() => t('meta.sub_desc'))}
   ]
 })
 
@@ -158,6 +174,21 @@ const selectedPlan = ref<any | null>(null)
 const selectedGateway = ref('')
 const selectedInterval = ref<'monthly' | 'yearly'>('monthly')
 const isSubmitting = ref(false)
+const activeSubscription = ref<any>(null)
+
+onMounted(async () => {
+  const email = localStorage.getItem('demo-email') || ''
+  if (email) {
+    try {
+      const res = await $fetch<any>(`/api/subscriptions/latest?email=${encodeURIComponent(email)}`)
+      if (res?.subscription) {
+        activeSubscription.value = res.subscription
+      }
+    } catch (e) {
+      console.warn('Failed to fetch latest subscription', e)
+    }
+  }
+})
 
 // Fetch plans from db backend
 const {data: plansData, pending, error, refresh} = await useFetch<any>('/api/plans', {
@@ -256,7 +287,7 @@ async function processSubscription() {
         },
       })
       if (response?.demoMode) {
-        message.info('Demo mode — simulating subscription flow', {duration: 1800})
+        message.info(t('subs.demo_toast'), {duration: 1800})
       }
       if (response?.url) {
         window.location.href = response.url
@@ -274,7 +305,7 @@ async function processSubscription() {
         },
       })
       if (response?.demoMode) {
-        message.info('Demo mode — simulating subscription flow', {duration: 1800})
+        message.info(t('subs.demo_toast'), {duration: 1800})
       }
       if (response?.approveUrl) {
         window.location.href = response.approveUrl

@@ -152,11 +152,11 @@ import {NButton} from 'naive-ui'
 const {t} = useI18n()
 
 useHead({
-  title: 'ShopPay — Payment Integration Demo',
+  title: computed(() => t('meta.home')),
   meta: [
     {
       name: 'description',
-      content: 'Production-ready demo of Stripe & PayPal payment integration with shopping cart and subscription billing flows.'
+      content: computed(() => t('meta.home_desc'))
     },
   ],
 })

@@ -3,13 +3,13 @@
     <!-- Page Header -->
     <div class="mb-8 animate-in stagger-1">
       <h1 class="section-title text-3xl sm:text-4xl mb-2">
-        <span class="gradient-text">Shopping Cart</span>
+        <span class="gradient-text">{{ t('cart.title') }}</span>
       </h1>
       <p class="text-slate-400">
         <template v-if="cartStore.totalItems > 0">
-          {{ cartStore.totalItems }} item{{ cartStore.totalItems > 1 ? 's' : '' }} in your cart
+          {{ cartStore.totalItems === 1 ? t('cart.item_count_single') : t('cart.items_count', { n: cartStore.totalItems }) }}
         </template>
-        <template v-else>Your cart is empty</template>
+        <template v-else>{{ t('cart.empty') }}</template>
       </p>
     </div>
 
@@ -17,11 +17,11 @@
     <div v-if="cartStore.cartItems.length === 0" class="flex items-center justify-center py-20 animate-in stagger-2">
       <div class="text-center">
         <div class="text-6xl mb-6 animate-float">🛒</div>
-        <n-empty description="Your cart is empty" size="large">
+        <n-empty :description="t('cart.empty')" size="large">
           <template #extra>
             <NuxtLink to="/products">
               <n-button :style="{ borderRadius: '10px' }" class="btn-stripe mt-4" type="primary">
-                Continue Shopping
+                {{ t('cart.continue_shopping') }}
               </n-button>
             </NuxtLink>
           </template>
@@ -52,7 +52,7 @@
                       stroke-linejoin="round"/>
               </svg>
             </template>
-            Clear Cart
+            {{ t('cart.clear') }}
           </n-button>
         </div>
       </div>
@@ -99,9 +99,9 @@
           </div>
           <div>
             <p class="text-sm font-bold text-slate-100">
-              Continue with {{ pendingGateway === 'stripe' ? 'Stripe' : 'PayPal' }}
+              {{ t('checkout.continue_with', { gateway: pendingGateway === 'stripe' ? 'Stripe' : 'PayPal' }) }}
             </p>
-            <p class="text-xs text-slate-500">We'll send a receipt to this address</p>
+            <p class="text-xs text-slate-500">{{ t('checkout.receipt_note') }}</p>
           </div>
         </div>
       </template>
@@ -109,7 +109,7 @@
       <div class="space-y-4">
         <div>
           <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
-            Email Address
+            {{ t('checkout.email_label') }}
           </label>
           <n-input
               v-model:value="customerEmail"
@@ -122,12 +122,12 @@
         </div>
 
         <div class="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5 text-xs">
-          <span class="text-slate-500">Order Total</span>
+          <span class="text-slate-500">{{ t('checkout.order_total') }}</span>
           <span class="text-slate-100 font-bold text-base">${{ ((cartStore.totalPrice * 1.1) / 100).toFixed(2) }}</span>
         </div>
 
         <div class="flex items-center gap-3 pt-2 justify-end">
-          <n-button :disabled="isSubmitting" @click="showEmailModal = false">Cancel</n-button>
+          <n-button :disabled="isSubmitting" @click="showEmailModal = false">{{ t('common.cancel') }}</n-button>
           <n-button
               :class="pendingGateway === 'stripe' ? 'btn-stripe' : 'btn-paypal'"
               :disabled="!isValidEmail || isSubmitting"
@@ -135,7 +135,7 @@
               type="primary"
               @click="proceed"
           >
-            Continue to {{ pendingGateway === 'stripe' ? 'Stripe' : 'PayPal' }}
+            {{ t('checkout.continue_to', { gateway: pendingGateway === 'stripe' ? 'Stripe' : 'PayPal' }) }}
           </n-button>
         </div>
       </div>
@@ -149,7 +149,9 @@ import {useCartStore} from '~/stores/cart'
 import CartItem from "~/components/cart/CartItem.vue";
 import CartSummary from "~/components/cart/CartSummary.vue";
 
-useHead({title: 'Cart — ShopPay'})
+const { t } = useI18n()
+
+useHead({title: computed(() => t('meta.cart'))})
 
 const cartStore = useCartStore()
 const message = useAppMessage()
@@ -168,20 +170,20 @@ const isValidEmail = computed(() =>
 
 function handleClearCart() {
   dialog.warning({
-    title: 'Clear Cart',
-    content: 'Are you sure you want to remove all items from your cart?',
-    positiveText: 'Clear All',
-    negativeText: 'Cancel',
+    title: t('cart.clear_confirm_title'),
+    content: t('cart.clear_confirm_body'),
+    positiveText: t('cart.clear_yes'),
+    negativeText: t('cart.cancel'),
     onPositiveClick: () => {
       cartStore.clearCart()
-      message.success('Cart cleared')
+      message.success(t('cart.cleared'))
     },
   })
 }
 
 function openCheckoutModal(gateway: 'stripe' | 'paypal') {
   if (cartStore.cartItems.length === 0) {
-    message.warning('Your cart is empty')
+    message.warning(t('cart.cart_empty_warn'))
     return
   }
   pendingGateway.value = gateway
@@ -217,7 +219,7 @@ async function proceed() {
     if (!redirect) throw new Error('No redirect URL returned by gateway.')
 
     if (res?.demoMode) {
-      message.info('Demo mode — simulating gateway flow', {duration: 1800})
+      message.info(t('checkout.demo_toast'), {duration: 1800})
     } else {
       message.loading(`Redirecting to ${pendingGateway.value === 'stripe' ? 'Stripe' : 'PayPal'}…`, {duration: 0})
     }
@@ -226,7 +228,7 @@ async function proceed() {
     window.location.href = redirect
   } catch (err: any) {
     isSubmitting.value = false
-    message.error(err?.data?.statusMessage || err?.message || 'Checkout failed. Please try again.')
+    message.error(err?.data?.statusMessage || err?.message || t('checkout.failed'))
   }
 }
 </script>

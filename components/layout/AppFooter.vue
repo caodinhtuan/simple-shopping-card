@@ -12,29 +12,29 @@
             <span class="text-lg font-bold gradient-text">ShopPay</span>
           </div>
           <p class="text-slate-500 text-sm leading-relaxed">
-            A demo project showcasing Stripe &amp; PayPal payment integration with shopping cart and subscription flows.
+            {{ t('footer.desc') }}
           </p>
         </div>
 
         <!-- Quick Links -->
         <div>
-          <h4 class="text-slate-300 font-semibold text-sm uppercase tracking-wider mb-3">Quick Links</h4>
+          <h4 class="text-slate-300 font-semibold text-sm uppercase tracking-wider mb-3">{{ t('footer.links') }}</h4>
           <div class="flex flex-col gap-2">
             <NuxtLink class="text-slate-500 hover:text-purple-400 text-sm transition-colors" to="/products">
-              Products
+              {{ t('nav.products') }}
             </NuxtLink>
             <NuxtLink class="text-slate-500 hover:text-purple-400 text-sm transition-colors" to="/subscriptions">
-              Subscriptions
+              {{ t('nav.subscriptions') }}
             </NuxtLink>
             <NuxtLink class="text-slate-500 hover:text-purple-400 text-sm transition-colors" to="/cart">
-              Shopping Cart
+              {{ t('cart.title') }}
             </NuxtLink>
           </div>
         </div>
 
         <!-- Payment Methods -->
         <div>
-          <h4 class="text-slate-300 font-semibold text-sm uppercase tracking-wider mb-3">Powered By</h4>
+          <h4 class="text-slate-300 font-semibold text-sm uppercase tracking-wider mb-3">{{ t('footer.powered') }}</h4>
           <div class="flex items-center gap-4">
             <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 border border-white/5">
               <svg class="w-4 h-4 text-purple-400" fill="currentColor" viewBox="0 0 24 24">
@@ -57,10 +57,10 @@
       <!-- Bottom bar -->
       <div class="border-t border-white/5 mt-8 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
         <p class="text-slate-600 text-xs">
-          &copy; {{ new Date().getFullYear() }} ShopPay Demo. Built with Nuxt 3, Naive UI &amp; TailwindCSS.
+          {{ t('footer.rights', { year: new Date().getFullYear() }) }}
         </p>
         <div class="flex items-center gap-4">
-          <span class="text-slate-600 text-xs">Demo Project — Not for Production</span>
+          <span class="text-slate-600 text-xs">{{ t('footer.demo_warn') }}</span>
         </div>
       </div>
     </div>
@@ -68,4 +68,5 @@
 </template>
 
 <script lang="ts" setup>
+const { t } = useI18n()
 </script>

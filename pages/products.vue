@@ -99,7 +99,7 @@ import {NButton, NInput, NResult} from 'naive-ui'
 import ProductGrid from '~/components/products/ProductGrid.vue'
 
 const {t} = useI18n()
-useHead({title: 'Products — ShopPay'})
+useHead({title: computed(() => t('meta.products'))})
 
 const searchQuery = ref('')
 const selectedCategory = ref('')

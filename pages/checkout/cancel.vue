@@ -12,26 +12,37 @@
       </div>
 
       <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight mb-2">
-        Payment <span class="gradient-text-orange">Cancelled</span>
+        {{ t('cancel.payment_title') }} <span class="gradient-text-orange">{{ t('cancel.payment_status') }}</span>
       </h1>
       <p class="text-slate-400 text-sm mb-8 leading-relaxed">
-        The payment authorization was cancelled. No charges were made to your account.
+        {{ t('cancel.payment_desc') }}
       </p>
 
       <div class="bg-white/[0.02] border border-white/5 rounded-2xl p-6 mb-8 text-left">
-        <p class="mb-3 text-xs uppercase tracking-wider text-slate-400 font-semibold">Possible reasons</p>
+        <div v-if="orderNumber" class="mb-4 pb-4 border-b border-white/5">
+          <div class="flex items-center justify-between text-sm mb-2">
+            <span class="text-slate-500 font-medium">{{ t('success.order_number') }}</span>
+            <span class="text-slate-200 font-mono font-bold">{{ orderNumber }}</span>
+          </div>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-500 font-medium">{{ t('summary.total') }}</span>
+            <span class="text-amber-400 font-bold text-base">${{ (totalAmount / 100).toFixed(2) }}</span>
+          </div>
+        </div>
+
+        <p class="mb-3 text-xs uppercase tracking-wider text-slate-400 font-semibold">{{ t('cancel.reasons_title') }}</p>
         <ul class="space-y-2 text-xs text-slate-500">
           <li class="flex items-start gap-2">
             <span class="text-amber-500 mt-0.5">•</span>
-            <span>You clicked back or cancelled on the gateway checkout screen.</span>
+            <span>{{ t('cancel.reason1') }}</span>
           </li>
           <li class="flex items-start gap-2">
             <span class="text-amber-500 mt-0.5">•</span>
-            <span>The session expired before payment details were entered.</span>
+            <span>{{ t('cancel.reason2') }}</span>
           </li>
           <li class="flex items-start gap-2">
             <span class="text-amber-500 mt-0.5">•</span>
-            <span>The gateway connection timed out or was closed early.</span>
+            <span>{{ t('cancel.reason3') }}</span>
           </li>
         </ul>
       </div>
@@ -39,12 +50,12 @@
       <div class="flex flex-col sm:flex-row items-center gap-3 justify-center">
         <NuxtLink class="w-full sm:w-auto" to="/checkout">
           <n-button :style="{ borderRadius: '12px' }" class="btn-stripe w-full" size="large" type="primary">
-            Try Again
+            {{ t('cancel.try_again') }}
           </n-button>
         </NuxtLink>
         <NuxtLink class="w-full sm:w-auto" to="/products">
           <n-button :style="{ borderRadius: '12px' }" class="w-full" size="large">
-            Browse Products
+            {{ t('checkout.browse') }}
           </n-button>
         </NuxtLink>
       </div>
@@ -53,5 +64,26 @@
 </template>
 
 <script lang="ts" setup>
-useHead({title: 'Payment Cancelled — ShopPay'})
+const { t } = useI18n()
+useHead({title: computed(() => t('meta.checkout_cancel'))})
+
+const route = useRoute()
+const orderId = computed(() => route.query.order_id ? String(route.query.order_id) : '')
+
+const orderNumber = ref('')
+const totalAmount = ref(0)
+
+onMounted(async () => {
+  if (orderId.value) {
+    try {
+      const { order } = await $fetch<any>(`/api/orders/${orderId.value}`)
+      if (order) {
+        orderNumber.value = order.order_number
+        totalAmount.value = order.total_amount
+      }
+    } catch (e) {
+      console.warn('Failed to resolve order details', e)
+    }
+  }
+})
 </script>

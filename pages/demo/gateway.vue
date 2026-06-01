@@ -8,7 +8,7 @@
     <div
         class="fixed top-20 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-400/30 backdrop-blur-md flex items-center gap-2 text-xs font-semibold text-amber-300 shadow-lg shadow-amber-500/10">
       <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"/>
-      Sandbox Simulator — No Real Charge
+      {{ t('gateway.sandbox_note') }}
     </div>
 
     <Transition mode="out-in" name="fade-scale">
@@ -29,12 +29,12 @@
               </svg>
             </div>
             <div>
-              <p class="text-xs text-slate-500 font-semibold uppercase tracking-wider">Stripe Checkout</p>
-              <p class="text-sm text-slate-300 font-medium">ShopPay Demo</p>
+              <p class="text-xs text-slate-500 font-semibold uppercase tracking-wider">{{ t('gateway.stripe_title') }}</p>
+              <p class="text-sm text-slate-300 font-medium">{{ t('gateway.demo_subtitle') }}</p>
             </div>
           </div>
           <div class="text-right">
-            <p class="text-xs text-slate-500">Amount</p>
+            <p class="text-xs text-slate-500">{{ t('gateway.amount') }}</p>
             <p class="text-xl font-bold gradient-text-purple">${{ formattedAmount }}</p>
           </div>
         </div>
@@ -42,7 +42,7 @@
         <!-- Card-form mock -->
         <div class="space-y-4 mb-6">
           <div>
-            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Card Number</label>
+            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">{{ t('gateway.card_number') }}</label>
             <div
                 class="px-4 py-3 rounded-xl bg-white/5 border border-white/10 font-mono text-slate-200 tracking-widest text-sm flex items-center justify-between">
               <span>4242 4242 4242 4242</span>
@@ -54,20 +54,20 @@
           </div>
           <div class="grid grid-cols-2 gap-3">
             <div>
-              <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Expiry</label>
+              <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">{{ t('gateway.expiry') }}</label>
               <div class="px-4 py-3 rounded-xl bg-white/5 border border-white/10 font-mono text-slate-200 text-sm">12 /
                 28
               </div>
             </div>
             <div>
-              <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">CVC</label>
+              <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">{{ t('gateway.cvc') }}</label>
               <div class="px-4 py-3 rounded-xl bg-white/5 border border-white/10 font-mono text-slate-200 text-sm">123
               </div>
             </div>
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Cardholder</label>
-            <div class="px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-slate-200 text-sm">Demo Customer
+            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">{{ t('gateway.cardholder') }}</label>
+            <div class="px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-slate-200 text-sm">{{ t('gateway.demo_customer') }}
             </div>
           </div>
         </div>
@@ -85,14 +85,14 @@
                     stroke-linejoin="round"/>
             </svg>
           </template>
-          Pay ${{ formattedAmount }}
+          {{ t('gateway.pay') }} ${{ formattedAmount }}
         </n-button>
 
         <button
             class="btn-reset mt-4 w-full text-center text-xs text-slate-500 hover:text-slate-300 transition-colors"
             @click="cancelPayment"
         >
-          Cancel and return
+          {{ t('gateway.cancel_return') }}
         </button>
       </div>
 
@@ -112,12 +112,12 @@
               </svg>
             </div>
             <div>
-              <p class="text-xs text-slate-500 font-semibold uppercase tracking-wider">PayPal</p>
-              <p class="text-sm text-slate-300 font-medium">ShopPay Demo</p>
+              <p class="text-xs text-slate-500 font-semibold uppercase tracking-wider">{{ t('gateway.paypal_title') }}</p>
+              <p class="text-sm text-slate-300 font-medium">{{ t('gateway.demo_subtitle') }}</p>
             </div>
           </div>
           <div class="text-right">
-            <p class="text-xs text-slate-500">Amount</p>
+            <p class="text-xs text-slate-500">{{ t('gateway.amount') }}</p>
             <p class="text-xl font-bold bg-[linear-gradient(135deg,#0070ba,#06b6d4)] bg-clip-text text-transparent">
               ${{ formattedAmount }}
             </p>
@@ -125,9 +125,9 @@
         </div>
 
         <div class="mb-6 p-5 rounded-xl bg-white/5 border border-white/8 text-center">
-          <p class="text-xs text-slate-500 uppercase tracking-wider mb-2 font-semibold">Logged in as</p>
+          <p class="text-xs text-slate-500 uppercase tracking-wider mb-2 font-semibold">{{ t('gateway.logged_in') }}</p>
           <p class="text-sm font-bold text-slate-200">demo-buyer@shoppay.com</p>
-          <p class="text-xs text-slate-500 mt-1">Verified PayPal Sandbox Account</p>
+          <p class="text-xs text-slate-500 mt-1">{{ t('gateway.paypal_sandbox_acc') }}</p>
         </div>
 
         <div class="mb-6 p-4 rounded-xl bg-blue-500/5 border border-blue-500/10">
@@ -137,7 +137,7 @@
               VISA
             </div>
             <div class="flex-1">
-              <p class="text-sm text-slate-200 font-medium">Visa Card</p>
+              <p class="text-sm text-slate-200 font-medium">{{ t('gateway.visa_card') }}</p>
               <p class="text-xs text-slate-500">•••• •••• •••• 4242</p>
             </div>
             <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" stroke-width="2.5"
@@ -154,14 +154,14 @@
             size="large"
             @click="processPayment"
         >
-          Authorize &amp; {{ isSubscription ? 'Subscribe' : 'Pay' }} ${{ formattedAmount }}
+          {{ isSubscription ? t('gateway.auth_subscribe') : t('gateway.auth_pay') }} ${{ formattedAmount }}
         </n-button>
 
         <button
             class="btn-reset mt-4 w-full text-center text-xs text-slate-500 hover:text-slate-300 transition-colors"
             @click="cancelPayment"
         >
-          Cancel transaction
+          {{ t('gateway.cancel_transaction') }}
         </button>
       </div>
 
@@ -187,9 +187,9 @@
         </div>
 
         <h2 class="text-xl font-bold text-slate-100 mb-2">{{ processingMessage }}</h2>
-        <p class="text-sm text-slate-500">Securing transaction with {{
-            gateway === 'stripe' ? 'Stripe' : 'PayPal'
-          }}…</p>
+        <p class="text-sm text-slate-500">{{
+            t('gateway.securing_with', { gateway: gateway === 'stripe' ? 'Stripe' : 'PayPal' })
+          }}</p>
 
         <div class="mt-8 flex justify-center gap-2">
           <div
@@ -211,8 +211,10 @@ import {useCartStore} from '~/stores/cart'
 
 definePageMeta({layout: false})
 
+const {t} = useI18n()
+
 useHead({
-  title: 'Gateway Simulator — ShopPay',
+  title: computed(() => t('meta.gateway')),
 })
 
 const route = useRoute()
@@ -250,13 +252,21 @@ const formattedAmount = computed(() => (displayAmount.value / 100).toFixed(2))
 
 const processing = ref(false)
 const step = ref(0)
-const processingMessages = [
-  'Authenticating…',
-  'Authorizing payment…',
-  'Confirming with bank…',
-  'Finalizing transaction…',
-]
-const processingMessage = ref(processingMessages[0])
+
+
+const processingMessages = computed(() => [
+  t('gateway.process_1'),
+  t('gateway.process_2'),
+  t('gateway.process_3'),
+  t('gateway.process_4'),
+])
+const processingMessage = ref('')
+
+watchEffect(() => {
+  if (processingMessages.value.length > 0 && !processingMessage.value) {
+    processingMessage.value = processingMessages.value[0]
+  }
+})
 
 const ringStyle = computed(() => ({
   borderTopColor: gateway.value === 'stripe' ? '#8b5cf6' : '#0070ba',
@@ -266,9 +276,9 @@ const ringStyle = computed(() => ({
 async function processPayment() {
   processing.value = true
 
-  for (let i = 0; i < processingMessages.length; i++) {
+  for (let i = 0; i < processingMessages.value.length; i++) {
     step.value = i + 1
-    processingMessage.value = processingMessages[i]
+    processingMessage.value = processingMessages.value[i]
     await new Promise((r) => setTimeout(r, 700))
   }
 
@@ -280,6 +290,20 @@ async function processPayment() {
       })
     } catch (e) {
       console.warn('[Demo] Mark-paid failed', e)
+    }
+  }
+
+  let sessionId = `demo_sub_${Date.now()}`
+
+  if (isSubscription.value && planId.value) {
+    const email = route.query.email ? String(route.query.email) : 'demo-buyer@shoppay.com'
+    try {
+      await $fetch('/api/subscriptions/mark-active', {
+        method: 'POST',
+        body: { planId: Number(planId.value), gateway: gateway.value, email, subscriptionId: sessionId },
+      })
+    } catch (e) {
+      console.warn('[Demo] Mark-active failed', e)
     }
   }
 
@@ -296,6 +320,7 @@ async function processPayment() {
         demo: '1',
         plan_id: planId.value,
         interval: interval.value,
+        session_id: sessionId,
       },
     })
   } else {
