@@ -4,7 +4,7 @@
       <n-dialog-provider>
         <n-notification-provider>
           <MessageApi/>
-          <NuxtLoadingIndicator :height="3" color="linear-gradient(90deg,#8b5cf6,#06b6d4,#ec4899)"/>
+          <NuxtLoadingIndicator :height="1.5" color="linear-gradient(90deg,#8b5cf6,#06b6d4,#ec4899)"/>
           <n-layout :style="{ background: layoutBg }" class="min-h-screen">
             <AppHeader/>
             <n-layout-content class="min-h-[calc(100vh-140px)]">

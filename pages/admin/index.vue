@@ -13,11 +13,11 @@
       <div v-for="stat in stats" :key="stat.label"
            class="glass-card p-5 flex flex-col gap-2 border-white/8">
         <div class="flex items-center justify-between">
-          <span class="text-xs uppercase tracking-wider text-slate-500 font-semibold">{{ stat.label }}</span>
+          <span class="text-xs uppercase tracking-wider text-slate-500 dark:text-slate-300 font-bold">{{ stat.label }}</span>
           <span class="text-xl">{{ stat.icon }}</span>
         </div>
         <p class="text-2xl font-extrabold" :class="stat.color">{{ stat.value }}</p>
-        <p class="text-xs text-slate-600">{{ stat.sub }}</p>
+        <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">{{ stat.sub }}</p>
       </div>
     </div>
 
@@ -27,14 +27,16 @@
         v-for="tab in tabs" :key="tab.key"
         @click="activeTab = tab.key"
         :class="activeTab === tab.key
-          ? 'bg-purple-500/20 border-purple-500/50 text-purple-300'
-          : 'bg-white/[0.03] border-white/[0.06] text-slate-500 hover:text-slate-300 hover:border-white/20'"
-        class="flex items-center gap-2 px-5 py-2.5 rounded-xl border text-sm font-semibold transition-all duration-200"
+          ? 'bg-purple-50/30 border-purple-600 text-purple-600 dark:bg-purple-500/10 dark:border-purple-400 dark:text-purple-400 shadow-sm'
+          : 'bg-transparent border-slate-300 text-[#333639] hover:border-purple-600 hover:text-purple-600 dark:border-white/15 dark:text-slate-300 dark:hover:border-purple-400 dark:hover:text-purple-400'"
+        class="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-solid text-sm font-medium transition-all duration-200 cursor-pointer"
       >
         <span>{{ tab.icon }}</span>
         {{ tab.label }}
-        <span class="ml-1 px-2 py-0.5 rounded-full text-xs"
-              :class="activeTab === tab.key ? 'bg-purple-500/30 text-purple-200' : 'bg-white/10 text-slate-500'">
+        <span class="ml-1 px-2.5 py-0.5 rounded-full text-xs transition-colors"
+              :class="activeTab === tab.key
+                ? 'bg-purple-100 text-purple-700 dark:bg-purple-500/20 dark:text-purple-300'
+                : 'bg-slate-100 text-slate-500 dark:bg-white/10 dark:text-slate-400'">
           {{ tab.key === 'orders' ? data?.orders?.length : data?.subscriptions?.length }}
         </span>
       </button>
@@ -214,28 +216,28 @@ const stats = computed(() => [
     label: 'Total Revenue',
     value: `$${((data.value?.stats?.totalRevenue || 0) / 100).toFixed(2)}`,
     icon: '💰',
-    color: 'text-emerald-400',
+    color: 'text-slate-900 dark:text-white',
     sub: 'from paid orders',
   },
   {
     label: 'Paid Orders',
     value: data.value?.stats?.paidOrders || 0,
     icon: '🛍️',
-    color: 'text-purple-400',
+    color: 'text-slate-900 dark:text-white',
     sub: `of ${data.value?.stats?.totalOrders || 0} total`,
   },
   {
     label: 'Active Subs',
     value: data.value?.stats?.activeSubscriptions || 0,
     icon: '🔄',
-    color: 'text-cyan-400',
+    color: 'text-slate-900 dark:text-white',
     sub: 'recurring revenue',
   },
   {
     label: 'MRR',
     value: `$${computeMRR()}`,
     icon: '📈',
-    color: 'text-amber-400',
+    color: 'text-slate-900 dark:text-white',
     sub: 'monthly recurring',
   },
 ])
