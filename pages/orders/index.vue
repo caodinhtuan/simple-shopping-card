@@ -182,6 +182,14 @@ async function lookup() {
     loading.value = false
   }
 }
+
+function formatDate(raw: string) {
+  if (!raw) return '—'
+  return new Date(raw).toLocaleDateString('en-US', {
+    year: 'numeric', month: 'long', day: 'numeric',
+    hour: '2-digit', minute: '2-digit',
+  })
+}
 </script>
 
 <style scoped>
