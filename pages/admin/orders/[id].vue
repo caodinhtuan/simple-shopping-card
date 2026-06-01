@@ -31,8 +31,13 @@
         <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6">
           <!-- Left: Branding -->
           <div>
-            <div class="flex items-center gap-3 mb-3">
-              <img src="~/assets/logo.png" alt="ShopPay" class="h-9 w-auto" />
+            <div class="flex items-center mb-3">
+              <img
+                src="~/assets/logo.png"
+                alt="ShopPay"
+                class="h-9 w-auto"
+                style="filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.3)) brightness(1.05);"
+              />
             </div>
             <p class="text-slate-500 text-xs">Order Invoice</p>
             <p class="text-2xl font-extrabold font-mono text-slate-100 mt-1">{{ data.order.order_number }}</p>

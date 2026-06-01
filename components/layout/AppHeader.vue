@@ -6,7 +6,8 @@
           <img
             src="~/assets/logo.png"
             alt="ShopPay"
-            class="h-9 w-auto transition-opacity group-hover:opacity-80"
+            class="h-9 w-auto transition-all duration-200 group-hover:scale-105"
+            style="filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.3)) brightness(1.05);"
           />
         </NuxtLink>
 
