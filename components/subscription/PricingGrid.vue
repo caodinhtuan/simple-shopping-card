@@ -42,6 +42,7 @@
         <PricingCard
             :plan="plan"
             :popular="index === 1"
+            :is-re-subscribe="activeSubscription && activeSubscription.status !== 'active' && activeSubscription.plan_id === plan.id"
             @subscribe="(payload) => $emit('subscribe', { ...payload, interval: isYearly ? 'yearly' : 'monthly' })"
         />
       </div>
@@ -87,7 +88,10 @@ interface Plan {
   paypal_plan_id?: string
 }
 
-const props = defineProps<{ plans: Plan[] }>()
+const props = defineProps<{ 
+  plans: Plan[]
+  activeSubscription?: any
+}>()
 
 defineEmits<{
   subscribe: [payload: { planId: number; gateway: string; interval?: string }]

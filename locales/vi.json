@@ -188,5 +188,17 @@
   "meta.subscriptions": "Đăng ký — ShopPay",
   "common.cancel": "Huỷ",
   "common.confirm": "Xác nhận",
-  "common.loading": "Đang tải..."
+  "common.loading": "Đang tải...",
+  "orders.pay_now": "Thanh toán ngay (Stripe)",
+  "orders.expires_on": "Hết hạn lúc: {time}",
+  "orders.linked_invoice": "Thông tin hóa đơn liên kết",
+  "orders.invoice_number": "Số hóa đơn",
+  "orders.billing_email": "Email thanh toán",
+  "orders.payment_gateway": "Cổng thanh toán",
+  "orders.transaction_id": "Mã giao dịch",
+  "subs.resubscribe_stripe": "Đăng ký lại bằng Stripe",
+  "subs.resubscribe_paypal": "Đăng ký lại bằng PayPal",
+  "subs.resubscribe_now": "Đăng ký lại ngay",
+  "subs.inactive_subscription": "Gói đăng ký không hoạt động: {name}",
+  "subs.inactive_desc": "Gói đăng ký {name} ({interval}) của bạn hiện đang ở trạng thái {status}."
 }

@@ -9,7 +9,7 @@ export default defineEventHandler((event) => {
     SELECT s.*, p.name as plan_name, p.price, p.interval
     FROM subscriptions s
     JOIN subscription_plans p ON s.plan_id = p.id
-    WHERE s.customer_email = ? AND s.status = 'active'
+    WHERE s.customer_email = ?
     ORDER BY s.created_at DESC
     LIMIT 1
   `).get(email)

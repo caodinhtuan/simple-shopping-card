@@ -188,5 +188,17 @@
   "meta.subscriptions": "Subscriptions — ShopPay",
   "common.cancel": "Cancel",
   "common.confirm": "Confirm",
-  "common.loading": "Loading..."
+  "common.loading": "Loading...",
+  "orders.pay_now": "Pay Now (Stripe)",
+  "orders.expires_on": "Expires on: {time}",
+  "orders.linked_invoice": "Linked Invoice Details",
+  "orders.invoice_number": "Invoice Number",
+  "orders.billing_email": "Billing Email",
+  "orders.payment_gateway": "Payment Gateway",
+  "orders.transaction_id": "Transaction ID",
+  "subs.resubscribe_stripe": "Re-subscribe with Stripe",
+  "subs.resubscribe_paypal": "Re-subscribe with PayPal",
+  "subs.resubscribe_now": "Re-subscribe Now",
+  "subs.inactive_subscription": "Inactive Subscription: {name}",
+  "subs.inactive_desc": "Your {name} plan subscription ({interval}) is currently {status}."
 }

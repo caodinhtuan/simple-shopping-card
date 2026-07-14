@@ -52,11 +52,15 @@ export default defineEventHandler(async (event) => {
   const grandTotal = totalAmount + taxAmount
   const customerEmail = body.customerEmail || 'guest@shoppay.demo'
 
+  const expireMinutes = Number(process.env.STRIPE_LINK_EXPIRE_MINUTES) || 30
+  const expiresAtTimestamp = Math.floor(Date.now() / 1000) + (expireMinutes * 60)
+  const expiresAtIso = new Date(Date.now() + (expireMinutes * 60 * 1000)).toISOString()
+
   // --- Create pending order ---
   const orderNumber = `ORD-${crypto.randomBytes(4).toString('hex').toUpperCase()}`
   const insertOrder = db.prepare(`
-      INSERT INTO orders (order_number, status, total_amount, payment_gateway, customer_email)
-      VALUES (?, 'pending', ?, 'stripe', ?)
+      INSERT INTO orders (order_number, status, total_amount, payment_gateway, customer_email, expires_at)
+      VALUES (?, 'pending', ?, 'stripe', ?, ?)
   `)
   const insertItem = db.prepare(`
       INSERT INTO order_items (order_id, product_id, quantity, unit_price)
@@ -64,7 +68,7 @@ export default defineEventHandler(async (event) => {
   `)
 
   const orderId = db.transaction(() => {
-    const result = insertOrder.run(orderNumber, grandTotal, customerEmail)
+    const result = insertOrder.run(orderNumber, grandTotal, customerEmail, expiresAtIso)
     const oid = result.lastInsertRowid as number
     for (const it of resolved) {
       insertItem.run(oid, it.id, it.quantity, it.price)
@@ -113,6 +117,7 @@ export default defineEventHandler(async (event) => {
       mode: 'payment',
       customer_email: customerEmail,
       line_items: lineItems,
+      expires_at: expiresAtTimestamp,
       metadata: {order_id: String(orderId), order_number: orderNumber},
       success_url: `${config.public.baseUrl}/checkout/success?gateway=stripe&order_id=${orderId}&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${config.public.baseUrl}/checkout/cancel?order_id=${orderId}`,

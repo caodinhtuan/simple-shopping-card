@@ -15,9 +15,10 @@
       </p>
     </div>
 
-    <!-- Active Subscription Banner -->
+    <!-- Active/Inactive Subscription Banner -->
     <div v-if="activeSubscription" class="mb-10 animate-in stagger-1">
-      <div class="max-w-3xl mx-auto bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border border-emerald-500/20 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between">
+      <!-- Active state banner -->
+      <div v-if="activeSubscription.status === 'active'" class="max-w-3xl mx-auto bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border border-emerald-500/20 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-4">
         <div>
           <h3 class="text-lg font-bold text-emerald-400 mb-1">Active Subscription: {{ activeSubscription.plan_name }}</h3>
           <p class="text-slate-400 text-sm">
@@ -27,6 +28,26 @@
         <div class="mt-4 md:mt-0 md:text-right">
           <p class="text-xs text-slate-500 uppercase tracking-wider font-semibold">Subscription ID</p>
           <p class="font-mono text-sm text-slate-300">{{ activeSubscription.subscription_id }}</p>
+        </div>
+      </div>
+
+      <!-- Inactive/Cancelled state banner with Re-subscribe -->
+      <div v-else class="max-w-3xl mx-auto bg-gradient-to-r from-amber-500/10 to-orange-500/10 border border-amber-500/20 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div>
+          <h3 class="text-lg font-bold text-amber-400 mb-1">{{ t('subs.inactive_subscription', { name: activeSubscription.plan_name }) }}</h3>
+          <p class="text-slate-400 text-sm">
+            {{ t('subs.inactive_desc', { name: activeSubscription.plan_name, interval: activeSubscription.interval, status: activeSubscription.status }) }}
+          </p>
+        </div>
+        <div class="flex items-center gap-4">
+          <n-button 
+            type="primary" 
+            class="btn-stripe"
+            :style="{ borderRadius: '10px' }"
+            @click="initiateSubscriptionFlow({ planId: activeSubscription.plan_id, gateway: activeSubscription.payment_gateway || 'stripe', interval: activeSubscription.interval })"
+          >
+            {{ t('subs.resubscribe_now') }}
+          </n-button>
         </div>
       </div>
     </div>
@@ -52,7 +73,7 @@
 
     <!-- Pricing Grid -->
     <div v-else class="animate-in stagger-2">
-      <PricingGrid :plans="plans" @subscribe="initiateSubscriptionFlow"/>
+      <PricingGrid :plans="plans" :active-subscription="activeSubscription" @subscribe="initiateSubscriptionFlow"/>
     </div>
 
     <!-- Email Modal -->

@@ -51,6 +51,9 @@
                   {{ data.order.status === 'paid' ? 'Payment Successful' : 'Order ' + data.order.status }}
                 </p>
                 <p class="font-mono font-extrabold text-slate-100 text-xl">{{ data.order.order_number }}</p>
+                <p v-if="data.order.status === 'pending' && data.order.expires_at" class="text-amber-400/90 text-xs mt-1 flex items-center gap-1">
+                  <span>⏰</span> {{ t('orders.expires_on', { time: formatDate(data.order.expires_at) }) }}
+                </p>
               </div>
             </div>
             <div class="text-left sm:text-right">
@@ -98,6 +101,31 @@
           </a>
         </div>
 
+        <!-- Real DB Invoice Info if Paid -->
+        <div v-if="data.invoice" class="px-8 py-5 border-b border-white/5 bg-emerald-500/[0.01]">
+          <p class="text-xs uppercase tracking-wider text-slate-500 font-semibold mb-3">{{ t('orders.linked_invoice') }}</p>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
+            <div>
+              <p class="text-slate-500 font-medium">{{ t('orders.invoice_number') }}</p>
+              <p class="text-slate-200 font-mono font-bold mt-0.5">{{ data.invoice.invoice_number }}</p>
+            </div>
+            <div>
+              <p class="text-slate-500 font-medium">{{ t('orders.billing_email') }}</p>
+              <p class="text-slate-200 font-bold mt-0.5 truncate">{{ data.invoice.customer_email }}</p>
+            </div>
+            <div>
+              <p class="text-slate-500 font-medium">{{ t('orders.payment_gateway') }}</p>
+              <p class="text-slate-200 font-bold capitalize mt-0.5">{{ data.invoice.payment_gateway }}</p>
+            </div>
+            <div>
+              <p class="text-slate-500 font-medium">{{ t('orders.transaction_id') }}</p>
+              <p class="text-slate-200 font-mono font-bold truncate mt-0.5" :title="data.invoice.payment_id">
+                {{ data.invoice.payment_id || 'N/A' }}
+              </p>
+            </div>
+          </div>
+        </div>
+
         <!-- Items -->
         <div class="px-8 py-5">
           <p class="text-xs uppercase tracking-wider text-slate-500 font-semibold mb-4">Items</p>
@@ -138,11 +166,25 @@
 
       <!-- CTA -->
       <div class="flex flex-col sm:flex-row gap-3 mt-6 animate-in stagger-3">
-        <NuxtLink to="/products" class="flex-1">
+        <!-- Pay Now / Retry payment if unpaid -->
+        <div v-if="data.order.status === 'pending'" class="flex-1">
+          <n-button 
+            :loading="retrying"
+            :style="{ borderRadius: '12px', height: '48px' }" 
+            class="btn-stripe w-full" 
+            type="primary"
+            @click="handleRetryPayment"
+          >
+            {{ t('orders.pay_now') }}
+          </n-button>
+        </div>
+
+        <NuxtLink v-else to="/products" class="flex-1">
           <n-button :style="{ borderRadius: '12px', height: '48px' }" class="btn-stripe w-full" type="primary">
             Continue Shopping
           </n-button>
         </NuxtLink>
+        
         <NuxtLink to="/orders" class="flex-1">
           <n-button :style="{ borderRadius: '12px', height: '48px' }" class="w-full">
             All My Orders
@@ -154,14 +196,41 @@
 </template>
 
 <script lang="ts" setup>
+import { ref, onMounted } from 'vue'
 import { NSpin, NButton } from 'naive-ui'
 
+const { t } = useI18n()
 const route = useRoute()
 const orderId = route.params.id as string
 
 useHead({ title: computed(() => `Order Detail | ShopPay`) })
 
-const { data, pending, error } = await useFetch<any>(`/api/orders/${orderId}/invoice`)
+const { data, pending, error, refresh } = await useFetch<any>(`/api/orders/${orderId}/invoice`)
+
+onMounted(() => {
+  refresh()
+})
+
+const retrying = ref(false)
+
+async function handleRetryPayment() {
+  if (!data.value?.order?.id) return
+  retrying.value = true
+  try {
+    const res = await $fetch<any>('/api/stripe/retry-payment', {
+      method: 'POST',
+      body: { orderId: data.value.order.id }
+    })
+    if (res?.url) {
+      window.location.href = res.url
+    }
+  } catch (err: any) {
+    console.error(err)
+    alert(err.message || 'Error occurred during payment retry.')
+  } finally {
+    retrying.value = false
+  }
+}
 
 const subtotal = computed(() => {
   if (!data.value?.order?.items) return 0

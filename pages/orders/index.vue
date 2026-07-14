@@ -9,36 +9,79 @@
     </div>
 
     <!-- Email Lookup -->
-    <div class="glass-card p-6 mb-8 border-white/8 animate-in stagger-2">
-      <div class="flex flex-col sm:flex-row gap-3">
-        <div class="flex-1">
-          <n-input
-            v-model:value="emailInput"
-            placeholder="your@email.com"
-            size="large"
-            type="text"
-            :disabled="loading"
-            @keydown.enter="lookup"
+    <ClientOnly>
+      <div class="glass-card p-6 mb-8 border-white/8 animate-in stagger-2">
+        <div class="flex flex-col sm:flex-row gap-3">
+          <div class="flex-1">
+            <n-input
+              v-model:value="emailInput"
+              placeholder="your@email.com"
+              size="large"
+              type="text"
+              :disabled="loading"
+              @keydown.enter="lookup"
+            >
+              <template #prefix>
+                <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </template>
+            </n-input>
+          </div>
+          <n-button
+            :disabled="!isValidEmail || loading"
+            :loading="loading"
+            :style="{ height: '42px', borderRadius: '10px', padding: '0 24px', fontWeight: '600' }"
+            class="btn-stripe"
+            type="primary"
+            @click="lookup"
           >
-            <template #prefix>
-              <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </template>
-          </n-input>
+            Look Up Orders
+          </n-button>
         </div>
-        <n-button
-          :disabled="!isValidEmail || loading"
-          :loading="loading"
-          :style="{ height: '42px', borderRadius: '10px', padding: '0 24px', fontWeight: '600' }"
-          class="btn-stripe"
-          type="primary"
-          @click="lookup"
-        >
-          Look Up Orders
-        </n-button>
+        <p v-if="emailInput && !isValidEmail" class="text-red-400 text-xs mt-2">Please enter a valid email address.</p>
       </div>
-      <p v-if="emailInput && !isValidEmail" class="text-red-400 text-xs mt-2">Please enter a valid email address.</p>
+
+      <template #fallback>
+        <!-- A beautiful styled placeholder/skeleton while loading on server -->
+        <div class="glass-card p-6 mb-8 border-white/8 flex flex-col sm:flex-row gap-3">
+          <div class="flex-1 h-[42px] bg-white/5 rounded-xl animate-pulse" />
+          <div class="w-36 h-[42px] bg-white/5 rounded-xl animate-pulse" />
+        </div>
+      </template>
+    </ClientOnly>
+
+    <!-- Skeleton Loading State -->
+    <div v-if="loading" class="space-y-4 animate-in stagger-3">
+      <!-- Summary Bar Skeleton -->
+      <div class="flex justify-between items-center mb-6">
+        <div class="w-48 h-5 bg-white/5 rounded animate-pulse" />
+        <div class="flex gap-4">
+          <div class="w-16 h-10 bg-white/5 rounded animate-pulse" />
+          <div class="w-16 h-10 bg-white/5 rounded animate-pulse" />
+        </div>
+      </div>
+      
+      <!-- List Skeletons -->
+      <div v-for="i in 3" :key="i" class="glass-card border-white/8 p-5 space-y-4">
+        <div class="flex justify-between items-center">
+          <div class="flex items-center gap-4">
+            <div class="w-10 h-10 rounded-xl bg-white/5 animate-pulse" />
+            <div class="space-y-2">
+              <div class="w-28 h-4 bg-white/5 rounded animate-pulse" />
+              <div class="w-20 h-3 bg-white/5 rounded animate-pulse" />
+            </div>
+          </div>
+          <div class="flex items-center gap-4">
+            <div class="w-16 h-6 bg-white/5 rounded-full animate-pulse" />
+            <div class="w-12 h-5 bg-white/5 rounded animate-pulse" />
+          </div>
+        </div>
+        <div class="flex gap-2">
+          <div class="w-20 h-5 bg-white/5 rounded-lg animate-pulse" />
+          <div class="w-24 h-5 bg-white/5 rounded-lg animate-pulse" />
+        </div>
+      </div>
     </div>
 
     <!-- Results -->

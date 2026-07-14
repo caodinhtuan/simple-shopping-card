@@ -166,6 +166,8 @@ function createTables(db: Database.Database): void {
           NULL
           DEFAULT
           '',
+          expires_at
+          TEXT,
           created_at
           TEXT
           NOT
@@ -278,7 +280,40 @@ function createTables(db: Database.Database): void {
           id
       ) ON DELETE RESTRICT
           );
+
+      CREATE TABLE IF NOT EXISTS invoices
+      (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          order_id INTEGER NOT NULL,
+          invoice_number TEXT NOT NULL UNIQUE,
+          status TEXT NOT NULL DEFAULT 'pending',
+          amount INTEGER NOT NULL DEFAULT 0,
+          payment_gateway TEXT NOT NULL DEFAULT '',
+          payment_id TEXT NOT NULL DEFAULT '',
+          customer_email TEXT NOT NULL DEFAULT '',
+          expires_at TEXT,
+          created_at TEXT NOT NULL DEFAULT (datetime('now')),
+          FOREIGN KEY (order_id) REFERENCES orders (id) ON DELETE CASCADE
+      );
+
+      CREATE TABLE IF NOT EXISTS invoice_details
+      (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          invoice_id INTEGER NOT NULL,
+          product_id INTEGER NOT NULL,
+          quantity INTEGER NOT NULL DEFAULT 1,
+          unit_price INTEGER NOT NULL DEFAULT 0,
+          FOREIGN KEY (invoice_id) REFERENCES invoices (id) ON DELETE CASCADE,
+          FOREIGN KEY (product_id) REFERENCES products (id) ON DELETE RESTRICT
+      );
   `)
+
+  // Safe migration: Add expires_at column to existing orders table if it doesn't exist
+  try {
+    db.exec(`ALTER TABLE orders ADD COLUMN expires_at TEXT;`)
+  } catch (e) {
+    // Column already exists, ignore error safely
+  }
 }
 
 function seedData(db: Database.Database): void {

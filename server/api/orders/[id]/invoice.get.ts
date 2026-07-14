@@ -118,10 +118,20 @@ export default defineEventHandler(async (event) => {
         console.warn('[Invoice] PayPal fetch error:', e.message)
         gatewayInvoice = { provider: 'PayPal', error: 'Could not fetch PayPal invoice' }
       }
-    } else {
-      gatewayInvoice = { provider: 'PayPal', demo: !hasCreds }
     }
   }
 
-  return { order, gatewayInvoice }
+  // ── Query real database invoice if exists ───────────────────────────────
+  const dbInvoice = db.prepare('SELECT * FROM invoices WHERE order_id = ?').get(order.id) as any
+  if (dbInvoice) {
+    const getInvoiceItems = db.prepare(`
+      SELECT id_detail.*, p.name as product_name, p.category
+      FROM invoice_details id_detail
+      LEFT JOIN products p ON id_detail.product_id = p.id
+      WHERE id_detail.invoice_id = ?
+    `)
+    dbInvoice.items = getInvoiceItems.all(dbInvoice.id)
+  }
+
+  return { order, gatewayInvoice, invoice: dbInvoice || null }
 })

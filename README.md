@@ -51,6 +51,7 @@ App will be live at **http://localhost:3000** (or next available port).
 | [`docs/payment_integration_plan.md`](./docs/payment_integration_plan.md) | Original architecture plan                                                    |
 | [`docs/sandbox_setup_guide.md`](./docs/sandbox_setup_guide.md)           | Step-by-step Stripe & PayPal sandbox setup                                    |
 | [`docs/webhook_advanced_guide.md`](./docs/webhook_advanced_guide.md)     | Advanced webhook event handling, signature verification, transaction tracking |
+| [`docs/stripe-payment-recovery-and-invoicing-flow.md`](./docs/stripe-payment-recovery-and-invoicing-flow.md) | Stripe payment retry, invoice PDF & SMTP mailing implementation flow |
 
 ---
 
@@ -117,6 +118,42 @@ simple-shopping-card/
 3. → Redirects to `/subscription/success`
 
 See [`docs/sandbox_setup_guide.md`](./docs/sandbox_setup_guide.md) for the complete walkthrough.
+
+---
+
+## 🔌 Webhook Testing Guide
+
+This application handles real-time payment events via Stripe and PayPal webhooks. Follow these steps to test them locally:
+
+### 1. Stripe Webhooks (via Stripe CLI)
+1. **Download & Log In**: Download the Stripe CLI and run `stripe login` in your terminal.
+2. **Forward Events**: Forward incoming events to the Nuxt application by running:
+   ```bash
+   stripe listen --forward-to localhost:3000/api/stripe/webhook
+   ```
+3. **Configure Key**: Copy the webhook signing secret returned in the terminal (starts with `whsec_...`) and update your `.env` file:
+   ```env
+   STRIPE_WEBHOOK_SECRET=whsec_your_secret
+   ```
+4. **Trigger & Verify**: Perform a transaction. You will see events like `checkout.session.completed` stream through the terminal and your database orders/invoices will automatically update to `paid`!
+
+### 2. PayPal Webhooks (via Ngrok)
+1. **Expose Server**: Expose port 3000 to the public internet using ngrok:
+   ```bash
+   ngrok http 3000
+   ```
+2. **Configure Webhook in PayPal**:
+   - Go to your PayPal Developer Dashboard -> My Apps & Credentials.
+   - Select your sandbox App, scroll down to **Webhooks**, and click **Add Webhook**.
+   - Set the URL to: `https://your-ngrok-subdomain.ngrok-free.app/api/paypal/webhook`.
+   - Select the following event types:
+     - `Checkout order approved`
+     - `Billing subscription created`
+     - `Billing subscription updated`
+3. **Configure Key**: Copy the generated **Webhook ID** and paste it into your `.env`:
+   ```env
+   PAYPAL_WEBHOOK_ID=your_paypal_webhook_id
+   ```
 
 ---
 
