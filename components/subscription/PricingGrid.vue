@@ -88,8 +88,16 @@ interface Plan {
   paypal_plan_id?: string
 }
 
-const props = defineProps<{ 
-  plans: Plan[]
+interface EnrichedPlan extends Plan {
+  price_monthly?: number
+  price_yearly?: number
+  stripe_price_id_monthly?: string
+  stripe_price_id_yearly?: string
+  paypal_plan_id_monthly?: string
+  paypal_plan_id_yearly?: string
+}
+const props = defineProps<{
+  plans: EnrichedPlan[]
   activeSubscription?: any
 }>()
 
@@ -100,18 +108,10 @@ defineEmits<{
 const {t} = useI18n()
 const isYearly = ref(false)
 
-interface EnrichedPlan extends Plan {
-  price_monthly?: number
-  price_yearly?: number
-  stripe_price_id_monthly?: string
-  stripe_price_id_yearly?: string
-  paypal_plan_id_monthly?: string
-  paypal_plan_id_yearly?: string
-}
 
 const displayPlans = computed<Plan[]>(() => {
   return props.plans.map((p) => {
-    const ep = p as EnrichedPlan
+    const ep = p
     if (!isYearly.value) {
       return {...p, price: ep.price_monthly ?? p.price, interval: 'month'}
     }

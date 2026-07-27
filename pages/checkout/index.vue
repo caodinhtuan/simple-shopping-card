@@ -191,6 +191,7 @@
 <script lang="ts" setup>
 import {NButton, NInput, NResult} from 'naive-ui'
 import {useCartStore} from '~/stores/cart'
+
 const {t} = useI18n()
 
 useHead({title: computed(() => t('meta.checkout'))})

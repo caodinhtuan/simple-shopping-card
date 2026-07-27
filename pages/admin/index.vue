@@ -198,13 +198,20 @@
 </template>
 
 <script lang="ts" setup>
-import { NSpin } from 'naive-ui'
+import {NSpin} from 'naive-ui'
 
 useHead({ title: 'Admin — Orders & Subscriptions | ShopPay' })
+type TabKey = 'orders' | 'subscriptions'
 
-const activeTab = ref<'orders' | 'subscriptions'>('orders')
+interface Tab {
+  key: TabKey
+  label: string
+  icon: string
+}
 
-const tabs = [
+const activeTab = ref<TabKey>('orders')
+
+const tabs: Tab[] = [
   { key: 'orders', label: 'Orders', icon: '🛍️' },
   { key: 'subscriptions', label: 'Subscriptions', icon: '🔄' },
 ]

@@ -1,9 +1,12 @@
 <template>
   <div class="cart-summary glass-card p-6 lg:sticky lg:top-24">
     <h3 class="text-lg font-bold text-slate-100 mb-1">{{ t('summary.title') }}</h3>
-    <p class="text-xs text-slate-500 mb-6">{{ itemCount }} {{
+    <p class="text-xs text-slate-500 mb-6">
+      {{ itemCount }}
+      {{
         itemCount > 1 ? t('cart.items_count', {n: itemCount}).split(' ').slice(1).join(' ') : t('cart.item_count_single').split(' ').slice(1).join(' ')
-      }}</p>
+      }}
+    </p>
 
     <div class="space-y-3">
       <div class="flex items-center justify-between text-sm">

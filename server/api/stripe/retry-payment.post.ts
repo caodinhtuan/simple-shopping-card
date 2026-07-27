@@ -1,5 +1,3 @@
-import crypto from 'crypto'
-
 interface RetryPaymentBody {
   orderId: number
 }

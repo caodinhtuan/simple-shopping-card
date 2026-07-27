@@ -192,7 +192,7 @@
 </template>
 
 <script lang="ts" setup>
-import { NInput, NButton } from 'naive-ui'
+import {NButton, NInput} from 'naive-ui'
 
 useHead({ title: 'My Orders | ShopPay' })
 

@@ -119,9 +119,9 @@
         <!-- Plan summary -->
         <div class="p-4 rounded-xl bg-gradient-to-br from-purple-500/10 to-cyan-500/5 border border-white/5">
           <div class="flex items-center justify-between mb-1">
-            <span class="text-xs text-slate-500 uppercase tracking-wider font-semibold">{{
-                t('subs.selected_plan')
-              }}</span>
+            <span class="text-xs text-slate-500 uppercase tracking-wider font-semibold">
+              {{ t('subs.selected_plan') }}
+            </span>
             <span class="text-xs text-slate-400">{{
                 selectedInterval === 'yearly' ? t('subs.billing_yearly') : t('subs.billing_monthly')
               }}</span>
@@ -130,9 +130,9 @@
             <span class="text-lg font-bold text-slate-100">{{ selectedPlan?.name }}</span>
             <span class="text-2xl font-extrabold gradient-text">
               ${{ (displayPrice() / 100).toFixed(2) }}
-              <span class="text-xs text-slate-500 font-medium">/ {{
-                  selectedInterval === 'yearly' ? 'year' : 'month'
-                }}</span>
+              <span class="text-xs text-slate-500 font-medium">/
+                {{ selectedInterval === 'yearly' ? 'year' : 'month' }}
+              </span>
             </span>
           </div>
           <p v-if="selectedInterval === 'yearly'" class="text-[10px] text-emerald-400 mt-2 font-semibold">
@@ -141,9 +141,9 @@
         </div>
 
         <div>
-          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">{{
-              t('subs.your_email')
-            }}</label>
+          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+            {{ t('subs.your_email') }}
+          </label>
           <n-input
               v-model:value="customerEmail"
               :disabled="isSubmitting"

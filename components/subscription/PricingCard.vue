@@ -33,9 +33,9 @@
         <h3 class="text-xl font-bold text-slate-900 dark:text-slate-100">{{ plan.name }}</h3>
         <span v-if="plan.id" class="text-[10px] text-slate-500 font-mono">#{{ plan.id }}</span>
       </div>
-      <p class="text-slate-500 dark:text-slate-400 text-xs mb-6 leading-relaxed min-h-[2.75rem]">{{
-          plan.description
-        }}</p>
+      <p class="text-slate-500 dark:text-slate-400 text-xs mb-6 leading-relaxed min-h-[2.75rem]">
+        {{ plan.description }}
+      </p>
 
       <!-- Price -->
       <div class="mb-6">
@@ -45,9 +45,9 @@
                 class="text-5xl font-extrabold">
             {{ formatPriceWhole(plan.price) }}
           </span>
-          <span class="text-base font-semibold text-slate-600 dark:text-slate-300">.{{
-              formatPriceCents(plan.price)
-            }}</span>
+          <span class="text-base font-semibold text-slate-600 dark:text-slate-300">.
+            {{ formatPriceCents(plan.price) }}
+          </span>
           <span class="text-slate-500 text-sm ml-1">/{{ plan.interval || 'month' }}</span>
         </div>
       </div>

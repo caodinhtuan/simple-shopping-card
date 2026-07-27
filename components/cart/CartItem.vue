@@ -26,9 +26,9 @@
           @click="$emit('update:quantity', item.quantity - 1)"
       >−
       </button>
-      <span class="min-w-[28px] text-center text-slate-100 font-semibold text-sm tabular-nums">{{
-          item.quantity
-        }}</span>
+      <span class="min-w-[28px] text-center text-slate-100 font-semibold text-sm tabular-nums">
+        {{ item.quantity }}
+      </span>
       <button
           :disabled="item.quantity >= 99"
           class="btn-reset w-7 h-7 rounded-[7px] text-slate-300 text-lg font-semibold flex items-center justify-center transition-all duration-200 hover:bg-purple-500/15 hover:text-purple-200 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-slate-300"

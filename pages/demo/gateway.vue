@@ -29,7 +29,9 @@
               </svg>
             </div>
             <div>
-              <p class="text-xs text-slate-500 font-semibold uppercase tracking-wider">{{ t('gateway.stripe_title') }}</p>
+              <p class="text-xs text-slate-500 font-semibold uppercase tracking-wider">
+                {{ t('gateway.stripe_title') }}
+              </p>
               <p class="text-sm text-slate-300 font-medium">{{ t('gateway.demo_subtitle') }}</p>
             </div>
           </div>
@@ -42,7 +44,9 @@
         <!-- Card-form mock -->
         <div class="space-y-4 mb-6">
           <div>
-            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">{{ t('gateway.card_number') }}</label>
+            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+              {{ t('gateway.card_number') }}
+            </label>
             <div
                 class="px-4 py-3 rounded-xl bg-white/5 border border-white/10 font-mono text-slate-200 tracking-widest text-sm flex items-center justify-between">
               <span>4242 4242 4242 4242</span>
@@ -54,20 +58,27 @@
           </div>
           <div class="grid grid-cols-2 gap-3">
             <div>
-              <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">{{ t('gateway.expiry') }}</label>
+              <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                {{ t('gateway.expiry') }}
+              </label>
               <div class="px-4 py-3 rounded-xl bg-white/5 border border-white/10 font-mono text-slate-200 text-sm">12 /
                 28
               </div>
             </div>
             <div>
-              <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">{{ t('gateway.cvc') }}</label>
+              <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                {{ t('gateway.cvc') }}
+              </label>
               <div class="px-4 py-3 rounded-xl bg-white/5 border border-white/10 font-mono text-slate-200 text-sm">123
               </div>
             </div>
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">{{ t('gateway.cardholder') }}</label>
-            <div class="px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-slate-200 text-sm">{{ t('gateway.demo_customer') }}
+            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+              {{ t('gateway.cardholder') }}
+            </label>
+            <div class="px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-slate-200 text-sm">
+              {{ t('gateway.demo_customer') }}
             </div>
           </div>
         </div>
@@ -81,8 +92,10 @@
         >
           <template #icon>
             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-              <path d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" stroke-linecap="round"
-                    stroke-linejoin="round"/>
+              <path
+                  d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"/>
             </svg>
           </template>
           {{ t('gateway.pay') }} ${{ formattedAmount }}
@@ -112,7 +125,9 @@
               </svg>
             </div>
             <div>
-              <p class="text-xs text-slate-500 font-semibold uppercase tracking-wider">{{ t('gateway.paypal_title') }}</p>
+              <p class="text-xs text-slate-500 font-semibold uppercase tracking-wider">
+                {{ t('gateway.paypal_title') }}
+              </p>
               <p class="text-sm text-slate-300 font-medium">{{ t('gateway.demo_subtitle') }}</p>
             </div>
           </div>
@@ -188,7 +203,7 @@
 
         <h2 class="text-xl font-bold text-slate-100 mb-2">{{ processingMessage }}</h2>
         <p class="text-sm text-slate-500">{{
-            t('gateway.securing_with', { gateway: gateway === 'stripe' ? 'Stripe' : 'PayPal' })
+            t('gateway.securing_with', {gateway: gateway === 'stripe' ? 'Stripe' : 'PayPal'})
           }}</p>
 
         <div class="mt-8 flex justify-center gap-2">
@@ -300,7 +315,7 @@ async function processPayment() {
     try {
       await $fetch('/api/subscriptions/mark-active', {
         method: 'POST',
-        body: { planId: Number(planId.value), gateway: gateway.value, email, subscriptionId: sessionId },
+        body: {planId: Number(planId.value), gateway: gateway.value, email, subscriptionId: sessionId},
       })
     } catch (e) {
       console.warn('[Demo] Mark-active failed', e)

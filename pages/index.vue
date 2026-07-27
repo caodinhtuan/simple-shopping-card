@@ -106,9 +106,9 @@
         <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
           <div class="px-1">
             <p class="text-3xl sm:text-4xl font-extrabold gradient-text-purple">2</p>
-            <p class="text-xs text-slate-500 uppercase tracking-wider font-semibold mt-1">{{
-                t('home.stat_gateways')
-              }}</p>
+            <p class="text-xs text-slate-500 uppercase tracking-wider font-semibold mt-1">
+              {{ t('home.stat_gateways') }}
+            </p>
           </div>
           <div class="px-1 border-l-0 md:border-l border-white/5">
             <p class="text-3xl sm:text-4xl font-extrabold gradient-text-cyan">2</p>
@@ -116,9 +116,9 @@
           </div>
           <div class="px-1 border-l-0 md:border-l border-white/5">
             <p class="text-3xl sm:text-4xl font-extrabold gradient-text-emerald">8</p>
-            <p class="text-xs text-slate-500 uppercase tracking-wider font-semibold mt-1">{{
-                t('home.stat_products')
-              }}</p>
+            <p class="text-xs text-slate-500 uppercase tracking-wider font-semibold mt-1">
+              {{ t('home.stat_products') }}
+            </p>
           </div>
           <div class="px-1 border-l-0 md:border-l border-white/5">
             <p class="text-3xl sm:text-4xl font-extrabold gradient-text-pink">3</p>

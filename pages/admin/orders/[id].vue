@@ -187,7 +187,7 @@
                   <span class="text-slate-300">{{ data.gatewayInvoice.currency }}</span>
                 </div>
                 <a v-if="data.gatewayInvoice?.receipt_url" :href="data.gatewayInvoice.receipt_url" target="_blank"
-                  class="flex items-center justify-center gap-2 w-full mt-4 py-2.5 px-4 rounded-xl bg-purple-500/10 border border-purple-500/30 text-purple-300 text-sm font-semibold hover:bg-purple-500/20 transition-colors">
+                   class="flex items-center justify-center gap-2 mt-4 py-2.5 px-4 rounded-xl bg-purple-500/10 border border-purple-500/30 text-purple-300 text-sm font-semibold hover:bg-purple-500/20 transition-colors">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" stroke-linecap="round" stroke-linejoin="round"/>
                   </svg>
@@ -223,7 +223,7 @@
 </template>
 
 <script lang="ts" setup>
-import { NSpin } from 'naive-ui'
+import {NSpin} from 'naive-ui'
 
 const route = useRoute()
 const orderId = route.params.id as string

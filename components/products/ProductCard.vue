@@ -46,9 +46,9 @@
 
       <div class="flex items-center justify-between gap-3">
         <div>
-          <p class="text-[10px] uppercase tracking-wider text-slate-600 font-semibold">{{
-              t('products.price_label')
-            }}</p>
+          <p class="text-[10px] uppercase tracking-wider text-slate-600 font-semibold">
+            {{ t('products.price_label') }}
+          </p>
           <span class="text-xl font-extrabold gradient-text-purple">${{ formatPrice(product.price) }}</span>
         </div>
         <n-button

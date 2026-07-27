@@ -196,8 +196,8 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue'
-import { NSpin, NButton } from 'naive-ui'
+import {onMounted, ref} from 'vue'
+import {NButton, NSpin} from 'naive-ui'
 
 const { t } = useI18n()
 const route = useRoute()
